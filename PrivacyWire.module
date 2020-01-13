@@ -1,0 +1,72 @@
+<?php namespace ProcessWire;
+
+/**
+ * PrivacyWire
+ * This module adds management options for GDPR-relevant elements (loading maps, videos etc. only after accepting
+ * external media) and cookies.
+ *
+ * @author blaueQuelle
+ *
+ * ProcessWire 3.x
+ * Copyright (C) 2011 by Ryan Cramer
+ * Licensed under GNU/GPL v2, see LICENSE.TXT
+ *
+ * http://www.processwire.com
+ * http://www.ryancramer.com
+ *
+ */
+class PrivacyWire extends WireData implements Module, ConfigurableModule
+{
+
+    public static function getModuleInfo()
+    {
+        return [
+            'title' => "PrivacyWire",
+            'summary' => "This module adds management options for GDPR-relevant elements (loading maps, videos etc. only after accepting external media) and cookies.",
+            'author' => "blaueQuelle",
+            'href' => "https://github.com/blaueQuelle/privacywire",
+            'version' => 1,
+            'autoload' => true,
+            'singular' => true,
+            'requires' => [ "PHP>=7.2", "ProcessWire>=3" ],
+            'installs' => [ "TextformatterPrivacyWire" ],
+            'icon' => 'cookie'
+        ];
+    }
+
+    public function ready()
+    {
+        // only do something, if module is set to be enabled
+        if (!$this->enable) {
+            return;
+        }
+
+        // exclude admin pages
+        if ($this->wire('page')->template == 'admin') {
+            return;
+        }
+
+        // exclude from form-builder iframe
+        if ($this->wire('page')->template == 'form-builder') {
+            return;
+        }
+
+        // TODO: Are there any other reasons to NOT render?
+
+        // all clear -> render the module!
+        $this->addHookAfter('Page::render', $this, 'render');
+
+    }
+
+    public function render(HookEvent $event)
+    {
+        // TODO: Output the inline script and defer-loaded script file before the closing body tag
+        $event->return .= str_replace("</body>", "<script>console.log('PrivacyWire is loaded!');</script>", $event->return);
+    }
+
+    public function ___install() { }
+
+    public function ___uninstall() { }
+
+
+}

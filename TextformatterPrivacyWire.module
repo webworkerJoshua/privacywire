@@ -1,0 +1,47 @@
+<?php namespace ProcessWire;
+
+/**
+ * Textformatter PrivacyWire
+ * This module adds the textformatter for PrivacyWire
+ *
+ *
+ * @author blaueQuelle
+ *
+ * ProcessWire 3.x
+ * Copyright (C) 2011 by Ryan Cramer
+ * Licensed under GNU/GPL v2, see LICENSE.TXT
+ *
+ * http://www.processwire.com
+ * http://www.ryancramer.com
+ *
+ */
+class TextformatterPrivacyWire extends Textformatter implements Module
+{
+
+    public static function getModuleInfo()
+    {
+        return [
+            'title' => 'PrivacyWire Textformatter',
+            'summary' => "PrivacyWire Textformatter to render privacy options via shortcode [[privacywire]]",
+            'author' => 'blaueQuelle',
+            'href' => "https://github.com/blaueQuelle/privacywire",
+            'version' => 1,
+            'requires' => [
+                "PHP>=7.2",
+                "ProcessWire>=3",
+                "PrivacyWire>=1"
+            ],
+        ];
+    }
+
+    public function formatValue(Page $page, Field $field, &$str)
+    {
+        $privacyWire = $this->modules->get("PrivacyWire");
+
+        // TODO: Output something relevant
+
+        $output = "<div class='privacywire privacywire--options'>" . $this->_('Privacy and Cookie Options') . "</div>";
+
+        $str = str_replace("[[privacywire]]", $output, $str);
+    }
+}
