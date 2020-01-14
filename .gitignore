@@ -1,0 +1,4 @@
+node_modules/
+.idea/
+*.lock
+/mix-manifest.json

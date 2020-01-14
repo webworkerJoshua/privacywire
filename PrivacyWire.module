@@ -28,7 +28,7 @@ class PrivacyWire extends WireData implements Module, ConfigurableModule
             'version' => 1,
             'autoload' => true,
             'singular' => true,
-            'requires' => [ "PHP>=7.2", "ProcessWire>=3" ],
+            'requires' => [ "PHP>=7.2", "ProcessWire>=3.0.0", "InputfieldRepeater>1.0.0" ],
             'installs' => [ "TextformatterPrivacyWire" ],
             'icon' => 'cookie'
         ];
@@ -36,32 +36,29 @@ class PrivacyWire extends WireData implements Module, ConfigurableModule
 
     public function ready()
     {
-        // only do something, if module is set to be enabled
-        if (!$this->enable) {
+        if (
+            !$this->enable || // only do something, if module is set to be enabled
+            $this->wire('page')->template == 'admin' || // exclude admin pages
+            $this->wire('page')->template == 'form-builder' // exclude from form-builder iframe
+        ) {
             return;
         }
 
-        // exclude admin pages
-        if ($this->wire('page')->template == 'admin') {
-            return;
-        }
-
-        // exclude from form-builder iframe
-        if ($this->wire('page')->template == 'form-builder') {
-            return;
-        }
-
-        // TODO: Are there any other reasons to NOT render?
-
-        // all clear -> render the module!
         $this->addHookAfter('Page::render', $this, 'render');
-
     }
 
     public function render(HookEvent $event)
     {
-        // TODO: Output the inline script and defer-loaded script file before the closing body tag
-        $event->return .= str_replace("</body>", "<script>console.log('PrivacyWire is loaded!');</script>", $event->return);
+
+        $respectDNT = ($this->respectDNT) ? "1" : "0";
+        $allowOptions = ($this->allowOptions) ? "1" : "0";
+
+        $output = wireRenderFile($this->wire('config')->paths->$this . 'PrivacyWireBanner.php', [ 'module' => $this ]);
+        $output .= "<link rel='stylesheet' type='text/css' href='{$this->wire('config')->urls->$this}css/PrivacyWire.css' />";
+        $output .= '<script>var PrivacyWireSettings={version:"' . $this->version . '",dnt:"' . $respectDNT . '",options:"' . $allowOptions . '"};</script>';
+        $output .= "<script defer src='{$this->wire('config')->urls->$this}js/PrivacyWire.min.js'></script>";
+
+        $event->return = str_replace("</body>", "{$output}</body>", $event->return);
     }
 
     public function ___install() { }

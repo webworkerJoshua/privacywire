@@ -1,0 +1,22 @@
+div.privacywire {
+  display: block;
+  position: fixed;
+  bottom: -100%;
+  left: 0;
+  right: 0;
+  box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.3);
+  background: white;
+  z-index: 1;
+  padding: 1rem;
+  transition: .3s ease;
+  
+  header {
+    font-weight: bold;
+  }
+  
+  .show-banner &.privacywire-banner,
+  .show-options &.privacywire-options,
+  .show-message &.privacywire-message {
+    bottom: 0;
+  }
+}
