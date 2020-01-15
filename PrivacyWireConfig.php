@@ -16,6 +16,7 @@ class PrivacyWireConfig extends ModuleConfig
             'content_banner_button_allow_necessary' => $this->_("Accept necessary cookies only"),
             'content_banner_button_choose' => $this->_("Choose cookies"),
             'content_banner_button_save' => $this->_("Save preferences"),
+            'content_banner_button_toggle' => $this->_("Toggle options"),
             'content_banner_save_message' => $this->_("Your cookie preferences have been saved."),
             'cookies_necessary' => $this->_("wire|domain.tld|This cookie is required for secure login and to detect spam or abuse of this website.|Session \nprivacywire|domain.tld|This cookie saves the consent status for cookies.|1 Year"),
             'cookies_statistics' => $this->_(""),

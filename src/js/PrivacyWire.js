@@ -1,5 +1,10 @@
 import Cookies from 'js-cookie/src/js.cookie'
 
+// NodeList.forEach Polyfill for old browsers
+if (window.NodeList && !NodeList.prototype.forEach) {
+  NodeList.prototype.forEach = Array.prototype.forEach;
+}
+
 class PrivacyWire {
   constructor(PrivacyWireSettings) {
     this.cookie = this.sanitizeCookie();
@@ -13,8 +18,6 @@ class PrivacyWire {
     if (!this.hasValidConsent() && this.hasNoDNT()) {
       this.showBanner();
     }
-
-    console.log(this);
   }
 
   sanitizeCookie() {
@@ -71,6 +74,12 @@ class PrivacyWire {
     this.banner.button_accept_necessary = this.banner.wrapper.querySelector("button.allow-necessary");
     this.banner.button_choose = this.banner.wrapper.querySelector("button.choose");
     this.banner.button_save = this.banner.wrapper.querySelector("button.save");
+    this.banner.button_toggle = this.banner.wrapper.querySelector("button.toggle");
+    this.banner.options = this.banner.wrapper.querySelectorAll(".privacywire-options input.optional");
+    this.banner.options_statistics = this.banner.wrapper.querySelector(".privacywire-options input#statistics");
+    this.banner.options_external_media = this.banner.wrapper.querySelector(".privacywire-options input#external_media");
+    this.banner.options_marketing = this.banner.wrapper.querySelector(".privacywire-options input#marketing");
+    this.banner.toggleToStatus = true;
 
     this.banner.wrapper.classList.add("show-banner");
     this.handleButtons();
@@ -94,16 +103,16 @@ class PrivacyWire {
     this.banner.button_accept_all.onclick = () => {
       this.consent.necessary = true;
       this.consent.statistics = true;
-      this.consent.marketing = true;
       this.consent.external_media = true;
+      this.consent.marketing = true;
       this.savePreferences();
     };
 
     this.banner.button_accept_necessary.onclick = () => {
       this.consent.necessary = true;
       this.consent.statistics = false;
-      this.consent.marketing = false;
       this.consent.external_media = false;
+      this.consent.marketing = false;
       this.savePreferences();
     };
 
@@ -112,11 +121,18 @@ class PrivacyWire {
       this.banner.wrapper.classList.add("show-options");
     };
 
+    this.banner.button_toggle.onclick = () => {
+      this.banner.options.forEach( (el) => {
+        el.checked = this.banner.toggleToStatus;
+      });
+      this.banner.toggleToStatus = !this.banner.toggleToStatus;
+    };
+
     this.banner.button_save.onclick = () => {
-      // TODO Check Form Input / Checkboxes
-      // ...
-      // this.savePreferences();
-      console.log("Save Preferences");
+      this.consent.statistics = this.banner.options_statistics.checked;
+      this.consent.external_media = this.banner.options_external_media.checked;
+      this.consent.marketing = this.banner.options_marketing.checked;
+      this.savePreferences();
     };
   }
 
