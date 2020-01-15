@@ -15,6 +15,11 @@ class PrivacyWire {
     this.consent.marketing = false;
     this.consent.external_media = false;
 
+    this.updateConsentFromCookie();
+    this.initBanner();
+    this.updateElements();
+    this.handleExternalTriggers();
+
     if (!this.hasValidConsent() && this.hasNoDNT()) {
       this.showBanner();
     }
@@ -51,7 +56,6 @@ class PrivacyWire {
     }
 
     return this.cookie.version === this.settings.version;
-
   }
 
   hasNoDNT() {
@@ -67,7 +71,7 @@ class PrivacyWire {
     return true;
   }
 
-  showBanner() {
+  initBanner() {
     this.banner = {};
     this.banner.wrapper = document.querySelector(".privacywire-wrapper");
     this.banner.button_accept_all = this.banner.wrapper.querySelector("button.allow-all");
@@ -81,9 +85,12 @@ class PrivacyWire {
     this.banner.options_marketing = this.banner.wrapper.querySelector(".privacywire-options input#marketing");
     this.banner.toggleToStatus = true;
 
-    this.banner.wrapper.classList.add("show-banner");
+    this.prefillOptionValues();
     this.handleButtons();
+  }
 
+  showBanner() {
+    this.banner.wrapper.classList.add("show-banner");
   }
 
   hideBanner() {
@@ -98,8 +105,13 @@ class PrivacyWire {
     }, 1500);
   }
 
-  handleButtons() {
+  prefillOptionValues() {
+    this.banner.options_statistics.checked = this.consent.statistics;
+    this.banner.options_external_media.checked = this.consent.external_media;
+    this.banner.options_marketing.checked = this.consent.marketing;
+  }
 
+  handleButtons() {
     this.banner.button_accept_all.onclick = () => {
       this.consent.necessary = true;
       this.consent.statistics = true;
@@ -122,7 +134,7 @@ class PrivacyWire {
     };
 
     this.banner.button_toggle.onclick = () => {
-      this.banner.options.forEach( (el) => {
+      this.banner.options.forEach((el) => {
         el.checked = this.banner.toggleToStatus;
       });
       this.banner.toggleToStatus = !this.banner.toggleToStatus;
@@ -145,6 +157,78 @@ class PrivacyWire {
     if (!silent) {
       this.showMessage();
     }
+    this.updateElements();
+  }
+
+  updateConsentFromCookie() {
+    if (this.cookie === null) {
+      return;
+    }
+    this.consent.statistics = this.cookie.consent.statistics;
+    this.consent.external_media = this.cookie.consent.external_media;
+    this.consent.marketing = this.cookie.consent.marketing;
+  }
+
+  updateElements() {
+    const elements = document.querySelectorAll("[type=optin]");
+    if (elements.length === 0) {
+      return;
+    }
+    elements.forEach((el) => {
+      const {dataset} = el;
+      const category = dataset.category;
+      let allowed = false;
+      if (category) {
+        for (const consentCategory in this.consent) {
+          if (this.consent[consentCategory] === true && consentCategory === category) {
+            allowed = true;
+            break;
+          }
+        }
+      }
+      if (!allowed) {
+        return;
+      }
+
+      const parent = el.parentElement;
+      if (el.tagName === 'SCRIPT') {
+        const newEl = document.createElement('script');
+        for (const key of Object.keys(dataset)) {
+          newEl.dataset[key] = el.dataset[key];
+        }
+        newEl.type = dataset.type;
+        newEl.innerText = el.innerText;
+        newEl.text = el.text;
+        newEl.class = el.class;
+        newEl.style.cssText = el.style.cssText;
+        newEl.id = el.id;
+        newEl.name = el.name;
+        newEl.defer = el.defer;
+        newEl.async = el.async;
+        if (dataset.src) {
+          newEl.src = dataset.src;
+        }
+
+        parent.insertBefore(newEl, el);
+        parent.removeChild(el);
+      } else {
+        // TODO for not-script tags
+      }
+
+    });
+  }
+
+  handleExternalTriggers() {
+    // TODO: for testing; later: make it clean
+    const showButton = document.querySelector(".privacywire-show-options");
+    if (!showButton) {
+      return;
+    }
+    showButton.onclick = () => {
+      this.showBanner();
+      this.banner.wrapper.classList.remove("show-banner");
+      this.banner.wrapper.classList.add("show-options");
+    };
   }
 
 }

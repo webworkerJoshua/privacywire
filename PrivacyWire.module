@@ -14,6 +14,7 @@
  * http://www.processwire.com
  * http://www.ryancramer.com
  *
+ *  @TODO: Handle async loading of scripts as Google Analytics, Matomo etc. Integrate display list of cookies for each group, include link to privacy page ...
  */
 class PrivacyWire extends WireData implements Module, ConfigurableModule
 {
