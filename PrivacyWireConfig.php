@@ -5,7 +5,7 @@ class PrivacyWireConfig extends ModuleConfig
     public function getDefaults()
     {
         return [
-            'enable' => false,
+            'enable' => true,
             'version' => 1,
             'respectDNT' => false,
             'allowOptions' => true,
@@ -46,7 +46,7 @@ class PrivacyWireConfig extends ModuleConfig
         $f->attr('name', 'version');
         $f->label = $this->_('Version Number');
         $f->attr('min', 1);
-        $f->columnWidth = 50;
+        $f->columnWidth = 33;
         $fieldset->add($f);
 
         // respect "do not track"
@@ -54,7 +54,15 @@ class PrivacyWireConfig extends ModuleConfig
         $f->attr('name', 'respectDNT');
         $f->label = $this->_('DNT: Do Not Track');
         $f->checkboxLabel = $this->_('Respect "Do Not Track" Settings from the browser');
-        $f->columnWidth = 50;
+        $f->columnWidth = 33;
+        $fieldset->add($f);
+
+        // allow to choose between cookie groups (otherwise only all or necessary)
+        $f = $this->modules->get('InputfieldCheckbox');
+        $f->attr('name', 'allowOptions');
+        $f->label = $this->_('Allow to choose cookie category');
+        $f->checkboxLabel = $this->_('Allow the user to choose, which category of cookies shall be allowed');
+        $f->columnWidth = 33;
         $fieldset->add($f);
 
 
