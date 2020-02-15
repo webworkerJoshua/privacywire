@@ -30,7 +30,6 @@ class PrivacyWire extends WireData implements Module, ConfigurableModule
             'autoload' => true,
             'singular' => true,
             'requires' => [ "PHP>=7.2", "ProcessWire>=3.0.0" ],
-            // 'installs' => [ "TextformatterPrivacyWire" ],
             'icon' => 'cookie'
         ];
     }
@@ -38,7 +37,6 @@ class PrivacyWire extends WireData implements Module, ConfigurableModule
     public function ready()
     {
         if (
-            !$this->enable || // only do something, if module is set to be enabled
             $this->wire('page')->template == 'admin' || // exclude admin pages
             $this->wire('page')->template == 'form-builder' // exclude from form-builder iframe
         ) {
@@ -52,11 +50,10 @@ class PrivacyWire extends WireData implements Module, ConfigurableModule
     {
 
         $respectDNT = ($this->respectDNT) ? "1" : "0";
-        $allowOptions = ($this->allowOptions) ? "1" : "0";
 
         $output = wireRenderFile($this->wire('config')->paths->$this . 'PrivacyWireBanner.php', [ 'module' => $this ]);
         $output .= "<link rel='stylesheet' type='text/css' href='{$this->wire('config')->urls->$this}css/PrivacyWire.css' />";
-        $output .= '<script>var PrivacyWireSettings={version:"' . $this->version . '",dnt:"' . $respectDNT . '",options:"' . $allowOptions . '"};</script>';
+        $output .= '<script>var PrivacyWireSettings={version:"' . $this->version . '",dnt:"' . $respectDNT . '"};</script>';
         $output .= "<script defer src='{$this->wire('config')->urls->$this}js/PrivacyWire.min.js'></script>";
 
         $event->return = str_replace("</body>", "{$output}</body>", $event->return);
