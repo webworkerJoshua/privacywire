@@ -93,6 +93,11 @@ class PrivacyWire {
     this.banner.wrapper.classList.add("show-banner");
   }
 
+  showOptions() {
+    this.banner.wrapper.classList.remove('show-banner');
+    this.banner.wrapper.classList.add("show-options");
+  }
+
   hideBanner() {
     this.banner.wrapper.classList.remove('show-banner');
     this.banner.wrapper.classList.remove('show-options');
@@ -129,8 +134,7 @@ class PrivacyWire {
     };
 
     this.banner.button_choose.onclick = () => {
-      this.banner.wrapper.classList.remove("show-banner");
-      this.banner.wrapper.classList.add("show-options");
+      this.showOptions();
     };
 
     this.banner.button_toggle.onclick = () => {
@@ -180,7 +184,7 @@ class PrivacyWire {
       let allowed = false;
       if (category) {
         for (const consentCategory in this.consent) {
-          if (this.consent[consentCategory] === true && consentCategory === category) {
+          if (consentCategory === category && this.consent[consentCategory] === true) {
             allowed = true;
             break;
           }
@@ -212,7 +216,7 @@ class PrivacyWire {
         parent.insertBefore(newEl, el);
         parent.removeChild(el);
       } else {
-        // TODO for not-script tags
+        // TODO: Output method for not-script tags
       }
 
     });
@@ -225,9 +229,7 @@ class PrivacyWire {
       return;
     }
     showButton.onclick = () => {
-      this.showBanner();
-      this.banner.wrapper.classList.remove("show-banner");
-      this.banner.wrapper.classList.add("show-options");
+      this.showOptions();
     };
   }
 
