@@ -15,6 +15,8 @@
         $showMarketingButton ||
         $showExternalMediaButton
     );
+
+    $privacyPage = (!empty($module->content_banner_privacy_link)) ? wire("sanitizer")->url($module->content_banner_privacy_link) : null;
 ?>
 
 <div class="privacywire-wrapper">
@@ -30,6 +32,10 @@
 
                 <button class="choose" <?php echo (!$showChooseButton) ? "hidden" : ""; ?>><?php echo $module->content_banner_button_choose; ?></button>
             </div>
+            <?php if (!empty($privacyPage)): ?>
+                <a href="<?php echo $privacyPage; ?>" class="privacywire-page-link"
+                   title="<?php echo $module->content_banner_privacy_title;?>"><?php echo $module->content_banner_privacy_title;?></a>
+            <?php endif; ?>
         </div>
 
     </div>
