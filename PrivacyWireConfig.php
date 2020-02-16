@@ -15,6 +15,7 @@ class PrivacyWireConfig extends ModuleConfig
             'content_banner_title' => $this->_("This website is using cookies to provide a good browsing experience"),
             'content_banner_text' => $this->_("These include essential cookies that are necessary for the operation of the site, as well as others that are used only for anonymous statistical purposes, for comfort settings or to display personalized content. You can decide for yourself which categories you want to allow. Please note that based on your settings, not all functions of the website may be available."),
             'content_banner_privacy_link' => null,
+            'content_banner_privacy_title' => $this->_("Privacy Policy"),
             'content_banner_button_allow_all' => $this->_("Accept all"),
             'content_banner_button_allow_necessary' => $this->_("Accept necessary cookies only"),
             'content_banner_button_choose' => $this->_("Choose cookies"),
@@ -122,14 +123,20 @@ class PrivacyWireConfig extends ModuleConfig
         $f->columnWidth = 50;
         $content->add($f);
 
-        // privacy page
-        $f = $this->modules->get('InputfieldPage');
+        // privacy policy url
+        $f = $this->modules->get('InputfieldURL');
         $f->attr('name', 'content_banner_privacy_link');
-        $f->description = $this->_("If you want to output a link to your privacy policy page, choose the corresponding page here");
-        $f->inputfield = "InputfieldPageListSelect";
-        $f->derefAsPage = 1;
-        $f->label = $this->_('Privacy Link / Page');
-        $f->columnWidth = 100;
+        $f->description = $this->_("If you want to output a link to your privacy policy page, add the URL to this page here");
+        $f->label = $this->_('Privacy Policy URL');
+        $f->columnWidth = 50;
+        $content->add($f);
+
+        // privacy policy link title
+        $f = $this->modules->get('InputfieldText');
+        $f->attr('name', 'content_banner_privacy_title');
+        $f->label = $this->_('Privacy Policy link title');
+        $f->showIf = "content_banner_privacy_link!=''";
+        $f->columnWidth = 50;
         $content->add($f);
 
         // Button Label: Allow All
