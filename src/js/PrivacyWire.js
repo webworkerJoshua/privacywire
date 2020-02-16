@@ -1,4 +1,5 @@
-import Cookies from 'js-cookie/src/js.cookie'
+import Cookies from 'js-cookie/src/js.cookie';
+import '../scss/PrivacyWire.scss';
 
 // NodeList.forEach Polyfill for old browsers
 if (window.NodeList && !NodeList.prototype.forEach) {
@@ -114,6 +115,7 @@ class PrivacyWire {
       this.consent.external_media = true;
       this.consent.marketing = true;
       this.savePreferences();
+      this.prefillOptionValues();
     };
 
     this.banner.button_accept_necessary.onclick = () => {
@@ -122,6 +124,7 @@ class PrivacyWire {
       this.consent.external_media = false;
       this.consent.marketing = false;
       this.savePreferences();
+      this.prefillOptionValues();
     };
 
     this.banner.button_choose.onclick = () => {
@@ -140,6 +143,7 @@ class PrivacyWire {
       this.consent.external_media = this.banner.options_external_media.checked;
       this.consent.marketing = this.banner.options_marketing.checked;
       this.savePreferences();
+      this.prefillOptionValues();
     };
   }
 
