@@ -174,6 +174,14 @@ class PrivacyWireConfig extends ModuleConfig
         $f->columnWidth = 100;
         $content->add($f);
 
+        // Textformatter Button Label
+        $f = $this->modules->get('InputfieldText');
+        $f->attr('name', 'textformatter_choose_label');
+        $f->label = $this->_('Textformatter Button label');
+        $f->columnWidth = 100;
+        $content->add($f);
+
+
         return $inputfields;
     }
 }
