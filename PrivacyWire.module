@@ -53,7 +53,6 @@ class PrivacyWire extends WireData implements Module, ConfigurableModule
         $respectDNT = ($this->respectDNT) ? "1" : "0";
 
         $output = wireRenderFile($this->wire('config')->paths->$this . 'PrivacyWireBanner.php', [ 'module' => $this ]);
-        $output .= "<link rel='stylesheet' type='text/css' href='{$this->wire('config')->urls->$this}css/PrivacyWire.css' />";
         $output .= '<script>var PrivacyWireSettings={version:"' . $this->version . '",dnt:"' . $respectDNT . '"};</script>';
         $output .= "<script defer src='{$this->wire('config')->urls->$this}js/PrivacyWire.js'></script>";
 
