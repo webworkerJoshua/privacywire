@@ -1,14 +1,14 @@
 div.privacywire {
-  display: block;
   position: fixed;
   bottom: -250%;
   left: 0;
   right: 0;
   box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.3);
+  opacity: 0;
   background: white;
   z-index: 1;
   padding: 1rem;
-  transition: .3s ease;
+  transition: bottom .3s ease, opacity 1s ease;
   
   header {
     font-weight: bold;
@@ -18,5 +18,7 @@ div.privacywire {
   .show-options &.privacywire-options,
   .show-message &.privacywire-message {
     bottom: 0;
+    opacity: 1;
+    transition: bottom .3s ease, opacity .3s ease;
   }
 }

@@ -7,15 +7,15 @@ if (window.NodeList && !NodeList.prototype.forEach) {
 
 class PrivacyWire {
   constructor(PrivacyWireSettings) {
-    this.cookie = this.sanitizeCookie();
     this.settings = this.sanitizeSettings(PrivacyWireSettings);
     this.consent = {};
+    this.consent.version = 0;
     this.consent.necessary = true;
     this.consent.statistics = false;
     this.consent.marketing = false;
     this.consent.external_media = false;
 
-    this.updateConsentFromCookie();
+    this.sanitizeCookie();
     this.initBanner();
     this.updateElements();
     this.handleExternalTriggers();
@@ -27,35 +27,26 @@ class PrivacyWire {
 
   sanitizeCookie() {
     if (!Cookies.get('privacywire')) {
-      return null;
+      return;
     }
     const cookieInput = JSON.parse(decodeURIComponent(Cookies.get('privacywire')));
 
-    let cookie = {};
-    cookie.version = parseInt(cookieInput.version) ?? null;
-    cookie.consent = {};
-    cookie.consent.necessary = Boolean(cookieInput.consent.necessary) ?? null;
-    cookie.consent.statistics = Boolean(cookieInput.consent.statistics) ?? null;
-    cookie.consent.marketing = Boolean(cookieInput.consent.marketing) ?? null;
-    cookie.consent.external_media = Boolean(cookieInput.consent.external_media) ?? null;
+    this.consent.version = parseInt(cookieInput.version) ?? 0;
+    this.consent.statistics = Boolean(cookieInput.statistics) ?? false;
+    this.consent.marketing = Boolean(cookieInput.marketing) ?? false;
+    this.consent.external_media = Boolean(cookieInput.external_media) ?? false;
 
-    return cookie;
   }
 
   sanitizeSettings(PrivacyWireSettings) {
     let settings = {};
     settings.dnt = Boolean(parseInt(PrivacyWireSettings.dnt));
     settings.version = parseInt(PrivacyWireSettings.version);
-    settings.options = Boolean(parseInt(PrivacyWireSettings.options));
     return settings;
   }
 
   hasValidConsent() {
-    if (this.cookie == null) {
-      return false;
-    }
-
-    return this.cookie.version === this.settings.version;
+    return this.consent.version !== 0 && this.consent.version === this.settings.version;
   }
 
   hasNoDNT() {
@@ -153,24 +144,14 @@ class PrivacyWire {
   }
 
   savePreferences(silent = false) {
-    let cookieContent = {};
+    let cookieContent = this.consent;
     cookieContent.version = this.settings.version;
-    cookieContent.consent = this.consent;
     Cookies.set("privacywire", cookieContent, {expires: 365});
     this.hideBanner();
     if (!silent) {
       this.showMessage();
     }
     this.updateElements();
-  }
-
-  updateConsentFromCookie() {
-    if (this.cookie === null) {
-      return;
-    }
-    this.consent.statistics = this.cookie.consent.statistics;
-    this.consent.external_media = this.cookie.consent.external_media;
-    this.consent.marketing = this.cookie.consent.marketing;
   }
 
   updateElements() {
@@ -223,14 +204,17 @@ class PrivacyWire {
   }
 
   handleExternalTriggers() {
-    // TODO: for testing; later: make it clean
-    const showButton = document.querySelector(".privacywire-show-options");
-    if (!showButton) {
+    const showButtons = document.querySelectorAll(".privacywire-show-options");
+    if (!showButtons.length) {
       return;
     }
-    showButton.onclick = () => {
-      this.showOptions();
-    };
+    showButtons.forEach((showButton) => {
+      showButton.onclick = (e) => {
+        e.preventDefault();
+        this.showOptions();
+      };
+    });
+
   }
 
 }

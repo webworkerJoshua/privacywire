@@ -21,6 +21,7 @@ class PrivacyWireConfig extends ModuleConfig
             'content_banner_button_save' => $this->_("Save preferences"),
             'content_banner_button_toggle' => $this->_("Toggle options"),
             'content_banner_save_message' => $this->_("Your cookie preferences have been saved."),
+            'textformatter_choose_label' => $this->_("Show or edit my Cookie Consent")
         ];
     }
 
@@ -124,7 +125,7 @@ class PrivacyWireConfig extends ModuleConfig
         // privacy page
         $f = $this->modules->get('InputfieldPage');
         $f->attr('name', 'content_banner_privacy_link');
-        $f->description = $this->_("If you want to output a link to your privacy policy page, choose the  corresponding page here");
+        $f->description = $this->_("If you want to output a link to your privacy policy page, choose the corresponding page here");
         $f->inputfield = "InputfieldPageListSelect";
         $f->derefAsPage = 1;
         $f->label = $this->_('Privacy Link / Page');

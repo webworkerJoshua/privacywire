@@ -14,7 +14,7 @@
  * http://www.processwire.com
  * http://www.ryancramer.com
  *
- *  @TODO: Handle async loading of scripts as Google Analytics, Matomo etc. Integrate display list of cookies for each group, include link to privacy page ...
+ *  @TODO: Include link to privacy page ...
  */
 class PrivacyWire extends WireData implements Module, ConfigurableModule
 {
@@ -30,6 +30,7 @@ class PrivacyWire extends WireData implements Module, ConfigurableModule
             'autoload' => true,
             'singular' => true,
             'requires' => [ "PHP>=7.2", "ProcessWire>=3.0.0" ],
+            'installs' => [ "TextformatterPrivacyWire" ],
             'icon' => 'cookie'
         ];
     }
@@ -54,7 +55,7 @@ class PrivacyWire extends WireData implements Module, ConfigurableModule
         $output = wireRenderFile($this->wire('config')->paths->$this . 'PrivacyWireBanner.php', [ 'module' => $this ]);
         $output .= "<link rel='stylesheet' type='text/css' href='{$this->wire('config')->urls->$this}css/PrivacyWire.css' />";
         $output .= '<script>var PrivacyWireSettings={version:"' . $this->version . '",dnt:"' . $respectDNT . '"};</script>';
-        $output .= "<script defer src='{$this->wire('config')->urls->$this}js/PrivacyWire.min.js'></script>";
+        $output .= "<script defer src='{$this->wire('config')->urls->$this}js/PrivacyWire.js'></script>";
 
         $event->return = str_replace("</body>", "{$output}</body>", $event->return);
     }
