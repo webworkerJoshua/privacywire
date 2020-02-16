@@ -74,6 +74,7 @@ class PrivacyWireConfig extends ModuleConfig
         $f->attr('name', 'cookies_necessary_label');
         $f->label = $this->_('Necessary Cookies: Label');
         $f->showIf("cookie_groups=necessary");
+        $f->useLanguage = true;
         $f->columnWidth = 25;
         $cookieFieldset->add($f);
 
@@ -82,6 +83,7 @@ class PrivacyWireConfig extends ModuleConfig
         $f->attr('name', 'cookies_statistics_label');
         $f->label = $this->_('Statistics Cookies: Label');
         $f->showIf("cookie_groups=statistics");
+        $f->useLanguage = true;
         $f->columnWidth = 25;
         $cookieFieldset->add($f);
 
@@ -90,6 +92,7 @@ class PrivacyWireConfig extends ModuleConfig
         $f->attr('name', 'cookies_marketing_label');
         $f->label = $this->_('Marketing Cookies: Label');
         $f->showIf("cookie_groups=marketing");
+        $f->useLanguage = true;
         $f->columnWidth = 25;
         $cookieFieldset->add($f);
 
@@ -98,6 +101,7 @@ class PrivacyWireConfig extends ModuleConfig
         $f->attr('name', 'cookies_external_media_label');
         $f->label = $this->_('External Media Cookies: Label');
         $f->showIf("cookie_groups=external_media");
+        $f->useLanguage = true;
         $f->columnWidth = 25;
         $cookieFieldset->add($f);
 
@@ -111,6 +115,7 @@ class PrivacyWireConfig extends ModuleConfig
         $f->attr('name', 'content_banner_title');
         $f->description = $this->_("Optional: If empty, no headline will be shown in the banner.");
         $f->label = $this->_('Banner Title');
+        $f->useLanguage = true;
         $f->columnWidth = 50;
         $content->add($f);
 
@@ -128,6 +133,7 @@ class PrivacyWireConfig extends ModuleConfig
         $f->attr('name', 'content_banner_privacy_link');
         $f->description = $this->_("If you want to output a link to your privacy policy page, add the URL to this page here");
         $f->label = $this->_('Privacy Policy URL');
+        $f->useLanguage = true;
         $f->columnWidth = 50;
         $content->add($f);
 
@@ -136,6 +142,7 @@ class PrivacyWireConfig extends ModuleConfig
         $f->attr('name', 'content_banner_privacy_title');
         $f->label = $this->_('Privacy Policy link title');
         $f->showIf = "content_banner_privacy_link!=''";
+        $f->useLanguage = true;
         $f->columnWidth = 50;
         $content->add($f);
 
@@ -143,44 +150,58 @@ class PrivacyWireConfig extends ModuleConfig
         $f = $this->modules->get('InputfieldText');
         $f->attr('name', 'content_banner_button_allow_all');
         $f->label = $this->_('Button Label: Allow All Cookies');
-        $f->columnWidth = 25;
+        $f->useLanguage = true;
+        $f->columnWidth = 33;
         $content->add($f);
 
         // Button Label: Allow Necessary
         $f = $this->modules->get('InputfieldText');
         $f->attr('name', 'content_banner_button_allow_necessary');
         $f->label = $this->_('Button Label: Allow Necessary Cookies');
-        $f->columnWidth = 25;
+        $f->useLanguage = true;
+        $f->columnWidth = 33;
         $content->add($f);
 
         // Button Label: Choose Cookies
         $f = $this->modules->get('InputfieldText');
         $f->attr('name', 'content_banner_button_choose');
         $f->label = $this->_('Button Label: Choose Cookies');
-        $f->columnWidth = 25;
+        $f->useLanguage = true;
+        $f->columnWidth = 34;
+        $content->add($f);
+
+        // Button Label: Toggle Cookies Options
+        $f = $this->modules->get('InputfieldText');
+        $f->attr('name', 'content_banner_button_toggle');
+        $f->label = $this->_('Button Label: Toggle Cookie Options');
+        $f->useLanguage = true;
+        $f->columnWidth = 33;
         $content->add($f);
 
         // Button Label: Save Preferences
         $f = $this->modules->get('InputfieldText');
         $f->attr('name', 'content_banner_button_save');
         $f->label = $this->_('Button Label: Save Preferences');
-        $f->columnWidth = 25;
-        $content->add($f);
-
-        // Button Label: Saved Message
-        $f = $this->modules->get('InputfieldText');
-        $f->attr('name', 'content_banner_save_message');
-        $f->label = $this->_('Save Message');
-        $f->columnWidth = 100;
+        $f->useLanguage = true;
+        $f->columnWidth = 33;
+        $f->value = "";
         $content->add($f);
 
         // Textformatter Button Label
         $f = $this->modules->get('InputfieldText');
         $f->attr('name', 'textformatter_choose_label');
         $f->label = $this->_('Textformatter Button label');
-        $f->columnWidth = 100;
+        $f->useLanguage = true;
+        $f->columnWidth = 34;
         $content->add($f);
 
+        // Button Label: Saved Message
+        $f = $this->modules->get('InputfieldText');
+        $f->attr('name', 'content_banner_save_message');
+        $f->label = $this->_('Save Message');
+        $f->useLanguage = true;
+        $f->columnWidth = 100;
+        $content->add($f);
 
         return $inputfields;
     }
