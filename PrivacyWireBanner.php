@@ -48,8 +48,11 @@
 
     </div>
     <div class="privacywire privacywire-options">
-        <header class="privacywire-header"></header>
+        <?php if (!empty($module->content_banner_title)): ?>
+            <header class="privacywire-header"> <?php echo $module->get("content_banner_title$lang|content_banner_title"); ?></header>
+        <?php endif; ?>
         <div class="privacywire-body">
+            <div class="privacywire-text"><?php echo $module->get("content_banner_text$lang|content_banner_text"); ?></div>
             <div class="privacywire-text">
                 <ul>
                     <li <?php echo (!$showNecessaryButton) ? "hidden" : ""; ?>>
