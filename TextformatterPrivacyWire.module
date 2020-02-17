@@ -38,7 +38,7 @@ class TextformatterPrivacyWire extends Textformatter implements Module
     {
         $privacyWire = $this->modules->get("PrivacyWire");
 
-        $output = "<button class='privacywire-show-options'>{$privacyWire->textformatter_choose_label}</button>";
+        $output = "<button class='button privacywire-show-options'>{$privacyWire->textformatter_choose_label}</button>";
 
         $str = str_replace("[[privacywire-choose-cookies]]", $output, $str);
     }
