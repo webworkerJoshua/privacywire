@@ -9,7 +9,8 @@ const production = !process.env.ROLLUP_WATCH;
 export default {
   input: 'src/js/PrivacyWire.js',
   output: {
-    file: 'js/PrivacyWire.js'
+    file: 'js/PrivacyWire.js',
+    format: 'iife'
   },
   plugins: [
     resolve(),
