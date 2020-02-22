@@ -16,6 +16,8 @@ class PrivacyWireConfig extends ModuleConfig
             'content_banner_text' => $this->_("These include essential cookies that are necessary for the operation of the site, as well as others that are used only for anonymous statistical purposes, for comfort settings or to display personalized content. You can decide for yourself which categories you want to allow. Please note that based on your settings, not all functions of the website may be available."),
             'content_banner_privacy_link' => null,
             'content_banner_privacy_title' => $this->_("Privacy Policy"),
+            'content_banner_imprint_link' => null,
+            'content_banner_imprint_title' => $this->_("Imprint"),
             'content_banner_button_allow_all' => $this->_("Accept all"),
             'content_banner_button_allow_necessary' => $this->_("Accept necessary cookies only"),
             'content_banner_button_choose' => $this->_("Choose cookies"),
@@ -142,6 +144,24 @@ class PrivacyWireConfig extends ModuleConfig
         $f->attr('name', 'content_banner_privacy_title');
         $f->label = $this->_('Privacy Policy link title');
         $f->showIf = "content_banner_privacy_link!=''";
+        $f->useLanguage = true;
+        $f->columnWidth = 50;
+        $content->add($f);
+
+        // imprint url
+        $f = $this->modules->get('InputfieldURL');
+        $f->attr('name', 'content_banner_imprint_link');
+        $f->description = $this->_("If you want to output a link to your imprint page, add the URL to this page here");
+        $f->label = $this->_('Imprint URL');
+        $f->useLanguage = true;
+        $f->columnWidth = 50;
+        $content->add($f);
+
+        // imprint link title
+        $f = $this->modules->get('InputfieldText');
+        $f->attr('name', 'content_banner_imprint_title');
+        $f->label = $this->_('Imprint link title');
+        $f->showIf = "content_banner_imprint_link!=''";
         $f->useLanguage = true;
         $f->columnWidth = 50;
         $content->add($f);

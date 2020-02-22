@@ -18,6 +18,8 @@
 
     $privacyPage = (!empty($module->content_banner_privacy_link)) ? wire("sanitizer")->url($module->content_banner_privacy_link) : null;
 
+    $imprintPage = (!empty($module->content_banner_imprint_link)) ? wire("sanitizer")->url($module->content_banner_imprint_link) : null;
+
     // Multi Language Support
     if ($this->wire('languages')) {
         $userLanguage = $this->wire('user')->language;
@@ -43,6 +45,10 @@
             <?php if (!empty($privacyPage)): ?>
                 <a class="privacywire-page-link" href="<?php echo $privacyPage; ?>"
                    title="<?php echo $module->get("content_banner_privacy_title$lang|content_banner_privacy_title"); ?>"><?php echo $module->get("content_banner_privacy_title$lang|content_banner_privacy_title"); ?></a>
+            <?php endif; ?>
+            <?php if (!empty($imprintPage)): ?>
+                <a class="privacywire-page-link" href="<?php echo $imprintPage; ?>"
+                   title="<?php echo $module->get("content_banner_imprint_title$lang|content_banner_imprint_title"); ?>"><?php echo $module->get("content_banner_imprint_title$lang|content_banner_imprint_title"); ?></a>
             <?php endif; ?>
         </div>
 
@@ -106,6 +112,14 @@
                 <button class="toggle"><?php echo $module->get("content_banner_button_toggle$lang|content_banner_button_toggle"); ?></button>
                 <button class="save"><?php echo $module->get("content_banner_button_save$lang|content_banner_button_save"); ?></button>
             </div>
+            <?php if (!empty($privacyPage)): ?>
+                <a class="privacywire-page-link" href="<?php echo $privacyPage; ?>"
+                   title="<?php echo $module->get("content_banner_privacy_title$lang|content_banner_privacy_title"); ?>"><?php echo $module->get("content_banner_privacy_title$lang|content_banner_privacy_title"); ?></a>
+            <?php endif; ?>
+            <?php if (!empty($imprintPage)): ?>
+                <a class="privacywire-page-link" href="<?php echo $imprintPage; ?>"
+                   title="<?php echo $module->get("content_banner_imprint_title$lang|content_banner_imprint_title"); ?>"><?php echo $module->get("content_banner_imprint_title$lang|content_banner_imprint_title"); ?></a>
+            <?php endif; ?>
         </div>
     </div>
     <div class="privacywire privacywire-message">
