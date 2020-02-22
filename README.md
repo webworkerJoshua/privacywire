@@ -32,6 +32,7 @@ This module is heavily inspired by the following repos (big thanks!):
 - https://github.com/KIProtect/klaro
 
 ## Changelog
+- 0.0.4 Added possibility to add an imprint link to the banner
 - 0.0.3 Multi-language support for module config (still in development)
 - 0.0.2 First release
 - 0.0.1 Early development
