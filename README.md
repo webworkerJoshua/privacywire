@@ -3,7 +3,9 @@
 
 This module adds management options for cookie groups and corresponding script tags.
 
-**... Work in progress ...**
+[Support Forum](https://processwire.com/talk/topic/23118-privacywire-cookie-management-async-external-asset-loading/)  
+[Git Repo](https://github.com/blaueQuelle/privacywire/)  
+[Download Module](https://github.com/blaueQuelle/privacywire/archive/master.zip)
 
 ## The aim & working mechanism of this module
 
