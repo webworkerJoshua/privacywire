@@ -123,6 +123,6 @@
         </div>
     </div>
     <div class="privacywire privacywire-message">
-        <div class="priavywire-body"><?php echo $module->get("content_banner_save_message$lang|content_banner_save_message"); ?></div>
+        <div class="privacywire-body"><?php echo $module->get("content_banner_save_message$lang|content_banner_save_message"); ?></div>
     </div>
 </div>
