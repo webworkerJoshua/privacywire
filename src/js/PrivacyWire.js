@@ -109,6 +109,7 @@ class PrivacyWire {
   }
 
   handleButtons() {
+
     this.banner.button_accept_all.onclick = () => {
       this.consent.necessary = true;
       this.consent.statistics = true;
@@ -180,29 +181,26 @@ class PrivacyWire {
       }
 
       const parent = el.parentElement;
-      if (el.tagName === 'SCRIPT') {
-        const newEl = document.createElement('script');
-        for (const key of Object.keys(dataset)) {
-          newEl.dataset[key] = el.dataset[key];
-        }
-        newEl.type = dataset.type;
-        newEl.innerText = el.innerText;
-        newEl.text = el.text;
-        newEl.class = el.class;
-        newEl.style.cssText = el.style.cssText;
-        newEl.id = el.id;
-        newEl.name = el.name;
-        newEl.defer = el.defer;
-        newEl.async = el.async;
-        if (dataset.src) {
-          newEl.src = dataset.src;
-        }
 
-        parent.insertBefore(newEl, el);
-        parent.removeChild(el);
-      } else {
-        // TODO: Output method for not-script tags
+      const newEl = document.createElement(el.tagName);
+      for (const key of Object.keys(dataset)) {
+        newEl.dataset[key] = el.dataset[key];
       }
+      newEl.type = dataset.type;
+      newEl.innerText = el.innerText;
+      newEl.text = el.text;
+      newEl.class = el.class;
+      newEl.style.cssText = el.style.cssText;
+      newEl.id = el.id;
+      newEl.name = el.name;
+      newEl.defer = el.defer;
+      newEl.async = el.async;
+      if (dataset.src) {
+        newEl.src = dataset.src;
+      }
+
+      parent.insertBefore(newEl, el);
+      parent.removeChild(el);
 
     });
   }
