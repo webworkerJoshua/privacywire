@@ -25,11 +25,11 @@ class TextformatterPrivacyWire extends Textformatter implements Module
             'summary' => "PrivacyWire Textformatter to render privacy options via shortcode [[privacywire]]",
             'author' => 'blaueQuelle',
             'href' => "https://github.com/blaueQuelle/privacywire",
-            'version' => 2,
+            'version' => 5,
             'requires' => [
                 "PHP>=7.2",
                 "ProcessWire>=3",
-                "PrivacyWire>=2"
+                "PrivacyWire>=5"
             ],
         ];
     }
@@ -38,7 +38,15 @@ class TextformatterPrivacyWire extends Textformatter implements Module
     {
         $privacyWire = $this->modules->get("PrivacyWire");
 
-        $output = "<button class='button privacywire-show-options'>{$privacyWire->textformatter_choose_label}</button>";
+        // Multi Language Support
+        if ($this->wire('languages')) {
+            $userLanguage = $this->wire('user')->language;
+            $lang = $userLanguage->isDefault() ? '' : "__$userLanguage->id";
+        } else {
+            $lang = '';
+        }
+
+        $output = "<button class='button privacywire-show-options'>{$privacyWire->get("textformatter_choose_label$lang|textformatter_choose_label")}</button>";
 
         $str = str_replace("[[privacywire-choose-cookies]]", $output, $str);
     }
