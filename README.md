@@ -22,6 +22,8 @@ After the user made his decision, script tags of these categories can be loaded 
 ```<script type="optin" data-type="text/javascript" data-category="statistics" data-src="/path/to/your/script.js"></script>```  
 or inline:  
 ```<script type="optin" data-type="text/javascript" data-category="statistics">console.log("Statistic Cookies are allowed!");</script>```  
+Also other tags can be loaded that way, but this feature is not thoroughly tested yet:  
+``<img type="optin" data-category="marketing" data-src="https://via.placeholder.com/300x300">``
 
 ## Textformatter
 If you want the user to allow to change the cookie consent, use the following Textformatter:
@@ -34,6 +36,7 @@ This module is heavily inspired by the following repos (big thanks!):
 - https://github.com/KIProtect/klaro
 
 ## Changelog
+- 0.0.5 Multi-language support included completely (also in TextFormatter). Added possibility to async load other assets (e.g. ``<img type="optin" data-category="marketing" data-src="https://via.placeholder.com/300x300">``)
 - 0.0.4 Added possibility to add an imprint link to the banner
 - 0.0.3 Multi-language support for module config (still in development)
 - 0.0.2 First release
