@@ -21,4 +21,7 @@ div.privacywire {
     opacity: 1;
     transition: bottom .3s ease, opacity .3s ease;
   }
+  button[hidden] {
+    display: none;
+  }
 }
