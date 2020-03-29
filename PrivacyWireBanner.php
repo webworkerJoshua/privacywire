@@ -16,10 +16,6 @@
         $showExternalMediaButton
     );
 
-    $privacyPage = (!empty($module->content_banner_privacy_link)) ? wire("sanitizer")->url($module->content_banner_privacy_link) : null;
-
-    $imprintPage = (!empty($module->content_banner_imprint_link)) ? wire("sanitizer")->url($module->content_banner_imprint_link) : null;
-
     // Multi Language Support
     if ($this->wire('languages')) {
         $userLanguage = $this->wire('user')->language;
@@ -27,6 +23,10 @@
     } else {
         $lang = '';
     }
+
+    $privacyPage = (!empty($module->get("content_banner_privacy_link$lang|content_banner_privacy_link"))) ? $module->get("content_banner_privacy_link$lang|content_banner_privacy_link") : null;
+
+    $imprintPage = (!empty($module->get("content_banner_imprint_link$lang|content_banner_imprint_link"))) ? $module->get("content_banner_imprint_link$lang|content_banner_imprint_link") : null;
 ?>
 
 <div class="privacywire-wrapper">

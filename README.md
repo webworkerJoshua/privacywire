@@ -36,6 +36,7 @@ This module is heavily inspired by the following repos (big thanks!):
 - https://github.com/KIProtect/klaro
 
 ## Changelog
+-0.0.7 debugging multi-lang privacy & imprint link
 - 0.0.6 CSS-Debugging for hiding unused buttons, added ProCache support for the JavaScript tag
 - 0.0.5 Multi-language support included completely (also in TextFormatter). Added possibility to async load other assets (e.g. ``<img type="optin" data-category="marketing" data-src="https://via.placeholder.com/300x300">``)
 - 0.0.4 Added possibility to add an imprint link to the banner
