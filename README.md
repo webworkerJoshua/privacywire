@@ -1,8 +1,9 @@
 # PrivacyWire
-🍪 ProcessWire module for Privacy- &amp; Cookie-Management (GDPR)
+ProcessWire module for Privacy- &amp; Cookie-Management (GDPR)
 
 This module adds management options for cookie groups and corresponding script tags.
 
+[ProcessWire Module Directory](https://modules.processwire.com/modules/privacy-wire/)   
 [Support Forum](https://processwire.com/talk/topic/23118-privacywire-cookie-management-async-external-asset-loading/)  
 [Git Repo](https://github.com/blaueQuelle/privacywire/)  
 [Download Module](https://github.com/blaueQuelle/privacywire/archive/master.zip)
