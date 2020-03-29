@@ -10,7 +10,8 @@ export default {
   input: 'src/js/PrivacyWire.js',
   output: {
     file: 'js/PrivacyWire.js',
-    format: 'iife'
+    format: 'iife',
+    compact: true
   },
   plugins: [
     resolve(),
