@@ -20,11 +20,11 @@ This modules outputs a cookie management banner (nearly unstyled, that's up to y
     4. marketing
 
 After the user made his decision, script tags of these categories can be loaded subsequently.  
-```<script type="optin" data-type="text/javascript" data-category="statistics" data-src="/path/to/your/script.js"></script>```  
+```<script type="text/plain" data-type="text/javascript" data-category="statistics" data-src="/path/to/your/script.js"></script>```  
 or inline:  
-```<script type="optin" data-type="text/javascript" data-category="statistics">console.log("Statistic Cookies are allowed!");</script>```  
+```<script type="text/plain" data-type="text/javascript" data-category="statistics">console.log("Statistic Cookies are allowed!");</script>```  
 Also other tags can be loaded that way, but this feature is not thoroughly tested yet:  
-``<img type="optin" data-category="marketing" data-src="https://via.placeholder.com/300x300">``
+``<img type="text/plain" data-category="marketing" data-src="https://via.placeholder.com/300x300">``
 
 ## Textformatter
 If you want the user to allow to change the cookie consent, use the following Textformatter:
