@@ -160,7 +160,7 @@ class PrivacyWire {
   }
 
   updateElements() {
-    const elements = document.querySelectorAll("[type=optin]");
+    const elements = document.querySelectorAll("[data-category]");
     if (elements.length === 0) {
       return;
     }
