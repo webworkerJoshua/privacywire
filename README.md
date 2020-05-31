@@ -37,6 +37,7 @@ This module is heavily inspired by the following repos (big thanks!):
 - https://github.com/KIProtect/klaro
 
 ## Changelog
+- 0.1.1 debugging: fixed error during uninstall
 - 0.1.0 changed script detection from type=optin to data-category for W3C validation
 - 0.0.7 debugging multi-lang privacy & imprint link
 - 0.0.6 CSS-Debugging for hiding unused buttons, added ProCache support for the JavaScript tag
