@@ -24,7 +24,8 @@ class PrivacyWireConfig extends ModuleConfig
             'content_banner_button_save' => $this->_("Save preferences"),
             'content_banner_button_toggle' => $this->_("Toggle options"),
             'content_banner_save_message' => $this->_("Your cookie preferences have been saved."),
-            'textformatter_choose_label' => $this->_("Show or edit my Cookie Consent")
+            'textformatter_choose_label' => $this->_("Show or edit my Cookie Consent"),
+            'use_procache_minification' => true
         ];
     }
 
@@ -222,6 +223,16 @@ class PrivacyWireConfig extends ModuleConfig
         $f->useLanguages = true;
         $f->columnWidth = 100;
         $content->add($f);
+
+        // ProCache JS Minification
+        $f = $this->modules->get('InputfieldCheckbox');
+        $f->attr('name', 'use_procache_minification');
+        $f->description = $this->_("When enabled, PrivacyWire checks if [ProCache](https://processwire.com/store/pro-cache/#procache-css-js-minification-api) is installed and activated. If so, the javascript files will be minified automatically via ProCache.");
+        $f->label = $this->_('Use ProCache JS Minification (if available)');
+        $f->checkboxLabel = $this->_('Use ProCache JS Minification (if available)');
+        $f->columnWidth = 33;
+        $inputfields->add($f);
+
 
         return $inputfields;
     }
