@@ -28,7 +28,7 @@ class TextformatterPrivacyWire extends Textformatter implements Module
             'version' => 5,
             'requires' => [
                 "PHP>=7.2",
-                "ProcessWire>=3"
+                "ProcessWire>=3.0.110"
             ],
         ];
     }

@@ -28,7 +28,7 @@ class PrivacyWire extends WireData implements Module, ConfigurableModule
             'version' => 12,
             'autoload' => true,
             'singular' => true,
-            'requires' => [ "PHP>=7.2", "ProcessWire>=3.0.0" ],
+            'requires' => [ "PHP>=7.2", "ProcessWire>=3.0.110" ],
             'installs' => [ "TextformatterPrivacyWire" ],
             'icon' => 'cookie'
         ];
