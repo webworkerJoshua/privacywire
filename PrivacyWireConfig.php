@@ -25,7 +25,8 @@ class PrivacyWireConfig extends ModuleConfig
             'content_banner_button_toggle' => $this->_("Toggle options"),
             'content_banner_save_message' => $this->_("Your cookie preferences have been saved."),
             'textformatter_choose_label' => $this->_("Show or edit my Cookie Consent"),
-            'use_procache_minification' => true
+            'use_procache_minification' => true,
+            'trigger_custom_js_function' => ""
         ];
     }
 
@@ -230,9 +231,16 @@ class PrivacyWireConfig extends ModuleConfig
         $f->description = $this->_("When enabled, PrivacyWire checks if [ProCache](https://processwire.com/store/pro-cache/#procache-css-js-minification-api) is installed and activated. If so, the javascript files will be minified automatically via ProCache.");
         $f->label = $this->_('Use ProCache JS Minification (if available)');
         $f->checkboxLabel = $this->_('Use ProCache JS Minification (if available)');
-        $f->columnWidth = 33;
+        $f->columnWidth = 50;
         $inputfields->add($f);
 
+        // privacy policy link title
+        $f = $this->modules->get('InputfieldText');
+        $f->attr('name', 'trigger_custom_js_function');
+        $f->label = $this->_('Trigger a custom js function');
+        $f->description = $this->_("When you want to trigger a custom js function after saving the cookie banner, insert the name of the function here");
+        $f->columnWidth = 50;
+        $inputfields->add($f);
 
         return $inputfields;
     }

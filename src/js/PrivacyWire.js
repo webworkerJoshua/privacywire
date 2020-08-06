@@ -5,242 +5,198 @@ if (window.NodeList && !NodeList.prototype.forEach) {
   NodeList.prototype.forEach = Array.prototype.forEach;
 }
 
-function getCookie(cname) {
-  var name = cname + "=";
-  var decodedCookie = decodeURIComponent(document.cookie);
-  var ca = decodedCookie.split(';');
-  for(var i = 0; i <ca.length; i++) {
-    var c = ca[i];
-    while (c.charAt(0) == ' ') {
-      c = c.substring(1);
-    }
-    if (c.indexOf(name) == 0) {
-      return c.substring(name.length, c.length);
-    }
-  }
-  return "";
+/* ######### initiate functions  ######### */
+
+const priw_showBanner = function () {
+  priw_wrapper.classList.add("show-banner");
 }
 
-function setCookie(cname, cvalue, exdays = 365) {
-  var d = new Date();
-  d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-  var expires = "expires="+d.toUTCString();
-  document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+const priw_hideBanner = function () {
+  priw_wrapper.classList.remove('show-banner');
+  priw_wrapper.classList.remove('show-options');
 }
 
-class PrivacyWire {
-  constructor(PrivacyWireSettings) {
-    this.settings = this.sanitizeSettings(PrivacyWireSettings);
-    this.consent = {};
-    this.consent.version = 0;
-    this.consent.necessary = true;
-    this.consent.statistics = false;
-    this.consent.marketing = false;
-    this.consent.external_media = false;
+const priw_setOnlyNecessaryConsent = function () {
+  priw_consent.necessary = true;
+  priw_consent.statistics = false;
+  priw_consent.marketing = false;
+  priw_consent.external_media = false;
+}
 
-    this.sanitizeCookie();
-    this.initBanner();
-    this.updateElements();
-    this.handleExternalTriggers();
+const priw_handleButtons = function () {
 
-    if (!this.hasValidConsent() && this.hasNoDNT()) {
-      this.showBanner();
-    }
+  priw_btn_allowAll.onclick = function () {
+    priw_consent.necessary = true;
+    priw_consent.statistics = true;
+    priw_consent.marketing = true;
+    priw_consent.external_media = true;
+    priw_savePreferences();
   }
 
-  sanitizeCookie() {
-    if (!getCookie('privacywire')) {
-      return;
-    }
-    const cookieInput = JSON.parse(decodeURIComponent(getCookie('privacywire')));
-
-    this.consent.version = parseInt(cookieInput.version) ?? 0;
-    this.consent.statistics = Boolean(cookieInput.statistics) ?? false;
-    this.consent.marketing = Boolean(cookieInput.marketing) ?? false;
-    this.consent.external_media = Boolean(cookieInput.external_media) ?? false;
-
+  priw_btn_allowNecessary.onclick = function () {
+    priw_setOnlyNecessaryConsent();
+    priw_savePreferences();
   }
 
-  sanitizeSettings(PrivacyWireSettings) {
-    let settings = {};
-    settings.dnt = Boolean(parseInt(PrivacyWireSettings.dnt));
-    settings.version = parseInt(PrivacyWireSettings.version);
-    return settings;
+  priw_btn_choose.onclick = function () {
+    priw_showOptions();
+  };
+
+  priw_btn_toggle.onclick = function () {
+    priw_btn_options.forEach(function (el) {
+      el.checked = priw_toggle_to_status;
+    });
+    priw_toggle_to_status = !priw_toggle_to_status;
+  };
+
+  priw_btn_save.onclick = function () {
+    priw_consent.statistics = priw_btn_options_statistics.checked;
+    priw_consent.marketing = priw_btn_options_marketing.checked;
+    priw_consent.external_media = priw_btn_options_external_media.checked;
+    priw_savePreferences();
   }
 
-  hasValidConsent() {
-    return this.consent.version !== 0 && this.consent.version === this.settings.version;
+}
+
+const priw_showOptions = function () {
+  priw_wrapper.classList.remove('show-banner');
+  priw_wrapper.classList.add("show-options");
+}
+
+const priw_showMessage = function () {
+  priw_wrapper.classList.add('show-message');
+  setTimeout(function () {
+    priw_wrapper.classList.remove('show-message');
+  }, 1500);
+}
+
+const priw_savePreferences = function (silent = false) {
+  if (priw_consent.version === 0) {
+    priw_consent.version = priw_settings.version;
+  }
+  window.localStorage.setItem(priw, JSON.stringify(priw_consent));
+  priw_hideBanner();
+  if (!silent) {
+    priw_showMessage();
   }
 
-  hasNoDNT() {
-    if (this.settings.dnt === true && navigator.doNotTrack === "1") {
-      this.consent.necessary = true;
-      this.consent.statistics = false;
-      this.consent.marketing = false;
-      this.consent.external_media = false;
-      this.savePreferences(true);
-      return false;
-    }
+  priw_updateElements();
+  priw_trigger_custom_function();
+};
 
-    return true;
+const priw_trigger_custom_function = function () {
+  if (typeof window[priw_settings.cstFn] === 'function') {
+    window[priw_settings.cstFn]();
   }
+};
 
-  initBanner() {
-    this.banner = {};
-    this.banner.wrapper = document.querySelector(".privacywire-wrapper");
-    this.banner.button_accept_all = this.banner.wrapper.querySelector("button.allow-all");
-    this.banner.button_accept_necessary = this.banner.wrapper.querySelector("button.allow-necessary");
-    this.banner.button_choose = this.banner.wrapper.querySelector("button.choose");
-    this.banner.button_save = this.banner.wrapper.querySelector("button.save");
-    this.banner.button_toggle = this.banner.wrapper.querySelector("button.toggle");
-    this.banner.options = this.banner.wrapper.querySelectorAll(".privacywire-options input.optional");
-    this.banner.options_statistics = this.banner.wrapper.querySelector(".privacywire-options input#statistics");
-    this.banner.options_external_media = this.banner.wrapper.querySelector(".privacywire-options input#external_media");
-    this.banner.options_marketing = this.banner.wrapper.querySelector(".privacywire-options input#marketing");
-    this.banner.toggleToStatus = true;
-
-    this.prefillOptionValues();
-    this.handleButtons();
+const priw_updateElements = function () {
+  const elements = document.querySelectorAll("[data-category]");
+  if (elements.length === 0) {
+    return;
   }
-
-  showBanner() {
-    this.banner.wrapper.classList.add("show-banner");
-  }
-
-  showOptions() {
-    this.banner.wrapper.classList.remove('show-banner');
-    this.banner.wrapper.classList.add("show-options");
-  }
-
-  hideBanner() {
-    this.banner.wrapper.classList.remove('show-banner');
-    this.banner.wrapper.classList.remove('show-options');
-  }
-
-  showMessage() {
-    this.banner.wrapper.classList.add('show-message');
-    setTimeout(() => {
-      this.banner.wrapper.classList.remove('show-message');
-    }, 1500);
-  }
-
-  prefillOptionValues() {
-    this.banner.options_statistics.checked = this.consent.statistics;
-    this.banner.options_external_media.checked = this.consent.external_media;
-    this.banner.options_marketing.checked = this.consent.marketing;
-  }
-
-  handleButtons() {
-
-    this.banner.button_accept_all.onclick = () => {
-      this.consent.necessary = true;
-      this.consent.statistics = true;
-      this.consent.external_media = true;
-      this.consent.marketing = true;
-      this.savePreferences();
-      this.prefillOptionValues();
-    };
-
-    this.banner.button_accept_necessary.onclick = () => {
-      this.consent.necessary = true;
-      this.consent.statistics = false;
-      this.consent.external_media = false;
-      this.consent.marketing = false;
-      this.savePreferences();
-      this.prefillOptionValues();
-    };
-
-    this.banner.button_choose.onclick = () => {
-      this.showOptions();
-    };
-
-    this.banner.button_toggle.onclick = () => {
-      this.banner.options.forEach((el) => {
-        el.checked = this.banner.toggleToStatus;
-      });
-      this.banner.toggleToStatus = !this.banner.toggleToStatus;
-    };
-
-    this.banner.button_save.onclick = () => {
-      this.consent.statistics = this.banner.options_statistics.checked;
-      this.consent.external_media = this.banner.options_external_media.checked;
-      this.consent.marketing = this.banner.options_marketing.checked;
-      this.savePreferences();
-      this.prefillOptionValues();
-    };
-  }
-
-  savePreferences(silent = false) {
-    let cookieContent = this.consent;
-    cookieContent.version = this.settings.version;
-    setCookie('privacywire', JSON.stringify(cookieContent));
-    this.hideBanner();
-    if (!silent) {
-      this.showMessage();
-    }
-    this.updateElements();
-  }
-
-  updateElements() {
-    const elements = document.querySelectorAll("[data-category]");
-    if (elements.length === 0) {
-      return;
-    }
-    elements.forEach((el) => {
-      const {dataset} = el;
-      const category = dataset.category;
-      let allowed = false;
-      if (category) {
-        for (const consentCategory in this.consent) {
-          if (consentCategory === category && this.consent[consentCategory] === true) {
-            allowed = true;
-            break;
-          }
+  elements.forEach((el) => {
+    const {dataset} = el;
+    const category = dataset.category;
+    let allowed = false;
+    if (category) {
+      for (const consentCategory in priw_consent) {
+        if (consentCategory === category && priw_consent[consentCategory] === true) {
+          allowed = true;
+          break;
         }
       }
-      if (!allowed) {
-        return;
-      }
-
-      const parent = el.parentElement;
-
-      const newEl = document.createElement(el.tagName);
-      for (const key of Object.keys(dataset)) {
-        newEl.dataset[key] = el.dataset[key];
-      }
-      newEl.type = dataset.type;
-      newEl.innerText = el.innerText;
-      newEl.text = el.text;
-      newEl.class = el.class;
-      newEl.style.cssText = el.style.cssText;
-      newEl.id = el.id;
-      newEl.name = el.name;
-      newEl.defer = el.defer;
-      newEl.async = el.async;
-      if (dataset.src) {
-        newEl.src = dataset.src;
-      }
-
-      parent.insertBefore(newEl, el);
-      parent.removeChild(el);
-
-    });
-  }
-
-  handleExternalTriggers() {
-    const showButtons = document.querySelectorAll(".privacywire-show-options");
-    if (!showButtons.length) {
+    }
+    if (!allowed) {
       return;
     }
-    showButtons.forEach((showButton) => {
-      showButton.onclick = (e) => {
-        e.preventDefault();
-        this.showOptions();
-      };
-    });
 
-  }
+    const parent = el.parentElement;
+    const newEl = document.createElement(el.tagName);
+    for (const key of Object.keys(dataset)) {
+      newEl.dataset[key] = el.dataset[key];
+    }
+    newEl.type = dataset.type;
+    newEl.innerText = el.innerText;
+    newEl.text = el.text;
+    newEl.class = el.class;
+    newEl.style.cssText = el.style.cssText;
+    newEl.id = el.id;
+    newEl.name = el.name;
+    newEl.defer = el.defer;
+    newEl.async = el.async;
+    if (dataset.src) {
+      newEl.src = dataset.src;
+    }
 
+    parent.insertBefore(newEl, el);
+    parent.removeChild(el);
+  });
 }
 
-let privacyWire = new PrivacyWire(PrivacyWireSettings);
+const priw_handleExternalTriggers = function () {
+  const showButtons = document.querySelectorAll(".privacywire-show-options");
+  if (!showButtons.length) {
+    return;
+  }
+  showButtons.forEach(function (showButton) {
+    showButton.onclick = function (e) {
+      e.preventDefault();
+      priw_showOptions();
+      priw_handleButtons();
+    };
+  });
+}
+
+/* ######### initiate variables  ######### */
+
+let priw_settings = {};
+priw_settings.dnt = Boolean(parseInt(PrivacyWireSettings.dnt));
+priw_settings.version = parseInt(PrivacyWireSettings.version);
+priw_settings.cstFn = PrivacyWireSettings.customFunction;
+
+let priw = "privacywire";
+let priw_wrapper = document.querySelector(".privacywire-wrapper");
+let priw_btn_allowAll = priw_wrapper.querySelector(".allow-all");
+let priw_btn_allowNecessary = priw_wrapper.querySelector(".allow-necessary");
+let priw_btn_choose = priw_wrapper.querySelector(".choose");
+let priw_btn_save = priw_wrapper.querySelector(".save");
+let priw_btn_toggle = priw_wrapper.querySelector(".toggle");
+let priw_btn_options = priw_wrapper.querySelectorAll(".optional");
+let priw_btn_options_statistics = priw_wrapper.querySelector("#statistics");
+let priw_btn_options_marketing = priw_wrapper.querySelector("#marketing");
+let priw_btn_options_external_media = priw_wrapper.querySelector("#external_media");
+let priw_toggle_to_status = true;
+
+let priw_consent = {};
+let priw_storage = (window.localStorage.getItem(priw)) ? JSON.parse(window.localStorage.getItem(priw)) : "";
+
+if (priw_storage) {
+  priw_consent.version = parseInt(priw_storage.version) ?? 0;
+  priw_consent.necessary = Boolean(priw_storage.statistics) ?? true;
+  priw_consent.statistics = Boolean(priw_storage.statistics) ?? false;
+  priw_consent.marketing = Boolean(priw_storage.marketing) ?? false;
+  priw_consent.external_media = Boolean(priw_storage.marketing) ?? false;
+
+  // prefill the option checkboxes
+  priw_btn_options_statistics.checked = priw_consent.statistics;
+  priw_btn_options_marketing.checked = priw_consent.marketing;
+  priw_btn_options_external_media.checked = priw_consent.external_media;
+} else {
+  priw_consent.version = 0;
+  priw_setOnlyNecessaryConsent();
+
+  if (priw_settings.dnt === true && navigator.doNotTrack === "1") {
+    priw_consent.version = 1;
+    priw_savePreferences(true);
+  }
+}
+
+let priw_valid_consent = priw_consent.version > 0 && priw_consent.version === priw_settings.version;
+
+/* ######### initiate the whole thing  ######### */
+if (!priw_valid_consent) {
+  priw_showBanner();
+}
+priw_handleButtons();
+priw_handleExternalTriggers();

@@ -22,10 +22,10 @@ class TextformatterPrivacyWire extends Textformatter implements Module
     {
         return [
             'title' => 'PrivacyWire Textformatter',
-            'summary' => "PrivacyWire Textformatter to render privacy options via shortcode [[privacywire]]",
+            'summary' => "PrivacyWire Textformatter to render privacy options via shortcode [[privacywire-choose-cookies]]",
             'author' => 'blaueQuelle',
             'href' => "https://github.com/blaueQuelle/privacywire",
-            'version' => 5,
+            'version' => 6,
             'requires' => [
                 "PHP>=7.2",
                 "ProcessWire>=3.0.110"
