@@ -198,5 +198,6 @@ let priw_valid_consent = priw_consent.version > 0 && priw_consent.version === pr
 if (!priw_valid_consent) {
   priw_showBanner();
 }
+priw_updateElements();
 priw_handleButtons();
 priw_handleExternalTriggers();
