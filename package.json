@@ -25,8 +25,5 @@
     "rollup-plugin-postcss": "^3.1.1",
     "rollup-plugin-terser": "^5.3.0",
     "sass": "^1.26.5"
-  },
-  "dependencies": {
-    "js-cookie": "^2.2.1"
   }
 }

@@ -1,9 +1,31 @@
-import Cookies from 'js-cookie/src/js.cookie';
 import '../scss/PrivacyWire.scss';
 
 // NodeList.forEach Polyfill for old browsers
 if (window.NodeList && !NodeList.prototype.forEach) {
   NodeList.prototype.forEach = Array.prototype.forEach;
+}
+
+function getCookie(cname) {
+  var name = cname + "=";
+  var decodedCookie = decodeURIComponent(document.cookie);
+  var ca = decodedCookie.split(';');
+  for(var i = 0; i <ca.length; i++) {
+    var c = ca[i];
+    while (c.charAt(0) == ' ') {
+      c = c.substring(1);
+    }
+    if (c.indexOf(name) == 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return "";
+}
+
+function setCookie(cname, cvalue, exdays = 365) {
+  var d = new Date();
+  d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+  var expires = "expires="+d.toUTCString();
+  document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
 }
 
 class PrivacyWire {
@@ -27,10 +49,10 @@ class PrivacyWire {
   }
 
   sanitizeCookie() {
-    if (!Cookies.get('privacywire')) {
+    if (!getCookie('privacywire')) {
       return;
     }
-    const cookieInput = JSON.parse(decodeURIComponent(Cookies.get('privacywire')));
+    const cookieInput = JSON.parse(decodeURIComponent(getCookie('privacywire')));
 
     this.consent.version = parseInt(cookieInput.version) ?? 0;
     this.consent.statistics = Boolean(cookieInput.statistics) ?? false;
@@ -151,7 +173,7 @@ class PrivacyWire {
   savePreferences(silent = false) {
     let cookieContent = this.consent;
     cookieContent.version = this.settings.version;
-    Cookies.set("privacywire", cookieContent, {expires: 365});
+    setCookie('privacywire', JSON.stringify(cookieContent));
     this.hideBanner();
     if (!silent) {
       this.showMessage();
