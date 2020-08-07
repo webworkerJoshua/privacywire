@@ -6,11 +6,13 @@
     $showAllButton = (in_array("all", $module->cookie_groups));
     $showNecessaryButton = (in_array("necessary", $module->cookie_groups));
 
+    $showFunctionalButton = (in_array("functional", $module->cookie_groups));
     $showStatisticsButton = (in_array("statistics", $module->cookie_groups));
     $showMarketingButton = (in_array("marketing", $module->cookie_groups));
     $showExternalMediaButton = (in_array("external_media", $module->cookie_groups));
 
     $showChooseButton = (
+        $showFunctionalButton ||
         $showStatisticsButton ||
         $showMarketingButton ||
         $showExternalMediaButton
@@ -71,6 +73,17 @@
                                    checked
                                    disabled>
                             <?php echo $module->get("cookies_necessary_label$lang|cookies_necessary_label"); ?>
+                        </label>
+                    </li>
+
+                    <li <?php echo (!$showFunctionalButton) ? "hidden" : ""; ?>>
+                        <label for="functional">
+                            <input class="optional"
+                                   type="checkbox"
+                                   name="functional"
+                                   id="functional"
+                                   value="0">
+                            <?php echo $module->get("cookies_functional_label$lang|cookies_functional_label"); ?>
                         </label>
                     </li>
 

@@ -18,6 +18,7 @@ const priw_hideBanner = function () {
 
 const priw_setOnlyNecessaryConsent = function () {
   priw_consent.necessary = true;
+  priw_consent.functional = false;
   priw_consent.statistics = false;
   priw_consent.marketing = false;
   priw_consent.external_media = false;
@@ -27,6 +28,7 @@ const priw_handleButtons = function () {
 
   priw_btn_allowAll.onclick = function () {
     priw_consent.necessary = true;
+    priw_consent.functional = true;
     priw_consent.statistics = true;
     priw_consent.marketing = true;
     priw_consent.external_media = true;
@@ -50,6 +52,8 @@ const priw_handleButtons = function () {
   };
 
   priw_btn_save.onclick = function () {
+    priw_consent.necessary = true;
+    priw_consent.functional = priw_btn_options_functional.checked;
     priw_consent.statistics = priw_btn_options_statistics.checked;
     priw_consent.marketing = priw_btn_options_marketing.checked;
     priw_consent.external_media = priw_btn_options_external_media.checked;
@@ -163,6 +167,7 @@ let priw_btn_choose = priw_wrapper.querySelector(".choose");
 let priw_btn_save = priw_wrapper.querySelector(".save");
 let priw_btn_toggle = priw_wrapper.querySelector(".toggle");
 let priw_btn_options = priw_wrapper.querySelectorAll(".optional");
+let priw_btn_options_functional = priw_wrapper.querySelector("#functional");
 let priw_btn_options_statistics = priw_wrapper.querySelector("#statistics");
 let priw_btn_options_marketing = priw_wrapper.querySelector("#marketing");
 let priw_btn_options_external_media = priw_wrapper.querySelector("#external_media");
@@ -174,11 +179,13 @@ let priw_storage = (window.localStorage.getItem(priw)) ? JSON.parse(window.local
 if (priw_storage) {
   priw_consent.version = parseInt(priw_storage.version) ?? 0;
   priw_consent.necessary = Boolean(priw_storage.statistics) ?? true;
+  priw_consent.functional = Boolean(priw_storage.functional) ?? false;
   priw_consent.statistics = Boolean(priw_storage.statistics) ?? false;
   priw_consent.marketing = Boolean(priw_storage.marketing) ?? false;
   priw_consent.external_media = Boolean(priw_storage.marketing) ?? false;
 
   // prefill the option checkboxes
+  priw_btn_options_functional.checked = priw_consent.functional;
   priw_btn_options_statistics.checked = priw_consent.statistics;
   priw_btn_options_marketing.checked = priw_consent.marketing;
   priw_btn_options_external_media.checked = priw_consent.external_media;

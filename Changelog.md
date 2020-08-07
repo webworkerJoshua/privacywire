@@ -1,5 +1,8 @@
 # Changelog of PrivacyWire
 
+## 0.2.1
+- added another cookie category "functional"
+
 ## 0.2.0
 - major rewrite of PrivacyWire.js -> now around half the size (main reason was babel with usage of js classes (ES6))
 - added possibility to add a custom js function name which is triggered after saving options

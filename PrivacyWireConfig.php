@@ -9,6 +9,7 @@ class PrivacyWireConfig extends ModuleConfig
             'cookie_groups' => [ "all", "necessary" ],
             'respectDNT' => false,
             'cookies_necessary_label' => $this->_('Necessary'),
+            'cookies_functional_label' => $this->_('Functional'),
             'cookies_statistics_label' => $this->_('Statistics'),
             'cookies_marketing_label' => $this->_('Marketing'),
             'cookies_external_media_label' => $this->_('External Media'),
@@ -50,6 +51,7 @@ class PrivacyWireConfig extends ModuleConfig
         $f->label = $this->_('Cookie Groups');
         $f->options = [
             "necessary" => $this->_("Necessary Cookies"),
+            "functional" => $this->_("Functional Cookies"),
             "all" => $this->_("All Cookies"),
             "statistics" => $this->_("Statistics"),
             'marketing' => $this->_("Marketing"),
@@ -78,6 +80,15 @@ class PrivacyWireConfig extends ModuleConfig
         $f->attr('name', 'cookies_necessary_label');
         $f->label = $this->_('Necessary Cookies: Label');
         $f->showIf("cookie_groups=necessary");
+        $f->useLanguages = true;
+        $f->columnWidth = 25;
+        $cookieFieldset->add($f);
+
+        // label for cookie group: functional
+        $f = $this->modules->get('InputfieldText');
+        $f->attr('name', 'cookies_functional_label');
+        $f->label = $this->_('Functional Cookies: Label');
+        $f->showIf("cookie_groups=functional");
         $f->useLanguages = true;
         $f->columnWidth = 25;
         $cookieFieldset->add($f);
