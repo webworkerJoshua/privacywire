@@ -46,7 +46,7 @@ class PrivacyWire extends WireData implements Module, ConfigurableModule
         $this->addHookAfter('Page::render', $this, 'render');
     }
 
-    public function render(HookEvent $event)
+    public function ___render(HookEvent $event)
     {
 
         $respectDNT = ($this->respectDNT) ? "1" : "0";
