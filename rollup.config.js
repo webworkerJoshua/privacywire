@@ -43,22 +43,5 @@ export default [
       }),
       production && terser()
     ],
-  },
-  // {
-  //   // Admin PrivacyWire JS Backend FileExternal Media Cookies
-  //   input: 'src/js/PrivacyWireAdmin.js',
-  //   output: {
-  //     file: 'js/PrivacyWireAdmin.js',
-  //     format: 'iife',
-  //     compact: true
-  //   },
-  //   plugins: [
-  //     resolve(),
-  //     commonjs(),
-  //     babel({
-  //       exclude: 'node_modules/**',
-  //     }),
-  //     production && terser()
-  //   ],
-  // },
+  }
 ];
