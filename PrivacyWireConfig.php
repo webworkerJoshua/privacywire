@@ -9,6 +9,7 @@ class PrivacyWireConfig extends ModuleConfig
             'cookie_groups' => [ "all", "necessary" ],
             'respectDNT' => false,
             'cookies_necessary_label' => $this->_('Necessary'),
+            'cookies_functional_label' => $this->_('Functional'),
             'cookies_statistics_label' => $this->_('Statistics'),
             'cookies_marketing_label' => $this->_('Marketing'),
             'cookies_external_media_label' => $this->_('External Media'),
@@ -25,7 +26,9 @@ class PrivacyWireConfig extends ModuleConfig
             'content_banner_button_toggle' => $this->_("Toggle options"),
             'content_banner_save_message' => $this->_("Your cookie preferences have been saved."),
             'textformatter_choose_label' => $this->_("Show or edit my Cookie Consent"),
-            'use_procache_minification' => true
+            'use_procache_minification' => true,
+            'trigger_custom_js_function' => "",
+            'add_basic_css_styling' => true
         ];
     }
 
@@ -49,6 +52,7 @@ class PrivacyWireConfig extends ModuleConfig
         $f->label = $this->_('Cookie Groups');
         $f->options = [
             "necessary" => $this->_("Necessary Cookies"),
+            "functional" => $this->_("Functional Cookies"),
             "all" => $this->_("All Cookies"),
             "statistics" => $this->_("Statistics"),
             'marketing' => $this->_("Marketing"),
@@ -77,6 +81,15 @@ class PrivacyWireConfig extends ModuleConfig
         $f->attr('name', 'cookies_necessary_label');
         $f->label = $this->_('Necessary Cookies: Label');
         $f->showIf("cookie_groups=necessary");
+        $f->useLanguages = true;
+        $f->columnWidth = 25;
+        $cookieFieldset->add($f);
+
+        // label for cookie group: functional
+        $f = $this->modules->get('InputfieldText');
+        $f->attr('name', 'cookies_functional_label');
+        $f->label = $this->_('Functional Cookies: Label');
+        $f->showIf("cookie_groups=functional");
         $f->useLanguages = true;
         $f->columnWidth = 25;
         $cookieFieldset->add($f);
@@ -230,9 +243,25 @@ class PrivacyWireConfig extends ModuleConfig
         $f->description = $this->_("When enabled, PrivacyWire checks if [ProCache](https://processwire.com/store/pro-cache/#procache-css-js-minification-api) is installed and activated. If so, the javascript files will be minified automatically via ProCache.");
         $f->label = $this->_('Use ProCache JS Minification (if available)');
         $f->checkboxLabel = $this->_('Use ProCache JS Minification (if available)');
-        $f->columnWidth = 33;
+        $f->columnWidth = 50;
         $inputfields->add($f);
 
+        // privacy policy link title
+        $f = $this->modules->get('InputfieldText');
+        $f->attr('name', 'trigger_custom_js_function');
+        $f->label = $this->_('Trigger a custom js function');
+        $f->description = $this->_("When you want to trigger a custom js function after saving the cookie banner, insert the name of the function here");
+        $f->columnWidth = 50;
+        $inputfields->add($f);
+
+        // add basic css styles or not
+        $f = $this->modules->get('InputfieldCheckbox');
+        $f->attr('name', 'add_basic_css_styling');
+        $f->description = $this->_("When enabled, PrivacyWire will automatically include some very basic css styles to the output.");
+        $f->label = $this->_('CSS: Add basic CSS Styling');
+        $f->checkboxLabel = $this->_('Add basic CSS Styling');
+        // $f->columnWidth = 33;
+        $inputfields->add($f);
 
         return $inputfields;
     }

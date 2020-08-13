@@ -25,7 +25,7 @@ class PrivacyWire extends WireData implements Module, ConfigurableModule
             'summary' => "This module adds management options for GDPR-relevant elements (loading maps, videos etc. only after accepting external media) and cookies.",
             'author' => "blaueQuelle",
             'href' => "https://github.com/blaueQuelle/privacywire",
-            'version' => 12,
+            'version' => 22,
             'autoload' => true,
             'singular' => true,
             'requires' => [ "PHP>=7.2", "ProcessWire>=3.0.110" ],
@@ -51,11 +51,13 @@ class PrivacyWire extends WireData implements Module, ConfigurableModule
 
         $respectDNT = ($this->respectDNT) ? "1" : "0";
 
-        $jsFilePath = $this->wire('config')->urls->$this . "js/PrivacyWire.js";
+        $customJsFunction = (!empty($this->trigger_custom_js_function)) ? $this->wire('sanitizer')->text($this->trigger_custom_js_function) : "";
+
+        $jsFilePath = ($this->add_basic_css_styling) ? $this->wire('config')->urls->$this . "js/PrivacyWire.js" : $this->wire('config')->urls->$this . "js/PrivacyWireUnstyled.js";
 
         $output = wireRenderFile($this->wire('config')->paths->$this . 'PrivacyWireBanner.php', [ 'module' => $this ]);
-        $output .= '<script>var PrivacyWireSettings={version:"' . $this->version . '",dnt:"' . $respectDNT . '"};</script>';
-        if($this->use_procache_minification && $this->wire('modules')->isInstalled('ProCache') && $this->wire('modules')->get('ProCache')) {
+        $output .= '<script>var PrivacyWireSettings={version:"' . $this->version . '",dnt:"' . $respectDNT . '",customFunction:"' . $customJsFunction . '"};</script>';
+        if ($this->use_procache_minification && $this->wire('modules')->isInstalled('ProCache') && $this->wire('modules')->get('ProCache')) {
             $output .= "<script defer src='{$this->wire('modules')->get('ProCache')->js($jsFilePath)}'></script>";
         } else {
             $output .= "<script defer src='{$jsFilePath}'></script>";
