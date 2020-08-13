@@ -1,5 +1,8 @@
 # Changelog of PrivacyWire
 
+## 0.2.2 
+- added option to output totally unstyled PrivacyWire 
+
 ## 0.2.1
 - added another cookie category "functional"
 
