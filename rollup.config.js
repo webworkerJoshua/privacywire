@@ -22,6 +22,7 @@ export default [
       }),
       babel({
         exclude: 'node_modules/**',
+        babelHelpers: 'bundled',
       }),
       production && terser()
     ],
@@ -40,6 +41,7 @@ export default [
       }),
       babel({
         exclude: 'node_modules/**',
+        babelHelpers: 'bundled',
       }),
       production && terser()
     ],
