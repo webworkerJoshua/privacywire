@@ -28,6 +28,7 @@ class PrivacyWireConfig extends ModuleConfig
             'textformatter_choose_label' => $this->_("Show or edit my Cookie Consent"),
             'use_procache_minification' => true,
             'trigger_custom_js_function' => "",
+            'messageTimeout' => 1500,
             'add_basic_css_styling' => true
         ];
     }
@@ -246,11 +247,18 @@ class PrivacyWireConfig extends ModuleConfig
         $f->columnWidth = 50;
         $inputfields->add($f);
 
-        // privacy policy link title
+        // Trigger a custom js function
         $f = $this->modules->get('InputfieldText');
         $f->attr('name', 'trigger_custom_js_function');
         $f->label = $this->_('Trigger a custom js function');
         $f->description = $this->_("When you want to trigger a custom js function after saving the cookie banner, insert the name of the function here");
+        $f->columnWidth = 50;
+        $inputfields->add($f);
+
+        // Message Timeout
+        $f = $this->modules->get('InputfieldInteger');
+        $f->attr('name', 'messageTimeout');
+        $f->label = $this->_('Timeout of showing the success message');
         $f->columnWidth = 50;
         $inputfields->add($f);
 
@@ -260,7 +268,7 @@ class PrivacyWireConfig extends ModuleConfig
         $f->description = $this->_("When enabled, PrivacyWire will automatically include some very basic css styles to the output.");
         $f->label = $this->_('CSS: Add basic CSS Styling');
         $f->checkboxLabel = $this->_('Add basic CSS Styling');
-        // $f->columnWidth = 33;
+        $f->columnWidth = 50;
         $inputfields->add($f);
 
         return $inputfields;

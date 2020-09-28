@@ -2,8 +2,6 @@ import babel from '@rollup/plugin-babel';
 import postcss from 'rollup-plugin-postcss';
 import { terser } from 'rollup-plugin-terser';
 import ignoreImport from 'rollup-plugin-ignore-import';
-import resolve from '@rollup/plugin-node-resolve';
-import commonjs from '@rollup/plugin-commonjs';
 
 const production = !process.env.ROLLUP_WATCH;
 

@@ -1,5 +1,8 @@
 # Changelog of PrivacyWire
 
+## 0.2.3
+- added configuration option for message timeout
+
 ## 0.2.2 
 - added option to output totally unstyled PrivacyWire 
 

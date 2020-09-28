@@ -71,7 +71,7 @@ const priw_showMessage = function () {
   priw_wrapper.classList.add('show-message');
   setTimeout(function () {
     priw_wrapper.classList.remove('show-message');
-  }, 1500);
+  }, priw_settings.msgTimeout);
 }
 
 const priw_savePreferences = function (silent = false) {
@@ -158,6 +158,7 @@ let priw_settings = {};
 priw_settings.dnt = Boolean(parseInt(PrivacyWireSettings.dnt));
 priw_settings.version = parseInt(PrivacyWireSettings.version);
 priw_settings.cstFn = PrivacyWireSettings.customFunction;
+priw_settings.msgTimeout = parseInt(PrivacyWireSettings.messageTimeout) ?? 1500;
 
 let priw = "privacywire";
 let priw_wrapper = document.querySelector(".privacywire-wrapper");
