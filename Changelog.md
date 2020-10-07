@@ -1,5 +1,8 @@
 # Changelog of PrivacyWire
 
+## 0.2.4
+- Bugfix: fixed typo in consent of external_media
+
 ## 0.2.3
 - added configuration option for message timeout
 
