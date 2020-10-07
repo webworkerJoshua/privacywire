@@ -179,11 +179,11 @@ let priw_storage = (window.localStorage.getItem(priw)) ? JSON.parse(window.local
 
 if (priw_storage) {
   priw_consent.version = parseInt(priw_storage.version) ?? 0;
-  priw_consent.necessary = Boolean(priw_storage.statistics) ?? true;
+  priw_consent.necessary = Boolean(priw_storage.necessary) ?? true;
   priw_consent.functional = Boolean(priw_storage.functional) ?? false;
   priw_consent.statistics = Boolean(priw_storage.statistics) ?? false;
   priw_consent.marketing = Boolean(priw_storage.marketing) ?? false;
-  priw_consent.external_media = Boolean(priw_storage.marketing) ?? false;
+  priw_consent.external_media = Boolean(priw_storage.external_media) ?? false;
 
   // prefill the option checkboxes
   priw_btn_options_functional.checked = priw_consent.functional;
