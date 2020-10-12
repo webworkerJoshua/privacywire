@@ -1,5 +1,8 @@
 # Changelog of PrivacyWire
 
+## 0.2.5
+- Bugfix: Changing version number now works as expected
+
 ## 0.2.4
 - Bugfix: fixed typo in consent of external_media
 
