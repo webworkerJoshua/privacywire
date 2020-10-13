@@ -1,5 +1,8 @@
 # Changelog of PrivacyWire
 
+## 0.2.7
+- Fixed: Updates more attributes of elements (srcset, height, width) - important for responsive images or iFrames
+
 ## 0.2.6
 - Added: Config option to show an "Accept All" instead of "Toggle" Button within the "Choose Cookies" window.
 

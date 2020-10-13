@@ -129,8 +129,15 @@ const priw_updateElements = function () {
         newEl.name = el.name;
         newEl.defer = el.defer;
         newEl.async = el.async;
+        newEl.width = el.width;
+        newEl.height = el.height;
+
         if (dataset.src) {
             newEl.src = dataset.src;
+        }
+
+        if (dataset.srcset) {
+            newEl.srcset = dataset.srcset;
         }
 
         parent.insertBefore(newEl, el);
