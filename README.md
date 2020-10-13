@@ -37,4 +37,4 @@ This module is heavily inspired by the following repos (big thanks!):
 - https://github.com/KIProtect/klaro
 
 ## Changelog
-see [Changelog.md](Changelog.md)
+see [CHANGELOG.md](CHANGELOG.md)
