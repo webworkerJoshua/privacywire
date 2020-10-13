@@ -26,14 +26,16 @@ const priw_setOnlyNecessaryConsent = function () {
 
 const priw_handleButtons = function () {
 
-    priw_btn_allowAll.onclick = function () {
-        priw_consent.necessary = true;
-        priw_consent.functional = true;
-        priw_consent.statistics = true;
-        priw_consent.marketing = true;
-        priw_consent.external_media = true;
-        priw_savePreferences();
-    }
+    priw_btn_allowAll.forEach(function (button) {
+        button.onclick = function () {
+            priw_consent.necessary = true;
+            priw_consent.functional = true;
+            priw_consent.statistics = true;
+            priw_consent.marketing = true;
+            priw_consent.external_media = true;
+            priw_savePreferences();
+        }
+    })
 
     priw_btn_allowNecessary.onclick = function () {
         priw_setOnlyNecessaryConsent();
@@ -160,7 +162,7 @@ priw_settings.msgTimeout = parseInt(PrivacyWireSettings.messageTimeout) ?? 1500;
 
 let priw = "privacywire";
 let priw_wrapper = document.querySelector(".privacywire-wrapper");
-let priw_btn_allowAll = priw_wrapper.querySelector(".allow-all");
+let priw_btn_allowAll = priw_wrapper.querySelectorAll(".allow-all");
 let priw_btn_allowNecessary = priw_wrapper.querySelector(".allow-necessary");
 let priw_btn_choose = priw_wrapper.querySelector(".choose");
 let priw_btn_save = priw_wrapper.querySelector(".save");

@@ -25,6 +25,7 @@ class PrivacyWireConfig extends ModuleConfig
             'content_banner_button_save' => $this->_("Save preferences"),
             'content_banner_button_toggle' => $this->_("Toggle options"),
             'content_banner_save_message' => $this->_("Your cookie preferences have been saved."),
+            'content_banner_button_all_instead_toggle' => false,
             'textformatter_choose_label' => $this->_("Show or edit my Cookie Consent"),
             'use_procache_minification' => true,
             'trigger_custom_js_function' => "",
@@ -230,12 +231,20 @@ class PrivacyWireConfig extends ModuleConfig
         $f->columnWidth = 34;
         $content->add($f);
 
+        // add basic css styles or not
+        $f = $this->modules->get('InputfieldCheckbox');
+        $f->attr('name', 'content_banner_button_all_instead_toggle');
+        $f->label = $this->_('Choose Window: Show "Accept All" Button instead of "Toggle" Button');
+        $f->checkboxLabel = $this->_('Show "Accept All" Button instead of "Toggle" Button');
+        $f->columnWidth = 50;
+        $content->add($f);
+
         // Button Label: Saved Message
         $f = $this->modules->get('InputfieldText');
         $f->attr('name', 'content_banner_save_message');
         $f->label = $this->_('Save Message');
         $f->useLanguages = true;
-        $f->columnWidth = 100;
+        $f->columnWidth = 50;
         $content->add($f);
 
         // ProCache JS Minification

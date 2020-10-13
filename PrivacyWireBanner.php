@@ -1,34 +1,34 @@
 <?php namespace ProcessWire;
-    /**
-     * @var PrivacyWire $module Instance of the PrivacyWire module;
-     */
+/**
+ * @var PrivacyWire $module Instance of the PrivacyWire module;
+ */
 
-    $showAllButton = (in_array("all", $module->cookie_groups));
-    $showNecessaryButton = (in_array("necessary", $module->cookie_groups));
+$showAllButton = (in_array("all", $module->cookie_groups));
+$showNecessaryButton = (in_array("necessary", $module->cookie_groups));
+$showAllInsteadToggle = $module->content_banner_button_all_instead_toggle;
+$showFunctionalButton = (in_array("functional", $module->cookie_groups));
+$showStatisticsButton = (in_array("statistics", $module->cookie_groups));
+$showMarketingButton = (in_array("marketing", $module->cookie_groups));
+$showExternalMediaButton = (in_array("external_media", $module->cookie_groups));
 
-    $showFunctionalButton = (in_array("functional", $module->cookie_groups));
-    $showStatisticsButton = (in_array("statistics", $module->cookie_groups));
-    $showMarketingButton = (in_array("marketing", $module->cookie_groups));
-    $showExternalMediaButton = (in_array("external_media", $module->cookie_groups));
+$showChooseButton = (
+    $showFunctionalButton ||
+    $showStatisticsButton ||
+    $showMarketingButton ||
+    $showExternalMediaButton
+);
 
-    $showChooseButton = (
-        $showFunctionalButton ||
-        $showStatisticsButton ||
-        $showMarketingButton ||
-        $showExternalMediaButton
-    );
+// Multi Language Support
+if ($this->wire('languages')) {
+    $userLanguage = $this->wire('user')->language;
+    $lang = $userLanguage->isDefault() ? '' : "__$userLanguage->id";
+} else {
+    $lang = '';
+}
 
-    // Multi Language Support
-    if ($this->wire('languages')) {
-        $userLanguage = $this->wire('user')->language;
-        $lang = $userLanguage->isDefault() ? '' : "__$userLanguage->id";
-    } else {
-        $lang = '';
-    }
+$privacyPage = (!empty($module->get("content_banner_privacy_link$lang|content_banner_privacy_link"))) ? $module->get("content_banner_privacy_link$lang|content_banner_privacy_link") : null;
 
-    $privacyPage = (!empty($module->get("content_banner_privacy_link$lang|content_banner_privacy_link"))) ? $module->get("content_banner_privacy_link$lang|content_banner_privacy_link") : null;
-
-    $imprintPage = (!empty($module->get("content_banner_imprint_link$lang|content_banner_imprint_link"))) ? $module->get("content_banner_imprint_link$lang|content_banner_imprint_link") : null;
+$imprintPage = (!empty($module->get("content_banner_imprint_link$lang|content_banner_imprint_link"))) ? $module->get("content_banner_imprint_link$lang|content_banner_imprint_link") : null;
 ?>
 
 <div class="privacywire-wrapper">
@@ -123,7 +123,8 @@
                     </ul>
                 </div>
                 <div class="privacywire-buttons">
-                    <button class="toggle"><?php echo $module->get("content_banner_button_toggle$lang|content_banner_button_toggle"); ?></button>
+                    <button class="allow-all" <?php echo ($showAllInsteadToggle) ? "" : "hidden"; ?>><?php echo $module->get("content_banner_button_allow_all$lang|content_banner_button_allow_all"); ?></button>
+                    <button class="toggle" <?php echo ($showAllInsteadToggle) ? "hidden" : ""; ?>><?php echo $module->get("content_banner_button_toggle$lang|content_banner_button_toggle"); ?></button>
                     <button class="save"><?php echo $module->get("content_banner_button_save$lang|content_banner_button_save"); ?></button>
                 </div>
                 <?php if (!empty($privacyPage)): ?>
