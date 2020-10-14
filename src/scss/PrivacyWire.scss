@@ -8,7 +8,7 @@
   background: white;
   z-index: 1;
   padding: 1rem;
-  transition: bottom .3s ease, opacity 1s ease;
+  transition: bottom .3s ease-in, opacity 1s ease-out;
   
   header {
     font-weight: bold;
@@ -25,6 +25,7 @@
     display: none;
   }
 }
-[data-ask-consent-rendered="1"] {
+
+[data-ask-consent-rendered="1"], div.privacywire-ask-consent-blueprint {
   display: none;
 }

@@ -51,10 +51,10 @@ const priw_handleButtons = function () {
     priw_btn_allowAll.forEach(function (button) {
         button.onclick = function () {
             priw_consent.necessary = true;
-            priw_consent.functional = true;
-            priw_consent.statistics = true;
-            priw_consent.marketing = true;
-            priw_consent.external_media = true;
+            priw_consent.functional = priw_btns_options.functional.checked = 1;
+            priw_consent.statistics = priw_btns_options.statistics.checked = 1;
+            priw_consent.marketing = priw_btns_options.marketing.checked = 1;
+            priw_consent.external_media = priw_btns_options.external_media.checked = 1;
             priw_savePreferences();
         }
     });
