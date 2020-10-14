@@ -30,7 +30,9 @@ class PrivacyWireConfig extends ModuleConfig
             'use_procache_minification' => true,
             'trigger_custom_js_function' => "",
             'messageTimeout' => 1500,
-            'add_basic_css_styling' => true
+            'add_basic_css_styling' => true,
+            'ask_consent_message' => $this->_("To load this element, it is required to consent to the following cookie category: {category}."),
+            'ask_content_button_label' => $this->_("Load {category} cookies")
         ];
     }
 
@@ -279,6 +281,30 @@ class PrivacyWireConfig extends ModuleConfig
         $f->checkboxLabel = $this->_('Add basic CSS Styling');
         $f->columnWidth = 50;
         $inputfields->add($f);
+
+        // fieldset for "Ask for consent" markup
+        $content = $this->modules->get('InputfieldFieldset');
+        $content->label = $this->_("Ask for consent");
+        $inputfields->add($content);
+
+        // ask for consent text field
+        $f = $this->modules->get('InputfieldCKEditor');
+        $f->attr('name', 'ask_consent_message');
+        $f->attr('toolbar', 'Bold, Italic, NumberedList, BulletedList, PWLink, Unlink, PWImage, Table');
+        $f->label = $this->_('Text above Button');
+        $f->description = $this->_("You can insert the current cookie category name by using the placeholder {category}.");
+        $f->useLanguages = true;
+        $f->columnWidth = 50;
+        $content->add($f);
+
+        // Trigger a custom js function
+        $f = $this->modules->get('InputfieldText');
+        $f->attr('name', 'ask_content_button_label');
+        $f->label = $this->_('Button Label');
+        $f->description = $this->_("You can insert the current cookie category name by using the placeholder {category}.");
+        $f->useLanguages = true;
+        $f->columnWidth = 50;
+        $content->add($f);
 
         return $inputfields;
     }
