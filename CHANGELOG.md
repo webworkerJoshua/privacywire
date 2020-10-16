@@ -1,5 +1,8 @@
 # Changelog of PrivacyWire
 
+## 0.3.1
+- Added: Config option within Textformatter to choose open and close tag
+
 ## 0.3.0
 - Added Feature: When the user hasn't given consent to a specific cookie category, show an alternative element with asking for consent. To enable this feature, add following data-attribute to the element ``` data-ask-consent="1"```. In the module configuration you can choose, what text should be in that window. Example: ``` <iframe src="" data-src="https://www.example.com/" data-category="marketing" data-ask-consent="1" frameborder="0" height="400" width="400"></iframe>```
 
