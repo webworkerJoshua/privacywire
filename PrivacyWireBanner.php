@@ -34,9 +34,9 @@ $imprintPage = (!empty($module->get("content_banner_imprint_link$lang|content_ba
 <div class="privacywire-wrapper">
     <div class="privacywire-page-wrapper">
         <div class="privacywire privacywire-banner">
-            <?php if (!empty($module->content_banner_title)): ?>
-                <header class="privacywire-header"> <?php echo $module->get("content_banner_title$lang|content_banner_title"); ?></header>
-            <?php endif; ?>
+            <?php if (!empty($module->content_banner_title)) {
+               echo "<{$module->banner_header_tag} class='privacywire-header'>{$module->get("content_banner_title$lang|content_banner_title")}</{$module->banner_header_tag}>";
+            }?>
             <div class="privacywire-body">
                 <div class="privacywire-text"><?php echo $module->get("content_banner_text$lang|content_banner_text"); ?></div>
                 <div class="privacywire-buttons">
@@ -57,9 +57,9 @@ $imprintPage = (!empty($module->get("content_banner_imprint_link$lang|content_ba
 
         </div>
         <div class="privacywire privacywire-options">
-            <?php if (!empty($module->content_banner_title)): ?>
-                <header class="privacywire-header"> <?php echo $module->get("content_banner_title$lang|content_banner_title"); ?></header>
-            <?php endif; ?>
+            <?php if (!empty($module->content_banner_title)) {
+                echo "<{$module->banner_header_tag} class='privacywire-header'>{$module->get("content_banner_title$lang|content_banner_title")}</{$module->banner_header_tag}>";
+            }?>
             <div class="privacywire-body">
                 <div class="privacywire-text"><?php echo $module->get("content_banner_text$lang|content_banner_text"); ?></div>
                 <div class="privacywire-text">

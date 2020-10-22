@@ -32,7 +32,8 @@ class PrivacyWireConfig extends ModuleConfig
             'messageTimeout' => 1500,
             'add_basic_css_styling' => true,
             'ask_consent_message' => $this->_("To load this element, it is required to consent to the following cookie category: {category}."),
-            'ask_content_button_label' => $this->_("Load {category} cookies")
+            'ask_content_button_label' => $this->_("Load {category} cookies"),
+            'banner_header_tag' => 'header'
         ];
     }
 
@@ -304,6 +305,17 @@ class PrivacyWireConfig extends ModuleConfig
         $f->description = $this->_("You can insert the current cookie category name by using the placeholder {category}.");
         $f->useLanguages = true;
         $f->columnWidth = 50;
+        $content->add($f);
+
+        // banner header tag
+        $f = $this->modules->get('InputfieldSelect');
+        $f->attr('name', 'banner_header_tag');
+        $f->description = $this->_("Choose between <header> and <div>.");
+        $f->label = $this->_('Banner Header Tag');
+        $f->options = [
+            "header" => $this->_("<header>"),
+            "div" => $this->_("<div>"),
+        ];
         $content->add($f);
 
         return $inputfields;

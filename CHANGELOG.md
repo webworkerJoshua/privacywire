@@ -1,5 +1,9 @@
 # Changelog of PrivacyWire
 
+## 0.3.2
+- Fixed: Bug with "Accept all" Button to load elements
+- Added: Config option to choose the banner header tag between `<header>` and `<div>`
+
 ## 0.3.1
 - Added: Config option within Textformatter to choose open and close tag
 
