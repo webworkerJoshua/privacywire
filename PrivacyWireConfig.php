@@ -33,7 +33,8 @@ class PrivacyWireConfig extends ModuleConfig
             'add_basic_css_styling' => true,
             'ask_consent_message' => $this->_("To load this element, it is required to consent to the following cookie category: {category}."),
             'ask_content_button_label' => $this->_("Load {category} cookies"),
-            'banner_header_tag' => 'header'
+            'banner_header_tag' => 'header',
+            'alternate_banner_template' => ''
         ];
     }
 
@@ -162,7 +163,7 @@ class PrivacyWireConfig extends ModuleConfig
         $f = $this->modules->get('InputfieldText');
         $f->attr('name', 'content_banner_privacy_title');
         $f->label = $this->_('Privacy Policy link title');
-        $f->showIf = "content_banner_privacy_link!=''";
+        //$f->showIf = "content_banner_privacy_link!=''";
         $f->useLanguages = true;
         $f->columnWidth = 50;
         $content->add($f);
@@ -180,7 +181,7 @@ class PrivacyWireConfig extends ModuleConfig
         $f = $this->modules->get('InputfieldText');
         $f->attr('name', 'content_banner_imprint_title');
         $f->label = $this->_('Imprint link title');
-        $f->showIf = "content_banner_imprint_link!=''";
+        //$f->showIf = "content_banner_imprint_link!=''";
         $f->useLanguages = true;
         $f->columnWidth = 50;
         $content->add($f);
@@ -234,15 +235,7 @@ class PrivacyWireConfig extends ModuleConfig
         $f->columnWidth = 34;
         $content->add($f);
 
-        // add basic css styles or not
-        $f = $this->modules->get('InputfieldCheckbox');
-        $f->attr('name', 'content_banner_button_all_instead_toggle');
-        $f->label = $this->_('Choose Window: Show "Accept All" Button instead of "Toggle" Button');
-        $f->checkboxLabel = $this->_('Show "Accept All" Button instead of "Toggle" Button');
-        $f->columnWidth = 50;
-        $content->add($f);
-
-        // Button Label: Saved Message
+        // Saved Message Text
         $f = $this->modules->get('InputfieldText');
         $f->attr('name', 'content_banner_save_message');
         $f->label = $this->_('Save Message');
@@ -250,38 +243,13 @@ class PrivacyWireConfig extends ModuleConfig
         $f->columnWidth = 50;
         $content->add($f);
 
-        // ProCache JS Minification
+        // Show another "Accept all" instead of the "Toggle" Button
         $f = $this->modules->get('InputfieldCheckbox');
-        $f->attr('name', 'use_procache_minification');
-        $f->description = $this->_("When enabled, PrivacyWire checks if [ProCache](https://processwire.com/store/pro-cache/#procache-css-js-minification-api) is installed and activated. If so, the javascript files will be minified automatically via ProCache.");
-        $f->label = $this->_('Use ProCache JS Minification (if available)');
-        $f->checkboxLabel = $this->_('Use ProCache JS Minification (if available)');
+        $f->attr('name', 'content_banner_button_all_instead_toggle');
+        $f->label = $this->_('Choose Window: Show "Accept all" Button instead of "Toggle" Button');
+        $f->checkboxLabel = $this->_('Show "Accept all" Button instead of "Toggle" Button');
         $f->columnWidth = 50;
-        $inputfields->add($f);
-
-        // Trigger a custom js function
-        $f = $this->modules->get('InputfieldText');
-        $f->attr('name', 'trigger_custom_js_function');
-        $f->label = $this->_('Trigger a custom js function');
-        $f->description = $this->_("When you want to trigger a custom js function after saving the cookie banner, insert the name of the function here");
-        $f->columnWidth = 50;
-        $inputfields->add($f);
-
-        // Message Timeout
-        $f = $this->modules->get('InputfieldInteger');
-        $f->attr('name', 'messageTimeout');
-        $f->label = $this->_('Timeout of showing the success message');
-        $f->columnWidth = 50;
-        $inputfields->add($f);
-
-        // add basic css styles or not
-        $f = $this->modules->get('InputfieldCheckbox');
-        $f->attr('name', 'add_basic_css_styling');
-        $f->description = $this->_("When enabled, PrivacyWire will automatically include some very basic css styles to the output.");
-        $f->label = $this->_('CSS: Add basic CSS Styling');
-        $f->checkboxLabel = $this->_('Add basic CSS Styling');
-        $f->columnWidth = 50;
-        $inputfields->add($f);
+        $content->add($f);
 
         // fieldset for "Ask for consent" markup
         $content = $this->modules->get('InputfieldFieldset');
@@ -298,7 +266,7 @@ class PrivacyWireConfig extends ModuleConfig
         $f->columnWidth = 50;
         $content->add($f);
 
-        // Trigger a custom js function
+        // Ask for consent Button label
         $f = $this->modules->get('InputfieldText');
         $f->attr('name', 'ask_content_button_label');
         $f->label = $this->_('Button Label');
@@ -306,6 +274,48 @@ class PrivacyWireConfig extends ModuleConfig
         $f->useLanguages = true;
         $f->columnWidth = 50;
         $content->add($f);
+
+        // fieldset for modifications - have fun ;-)
+        $content = $this->modules->get('InputfieldFieldset');
+        $content->label = $this->_("Modifications");
+        $inputfields->add($content);
+
+
+        // ProCache JS Minification
+        $f = $this->modules->get('InputfieldCheckbox');
+        $f->attr('name', 'use_procache_minification');
+        $f->description = $this->_("When enabled, PrivacyWire checks if [ProCache](https://processwire.com/store/pro-cache/#procache-css-js-minification-api) is installed and activated. If so, the javascript files will be minified automatically via ProCache.");
+        $f->label = $this->_('Use ProCache JS Minification (if available)');
+        $f->checkboxLabel = $this->_('Use ProCache JS Minification (if available)');
+        $f->columnWidth = 33;
+        $content->add($f);
+
+        // add basic css styles or not
+        $f = $this->modules->get('InputfieldCheckbox');
+        $f->attr('name', 'add_basic_css_styling');
+        $f->description = $this->_("When enabled, PrivacyWire will automatically include some very basic css styles to the output.");
+        $f->label = $this->_('CSS: Add basic CSS Styling');
+        $f->checkboxLabel = $this->_('Add basic CSS Styling');
+        $f->columnWidth = 33;
+        $content->add($f);
+
+        // Trigger a custom js function
+        $f = $this->modules->get('InputfieldText');
+        $f->attr('name', 'trigger_custom_js_function');
+        $f->label = $this->_('Trigger a custom js function');
+        $f->description = $this->_("When you want to trigger a custom js function after saving the cookie banner, insert the name of the function here");
+        $f->columnWidth = 34;
+        $content->add($f);
+
+        // Message Timeout
+        $f = $this->modules->get('InputfieldInteger');
+        $f->attr('name', 'messageTimeout');
+        $f->label = $this->_('Timeout of showing the success message');
+        $f->description = $this->_("Time in ms for how long the success message should be visible");
+        $f->columnWidth = 33;
+        $content->add($f);
+
+
 
         // banner header tag
         $f = $this->modules->get('InputfieldSelect');
@@ -316,6 +326,15 @@ class PrivacyWireConfig extends ModuleConfig
             "header" => $this->_("<header>"),
             "div" => $this->_("<div>"),
         ];
+        $f->columnWidth = 33;
+        $content->add($f);
+
+        // alternate banner template
+        $f = $this->modules->get('InputfieldText');
+        $f->attr('name', 'alternate_banner_template');
+        $f->label = $this->_('Alternate Banner Template');
+        $f->description = $this->_("If you want to replace the original banner template (located in site/modules/PrivacyWire/PrivacyWireBanner.php ) insert the alternative file path here (starting from webroot without leading slash )");
+        $f->columnWidth = 34;
         $content->add($f);
 
         return $inputfields;

@@ -142,4 +142,4 @@ $imprintPage = (!empty($module->get("content_banner_imprint_link$lang|content_ba
         </div>
     </div>
 </div>
-<div hidden class="hidden privacywire-ask-consent-blueprint"><div class="privacywire-consent-message"><?php echo $module->get("ask_consent_message$lang|ask_consent_message"); ?></div><button class="privacywire-consent-button" data-consent-category="{categoryname}"><?php echo $module->get("ask_content_button_label$lang|ask_content_button_label"); ?></button></div>
+<div hidden class="privacywire-ask-consent-blueprint"><div class="privacywire-consent-message"><?php echo $module->get("ask_consent_message$lang|ask_consent_message"); ?></div><button class="privacywire-consent-button" data-consent-category="{categoryname}"><?php echo $module->get("ask_content_button_label$lang|ask_content_button_label"); ?></button></div>

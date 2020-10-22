@@ -25,7 +25,7 @@ class PrivacyWire extends WireData implements Module, ConfigurableModule
             'summary' => "This module adds management options for GDPR-relevant elements (loading maps, videos etc. only after accepting external media) and cookies.",
             'author' => "blaueQuelle",
             'href' => "https://github.com/blaueQuelle/privacywire",
-            'version' => 32,
+            'version' => 33,
             'autoload' => true,
             'singular' => true,
             'requires' => ["PHP>=7.2", "ProcessWire>=3.0.110"],
@@ -46,7 +46,20 @@ class PrivacyWire extends WireData implements Module, ConfigurableModule
         $this->addHookAfter('Page::render', $this, 'render');
     }
 
-    public function ___render(HookEvent $event)
+    /**
+     * checks for a javascript file alternate path
+     * @return string   the path of the JS file
+     **/
+    public function ___getJsFile()
+    {
+        return ($this->add_basic_css_styling) ? $this->wire('config')->urls->$this . "js/PrivacyWire.js" : $this->wire('config')->urls->$this . "js/PrivacyWireUnstyled.js";
+    }
+
+    /**
+     * look for current module config and put this into an json array
+     * @return string   json object of inline settings
+     **/
+    public function ___getInlineJs()
     {
         // Multi Language Support
         if ($this->wire('languages')) {
@@ -68,18 +81,25 @@ class PrivacyWire extends WireData implements Module, ConfigurableModule
             'marketing' => $this->get("cookies_marketing_label$lang|cookies_marketing_label"),
             'external_media' => $this->get("cookies_external_media_label$lang|cookies_external_media_label"),
         ];
+        return json_encode($privacyWireSettings);
+    }
 
-        $privacyWireSettingsOutput = json_encode($privacyWireSettings);
+    /**
+     * checks for a alternate banner template path
+     * @return string   the path of the banner template file
+     **/
+    public function ___getBannerTemplateFile()
+    {
+        return (!empty($this->alternate_banner_template) && file_exists($this->wire('config')->paths->root . $this->alternate_banner_template)) ? $this->wire('config')->paths->root . $this->alternate_banner_template : $this->wire('config')->paths->$this . 'PrivacyWireBanner.php';
+    }
 
-        $jsFilePath = ($this->add_basic_css_styling) ? $this->wire('config')->urls->$this . "js/PrivacyWire.js" : $this->wire('config')->urls->$this . "js/PrivacyWireUnstyled.js";
-
-        $headContent = "<script>var PrivacyWireSettings={$privacyWireSettingsOutput};</script>";
-
-        $headContent .= ($this->use_procache_minification && $this->wire('modules')->isInstalled('ProCache') && $this->wire('modules')->get('ProCache')) ? "<script defer src='{$this->wire('modules')->get('ProCache')->js($jsFilePath)}'></script>" : "<script defer src='{$jsFilePath}'></script>" ;
-
+    public function ___render(HookEvent $event)
+    {
+        $headContent = "<script>var PrivacyWireSettings={$this->getInlineJs()};</script>";
+        $headContent .= ($this->use_procache_minification && $this->wire('modules')->isInstalled('ProCache') && $this->wire('modules')->get('ProCache')) ? "<script defer src='{$this->wire('modules')->get('ProCache')->js($this->getJsFile())}'></script>" : "<script defer src='{$this->getJsFile()}'></script>";
         $event->return = str_replace("</head>", "{$headContent}</head>", $event->return);
 
-        $bodyContent = wireRenderFile($this->wire('config')->paths->$this . 'PrivacyWireBanner.php', ['module' => $this]);
+        $bodyContent = wireRenderFile($this->getBannerTemplateFile(), ['module' => $this]);
         $event->return = str_replace("</body>", "{$bodyContent}</body>", $event->return);
     }
 
@@ -90,6 +110,5 @@ class PrivacyWire extends WireData implements Module, ConfigurableModule
     public function ___uninstall()
     {
     }
-
 
 }

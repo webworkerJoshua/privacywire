@@ -1,5 +1,13 @@
 # Changelog of PrivacyWire
 
+## 0.3.3
+- Added: Config option to replace the original banner template (located in site/modules/PrivacyWire/PrivacyWireBanner.php) with an alternative banner template
+- Added: hookable method to get JS file
+- Added: hookable method to get inline JS
+- Added: hookable method to get (alternative) banner template file
+- Changed: Optimized CSS (even smaller - 458 bytes instead of 554 bytes)
+- Changed: Re-arranged the config options to provide better structure
+
 ## 0.3.2
 - Fixed: Bug with "Accept all" Button to load elements
 - Added: Config option to choose the banner header tag between `<header>` and `<div>`
