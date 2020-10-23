@@ -25,7 +25,7 @@ class PrivacyWire extends WireData implements Module, ConfigurableModule
             'summary' => "This module adds management options for GDPR-relevant elements (loading maps, videos etc. only after accepting external media) and cookies.",
             'author' => "blaueQuelle",
             'href' => "https://github.com/blaueQuelle/privacywire",
-            'version' => 33,
+            'version' => 34,
             'autoload' => true,
             'singular' => true,
             'requires' => ["PHP>=7.2", "ProcessWire>=3.0.110"],
@@ -90,7 +90,8 @@ class PrivacyWire extends WireData implements Module, ConfigurableModule
      **/
     public function ___getBannerTemplateFile()
     {
-        return (!empty($this->alternate_banner_template) && file_exists($this->wire('config')->paths->root . $this->alternate_banner_template)) ? $this->wire('config')->paths->root . $this->alternate_banner_template : $this->wire('config')->paths->$this . 'PrivacyWireBanner.php';
+        $sanitizedAlternateBannerPath = (substr($this->alternate_banner_template, 0, 1) !== "/") ? $this->alternate_banner_template : substr($this->alternate_banner_template, 1);
+        return (!empty($this->alternate_banner_template) && file_exists($this->wire('config')->paths->root . $sanitizedAlternateBannerPath)) ? $this->wire('config')->paths->root . $sanitizedAlternateBannerPath : $this->wire('config')->paths->$this . 'PrivacyWireBanner.php';
     }
 
     public function ___render(HookEvent $event)

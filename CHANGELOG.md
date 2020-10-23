@@ -1,5 +1,8 @@
 # Changelog of PrivacyWire
 
+## 0.3.4
+- Fixed: sanitize alternative banner template path to ignore leading slash
+
 ## 0.3.3
 - Added: Config option to replace the original banner template (located in site/modules/PrivacyWire/PrivacyWireBanner.php) with an alternative banner template
 - Added: hookable method to get JS file
