@@ -34,7 +34,8 @@ class PrivacyWireConfig extends ModuleConfig
             'ask_consent_message' => $this->_("To load this element, it is required to consent to the following cookie category: {category}."),
             'ask_content_button_label' => $this->_("Load {category} cookies"),
             'banner_header_tag' => 'header',
-            'alternate_banner_template' => ''
+            'alternate_banner_template' => '',
+            'render_manually' => false,
         ];
     }
 
@@ -335,6 +336,14 @@ class PrivacyWireConfig extends ModuleConfig
         $f->label = $this->_('Alternate Banner Template');
         $f->description = $this->_("If you want to replace the original banner template (located in site/modules/PrivacyWire/PrivacyWireBanner.php ) insert the alternative file path here (starting from webroot without leading slash )");
         $f->columnWidth = 34;
+        $content->add($f);
+
+        // render manually
+        $f = $this->modules->get('InputfieldCheckbox');
+        $f->attr('name', 'render_manually');
+        $f->label = $this->_('Render Banner and Header Content Manually');
+        $f->description = $this->_("If you want to render PrivacyWire header and banner content manually instead of letting the module render them for you, check this option.");
+        $f->notes = $this->_("Use `\$modules->get('PrivacyWire')->renderHeadContent()` to render header tags and `\$modules->get('PrivacyWire')->renderBodyContent()` to render body content.");
         $content->add($f);
 
         return $inputfields;
