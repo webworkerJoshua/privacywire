@@ -1,5 +1,9 @@
 # Changelog of PrivacyWire
 
+## 0.3.6
+- Added: Config option to prevent automatic rendering.
+- Added: New methods renderHeadContent() and renderBodyContent().
+
 ## 0.3.4
 - Fixed: sanitize alternative banner template path to ignore leading slash
 

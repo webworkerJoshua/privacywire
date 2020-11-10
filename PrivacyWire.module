@@ -25,7 +25,7 @@ class PrivacyWire extends WireData implements Module, ConfigurableModule
             'summary' => "This module adds management options for GDPR-relevant elements (loading maps, videos etc. only after accepting external media) and cookies.",
             'author' => "blaueQuelle",
             'href' => "https://github.com/blaueQuelle/privacywire",
-            'version' => 35,
+            'version' => 36,
             'autoload' => true,
             'singular' => true,
             'requires' => ["PHP>=7.2", "ProcessWire>=3.0.110"],
@@ -43,7 +43,9 @@ class PrivacyWire extends WireData implements Module, ConfigurableModule
             return;
         }
 
-        $this->addHookAfter('Page::render', $this, 'render');
+        if (!$this->render_manually) {
+            $this->addHookAfter('Page::render', $this, 'render');
+        }
     }
 
     /**
@@ -96,12 +98,23 @@ class PrivacyWire extends WireData implements Module, ConfigurableModule
 
     public function ___render(HookEvent $event)
     {
-        $headContent = "<script>var PrivacyWireSettings={$this->getInlineJs()};</script>";
-        $headContent .= ($this->use_procache_minification && $this->wire('modules')->isInstalled('ProCache') && $this->wire('modules')->get('ProCache')) ? "<script defer src='{$this->wire('modules')->get('ProCache')->js($this->getJsFile())}'></script>" : "<script defer src='{$this->getJsFile()}'></script>";
+        $headContent = $this->renderHeadContent();
         $event->return = str_replace("</head>", "{$headContent}</head>", $event->return);
 
-        $bodyContent = wireRenderFile($this->getBannerTemplateFile(), ['module' => $this]);
+        $bodyContent = $this->renderBodyContent();
         $event->return = str_replace("</body>", "{$bodyContent}</body>", $event->return);
+    }
+
+    public function renderHeadContent()
+    {
+        $headContent = "<script>var PrivacyWireSettings={$this->getInlineJs()};</script>";
+        $headContent .= ($this->use_procache_minification && $this->wire('modules')->isInstalled('ProCache') && $this->wire('modules')->get('ProCache')) ? "<script defer src='{$this->wire('modules')->get('ProCache')->js($this->getJsFile())}'></script>" : "<script defer src='{$this->getJsFile()}'></script>";
+        return $headContent;
+    }
+
+    public function renderBodyContent()
+    {
+        return wireRenderFile($this->getBannerTemplateFile(), ['module' => $this]);
     }
 
     public function ___install()
