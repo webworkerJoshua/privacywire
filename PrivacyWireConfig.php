@@ -9,6 +9,7 @@ class PrivacyWireConfig extends ModuleConfig
             'cookie_groups' => [ "all", "necessary" ],
             'respectDNT' => false,
             'cookies_necessary_label' => $this->_('Necessary'),
+            'cookies_functional_label' => $this->_('Functional'),
             'cookies_statistics_label' => $this->_('Statistics'),
             'cookies_marketing_label' => $this->_('Marketing'),
             'cookies_external_media_label' => $this->_('External Media'),
@@ -24,8 +25,17 @@ class PrivacyWireConfig extends ModuleConfig
             'content_banner_button_save' => $this->_("Save preferences"),
             'content_banner_button_toggle' => $this->_("Toggle options"),
             'content_banner_save_message' => $this->_("Your cookie preferences have been saved."),
+            'content_banner_button_all_instead_toggle' => false,
             'textformatter_choose_label' => $this->_("Show or edit my Cookie Consent"),
-            'use_procache_minification' => true
+            'use_procache_minification' => true,
+            'trigger_custom_js_function' => "",
+            'messageTimeout' => 1500,
+            'add_basic_css_styling' => true,
+            'ask_consent_message' => $this->_("To load this element, it is required to consent to the following cookie category: {category}."),
+            'ask_content_button_label' => $this->_("Load {category} cookies"),
+            'banner_header_tag' => 'header',
+            'alternate_banner_template' => '',
+            'render_manually' => false,
         ];
     }
 
@@ -49,6 +59,7 @@ class PrivacyWireConfig extends ModuleConfig
         $f->label = $this->_('Cookie Groups');
         $f->options = [
             "necessary" => $this->_("Necessary Cookies"),
+            "functional" => $this->_("Functional Cookies"),
             "all" => $this->_("All Cookies"),
             "statistics" => $this->_("Statistics"),
             'marketing' => $this->_("Marketing"),
@@ -77,6 +88,15 @@ class PrivacyWireConfig extends ModuleConfig
         $f->attr('name', 'cookies_necessary_label');
         $f->label = $this->_('Necessary Cookies: Label');
         $f->showIf("cookie_groups=necessary");
+        $f->useLanguages = true;
+        $f->columnWidth = 25;
+        $cookieFieldset->add($f);
+
+        // label for cookie group: functional
+        $f = $this->modules->get('InputfieldText');
+        $f->attr('name', 'cookies_functional_label');
+        $f->label = $this->_('Functional Cookies: Label');
+        $f->showIf("cookie_groups=functional");
         $f->useLanguages = true;
         $f->columnWidth = 25;
         $cookieFieldset->add($f);
@@ -144,7 +164,7 @@ class PrivacyWireConfig extends ModuleConfig
         $f = $this->modules->get('InputfieldText');
         $f->attr('name', 'content_banner_privacy_title');
         $f->label = $this->_('Privacy Policy link title');
-        $f->showIf = "content_banner_privacy_link!=''";
+        //$f->showIf = "content_banner_privacy_link!=''";
         $f->useLanguages = true;
         $f->columnWidth = 50;
         $content->add($f);
@@ -162,7 +182,7 @@ class PrivacyWireConfig extends ModuleConfig
         $f = $this->modules->get('InputfieldText');
         $f->attr('name', 'content_banner_imprint_title');
         $f->label = $this->_('Imprint link title');
-        $f->showIf = "content_banner_imprint_link!=''";
+        //$f->showIf = "content_banner_imprint_link!=''";
         $f->useLanguages = true;
         $f->columnWidth = 50;
         $content->add($f);
@@ -216,13 +236,51 @@ class PrivacyWireConfig extends ModuleConfig
         $f->columnWidth = 34;
         $content->add($f);
 
-        // Button Label: Saved Message
+        // Saved Message Text
         $f = $this->modules->get('InputfieldText');
         $f->attr('name', 'content_banner_save_message');
         $f->label = $this->_('Save Message');
         $f->useLanguages = true;
-        $f->columnWidth = 100;
+        $f->columnWidth = 50;
         $content->add($f);
+
+        // Show another "Accept all" instead of the "Toggle" Button
+        $f = $this->modules->get('InputfieldCheckbox');
+        $f->attr('name', 'content_banner_button_all_instead_toggle');
+        $f->label = $this->_('Choose Window: Show "Accept all" Button instead of "Toggle" Button');
+        $f->checkboxLabel = $this->_('Show "Accept all" Button instead of "Toggle" Button');
+        $f->columnWidth = 50;
+        $content->add($f);
+
+        // fieldset for "Ask for consent" markup
+        $content = $this->modules->get('InputfieldFieldset');
+        $content->label = $this->_("Ask for consent");
+        $inputfields->add($content);
+
+        // ask for consent text field
+        $f = $this->modules->get('InputfieldCKEditor');
+        $f->attr('name', 'ask_consent_message');
+        $f->attr('toolbar', 'Bold, Italic, NumberedList, BulletedList, PWLink, Unlink, PWImage, Table');
+        $f->label = $this->_('Text above Button');
+        $f->description = $this->_("You can insert the current cookie category name by using the placeholder {category}.");
+        $f->useLanguages = true;
+        $f->columnWidth = 50;
+        $content->add($f);
+
+        // Ask for consent Button label
+        $f = $this->modules->get('InputfieldText');
+        $f->attr('name', 'ask_content_button_label');
+        $f->label = $this->_('Button Label');
+        $f->description = $this->_("You can insert the current cookie category name by using the placeholder {category}.");
+        $f->useLanguages = true;
+        $f->columnWidth = 50;
+        $content->add($f);
+
+        // fieldset for modifications - have fun ;-)
+        $content = $this->modules->get('InputfieldFieldset');
+        $content->label = $this->_("Modifications");
+        $inputfields->add($content);
+
 
         // ProCache JS Minification
         $f = $this->modules->get('InputfieldCheckbox');
@@ -231,8 +289,62 @@ class PrivacyWireConfig extends ModuleConfig
         $f->label = $this->_('Use ProCache JS Minification (if available)');
         $f->checkboxLabel = $this->_('Use ProCache JS Minification (if available)');
         $f->columnWidth = 33;
-        $inputfields->add($f);
+        $content->add($f);
 
+        // add basic css styles or not
+        $f = $this->modules->get('InputfieldCheckbox');
+        $f->attr('name', 'add_basic_css_styling');
+        $f->description = $this->_("When enabled, PrivacyWire will automatically include some very basic css styles to the output.");
+        $f->label = $this->_('CSS: Add basic CSS Styling');
+        $f->checkboxLabel = $this->_('Add basic CSS Styling');
+        $f->columnWidth = 33;
+        $content->add($f);
+
+        // Trigger a custom js function
+        $f = $this->modules->get('InputfieldText');
+        $f->attr('name', 'trigger_custom_js_function');
+        $f->label = $this->_('Trigger a custom js function');
+        $f->description = $this->_("When you want to trigger a custom js function after saving the cookie banner, insert the name of the function here");
+        $f->columnWidth = 34;
+        $content->add($f);
+
+        // Message Timeout
+        $f = $this->modules->get('InputfieldInteger');
+        $f->attr('name', 'messageTimeout');
+        $f->label = $this->_('Timeout of showing the success message');
+        $f->description = $this->_("Time in ms for how long the success message should be visible");
+        $f->columnWidth = 33;
+        $content->add($f);
+
+
+
+        // banner header tag
+        $f = $this->modules->get('InputfieldSelect');
+        $f->attr('name', 'banner_header_tag');
+        $f->description = $this->_("Choose between <header> and <div>.");
+        $f->label = $this->_('Banner Header Tag');
+        $f->options = [
+            "header" => $this->_("<header>"),
+            "div" => $this->_("<div>"),
+        ];
+        $f->columnWidth = 33;
+        $content->add($f);
+
+        // alternate banner template
+        $f = $this->modules->get('InputfieldText');
+        $f->attr('name', 'alternate_banner_template');
+        $f->label = $this->_('Alternate Banner Template');
+        $f->description = $this->_("If you want to replace the original banner template (located in site/modules/PrivacyWire/PrivacyWireBanner.php ) insert the alternative file path here (starting from webroot without leading slash )");
+        $f->columnWidth = 34;
+        $content->add($f);
+
+        // render manually
+        $f = $this->modules->get('InputfieldCheckbox');
+        $f->attr('name', 'render_manually');
+        $f->label = $this->_('Render Banner and Header Content Manually');
+        $f->description = $this->_("If you want to render PrivacyWire header and banner content manually instead of letting the module render them for you, check this option.");
+        $f->notes = $this->_("Use `\$modules->get('PrivacyWire')->renderHeadContent()` to render header tags and `\$modules->get('PrivacyWire')->renderBodyContent()` to render body content.");
+        $content->add($f);
 
         return $inputfields;
     }

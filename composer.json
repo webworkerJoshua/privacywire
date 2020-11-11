@@ -1,0 +1,14 @@
+{
+  "name": "blauequelle/privacywire",
+  "license": "GPL-3.0",
+  "type": "pw-module",
+  "authors": [
+    {
+      "name": "blauequelle",
+      "email": "jk@blauequelle.de"
+    }
+  ],
+  "require": {
+    "wireframe-framework/processwire-composer-installer": "^1.0.0"
+  }
+}
