@@ -1,5 +1,8 @@
 # Changelog of PrivacyWire
 
+## 0.3.7
+- Added: Config options to show alternative headline and text elements within the options banner 
+
 ## 0.3.6
 - Added: Config option to prevent automatic rendering.
 - Added: New methods renderHeadContent() and renderBodyContent().

@@ -58,7 +58,7 @@ class PrivacyWireConfig extends ModuleConfig
         // opt-in type
         $f = $this->modules->get('InputfieldAsmSelect');
         $f->attr('name', 'cookie_groups');
-        $f->description = $this->_("Choose, which groups of cookies the user is allowed to choose. When more than the two default groups (all & necessary) are allowed, the option window will be shown to the user.");
+        $f->description = $this->_("Choose, which groups of cookies the user is allowed to choose. If more than the two default groups (all & necessary) are allowed, the option window will be shown to the user.");
         $f->label = $this->_('Cookie Groups');
         $f->options = [
             "necessary" => $this->_("Necessary Cookies"),
@@ -74,7 +74,7 @@ class PrivacyWireConfig extends ModuleConfig
         // respect "do not track"
         $f = $this->modules->get('InputfieldCheckbox');
         $f->attr('name', 'respectDNT');
-        $f->description = $this->_("When enabled, PrivacyWire checks if the users browser sends the DNT-Header. If so, no cookie banner will be shown and the user will be handled like 'Only Necessary Cookies' would be chosen.");
+        $f->description = $this->_("If enabled, PrivacyWire checks if the users browser sends the DNT-Header. If so, no cookie banner will be shown and the user will be handled like 'Only Necessary Cookies' would be chosen.");
         $f->label = $this->_('DNT: Do Not Track');
         $f->checkboxLabel = $this->_('Respect "Do Not Track" Settings from the browser');
         $f->columnWidth = 33;
@@ -152,35 +152,6 @@ class PrivacyWireConfig extends ModuleConfig
         $f->label = $this->_('Banner Text');
         $f->useLanguages = true;
         $f->columnWidth = 50;
-        $content->add($f);
-
-        // banner show details
-        $f = $this->modules->get('InputfieldCheckbox');
-        $f->attr('name', 'content_banner_details_show');
-        $f->description = $this->_("If checked, you will have the possibility to display an detailed text in the options banner where the user can select the cookies allowed. ");
-        $f->label = $this->_('Use detailed text for options banner');
-        $f->checkboxLabel = $this->_('Use detailed text for options banner');
-        $f->columnWidth = 100;
-        $content->add($f);
-
-        // banner details headline (optional)
-        $f = $this->modules->get('InputfieldText');
-        $f->attr('name', 'content_banner_details_title');
-        $f->description = $this->_("Optional: If empty, no headline will be shown in the banner.");
-        $f->label = $this->_('Banner Title Details');
-        $f->showIf = "content_banner_details_show=1";
-        $f->useLanguages = true;
-        $f->columnWidth = 50;
-        $content->add($f);
-
-        // banner details text
-        $f = $this->modules->get('InputfieldCKEditor');
-        $f->attr('name', 'content_banner_details_text');
-        $f->attr('toolbar', 'Bold, Italic, NumberedList, BulletedList, PWLink, Unlink, PWImage, Table');
-        $f->showIf = "content_banner_details_show=1";
-        $f->label = $this->_('Banner Text Details');
-        $f->useLanguages = true;
-        $f->columnWidth = 50;        
         $content->add($f);
 
         // privacy policy url
@@ -284,6 +255,34 @@ class PrivacyWireConfig extends ModuleConfig
         $f->columnWidth = 50;
         $content->add($f);
 
+        // banner show details
+        $f = $this->modules->get('InputfieldCheckbox');
+        $f->attr('name', 'content_banner_details_show');
+        $f->description = $this->_("If enabled, you will have the possibility to display alternative headline and text elements within the options banner where the user can select the cookies allowed.");
+        $f->label = $this->_('Use alternative text and headline for options banner');
+        $f->columnWidth = 100;
+        $content->add($f);
+
+        // banner details headline (optional)
+        $f = $this->modules->get('InputfieldText');
+        $f->attr('name', 'content_banner_details_title');
+        $f->description = $this->_("Optional: If empty, no headline will be shown in the banner.");
+        $f->label = $this->_('Options Banner - Title Details');
+        $f->showIf = "content_banner_details_show=1";
+        $f->useLanguages = true;
+        $f->columnWidth = 50;
+        $content->add($f);
+
+        // banner details text
+        $f = $this->modules->get('InputfieldCKEditor');
+        $f->attr('name', 'content_banner_details_text');
+        $f->attr('toolbar', 'Bold, Italic, NumberedList, BulletedList, PWLink, Unlink, PWImage, Table');
+        $f->showIf = "content_banner_details_show=1";
+        $f->label = $this->_('Options Banner - Text Details');
+        $f->useLanguages = true;
+        $f->columnWidth = 50;
+        $content->add($f);
+
         // fieldset for "Ask for consent" markup
         $content = $this->modules->get('InputfieldFieldset');
         $content->label = $this->_("Ask for consent");
@@ -317,7 +316,7 @@ class PrivacyWireConfig extends ModuleConfig
         // ProCache JS Minification
         $f = $this->modules->get('InputfieldCheckbox');
         $f->attr('name', 'use_procache_minification');
-        $f->description = $this->_("When enabled, PrivacyWire checks if [ProCache](https://processwire.com/store/pro-cache/#procache-css-js-minification-api) is installed and activated. If so, the javascript files will be minified automatically via ProCache.");
+        $f->description = $this->_("If enabled, PrivacyWire checks if [ProCache](https://processwire.com/store/pro-cache/#procache-css-js-minification-api) is installed and activated. If so, the javascript files will be minified automatically via ProCache.");
         $f->label = $this->_('Use ProCache JS Minification (if available)');
         $f->checkboxLabel = $this->_('Use ProCache JS Minification (if available)');
         $f->columnWidth = 33;
@@ -326,7 +325,7 @@ class PrivacyWireConfig extends ModuleConfig
         // add basic css styles or not
         $f = $this->modules->get('InputfieldCheckbox');
         $f->attr('name', 'add_basic_css_styling');
-        $f->description = $this->_("When enabled, PrivacyWire will automatically include some very basic css styles to the output.");
+        $f->description = $this->_("If enabled, PrivacyWire will automatically include some very basic css styles to the output.");
         $f->label = $this->_('CSS: Add basic CSS Styling');
         $f->checkboxLabel = $this->_('Add basic CSS Styling');
         $f->columnWidth = 33;
@@ -336,7 +335,7 @@ class PrivacyWireConfig extends ModuleConfig
         $f = $this->modules->get('InputfieldText');
         $f->attr('name', 'trigger_custom_js_function');
         $f->label = $this->_('Trigger a custom js function');
-        $f->description = $this->_("When you want to trigger a custom js function after saving the cookie banner, insert the name of the function here");
+        $f->description = $this->_("If you want to trigger a custom js function after saving the cookie banner, insert the name of the function here");
         $f->columnWidth = 34;
         $content->add($f);
 
