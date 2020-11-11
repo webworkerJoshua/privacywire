@@ -15,6 +15,9 @@ class PrivacyWireConfig extends ModuleConfig
             'cookies_external_media_label' => $this->_('External Media'),
             'content_banner_title' => $this->_("This website is using cookies to provide a good browsing experience"),
             'content_banner_text' => $this->_("These include essential cookies that are necessary for the operation of the site, as well as others that are used only for anonymous statistical purposes, for comfort settings or to display personalized content. You can decide for yourself which categories you want to allow. Please note that based on your settings, not all functions of the website may be available."),
+            'content_banner_details_show' => false,
+            'content_banner_details_title' => $this->_("This is how and why we use cookies"),
+            'content_banner_details_text' => $this->_("Here you can store more detailed information on the cookies used or describe individual cookies in depth."),
             'content_banner_privacy_link' => null,
             'content_banner_privacy_title' => $this->_("Privacy Policy"),
             'content_banner_imprint_link' => null,
@@ -149,6 +152,35 @@ class PrivacyWireConfig extends ModuleConfig
         $f->label = $this->_('Banner Text');
         $f->useLanguages = true;
         $f->columnWidth = 50;
+        $content->add($f);
+
+        // banner show details
+        $f = $this->modules->get('InputfieldCheckbox');
+        $f->attr('name', 'content_banner_details_show');
+        $f->description = $this->_("If checked, you will have the possibility to display an detailed text in the options banner where the user can select the cookies allowed. ");
+        $f->label = $this->_('Use detailed text for options banner');
+        $f->checkboxLabel = $this->_('Use detailed text for options banner');
+        $f->columnWidth = 100;
+        $content->add($f);
+
+        // banner details headline (optional)
+        $f = $this->modules->get('InputfieldText');
+        $f->attr('name', 'content_banner_details_title');
+        $f->description = $this->_("Optional: If empty, no headline will be shown in the banner.");
+        $f->label = $this->_('Banner Title Details');
+        $f->showIf = "content_banner_details_show=1";
+        $f->useLanguages = true;
+        $f->columnWidth = 50;
+        $content->add($f);
+
+        // banner details text
+        $f = $this->modules->get('InputfieldCKEditor');
+        $f->attr('name', 'content_banner_details_text');
+        $f->attr('toolbar', 'Bold, Italic, NumberedList, BulletedList, PWLink, Unlink, PWImage, Table');
+        $f->showIf = "content_banner_details_show=1";
+        $f->label = $this->_('Banner Text Details');
+        $f->useLanguages = true;
+        $f->columnWidth = 50;        
         $content->add($f);
 
         // privacy policy url

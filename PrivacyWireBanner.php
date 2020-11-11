@@ -26,6 +26,15 @@ if ($this->wire('languages')) {
     $lang = '';
 }
 
+// Detailed Text for options banner 
+if ($module->content_banner_details_show == true) {
+    $optionsTitle = $module->get("content_banner_details_title$lang|content_banner_details_title");
+    $optionsText = $module->get("content_banner_details_text$lang|content_banner_details_text");
+} else {
+    $optionsTitle = $module->get("content_banner_title$lang|content_banner_title");
+    $optionsText = $module->get("content_banner_text$lang|content_banner_text");
+}
+
 $privacyPage = (!empty($module->get("content_banner_privacy_link$lang|content_banner_privacy_link"))) ? $module->get("content_banner_privacy_link$lang|content_banner_privacy_link") : null;
 
 $imprintPage = (!empty($module->get("content_banner_imprint_link$lang|content_banner_imprint_link"))) ? $module->get("content_banner_imprint_link$lang|content_banner_imprint_link") : null;
@@ -57,11 +66,11 @@ $imprintPage = (!empty($module->get("content_banner_imprint_link$lang|content_ba
 
         </div>
         <div class="privacywire privacywire-options">
-            <?php if (!empty($module->content_banner_title)) {
-                echo "<{$module->banner_header_tag} class='privacywire-header'>{$module->get("content_banner_title$lang|content_banner_title")}</{$module->banner_header_tag}>";
+            <?php if (!empty($optionsTitle)) {
+                echo "<{$module->banner_header_tag} class='privacywire-header'>{$optionsTitle}</{$module->banner_header_tag}>";
             }?>
             <div class="privacywire-body">
-                <div class="privacywire-text"><?php echo $module->get("content_banner_text$lang|content_banner_text"); ?></div>
+                <div class="privacywire-text"><?php echo $optionsText; ?></div>
                 <div class="privacywire-text">
                     <ul>
                         <li <?php echo (!$showNecessaryButton) ? "hidden" : ""; ?>>
