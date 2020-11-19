@@ -25,7 +25,7 @@ class TextformatterPrivacyWire extends Textformatter implements Module
             'summary' => "PrivacyWire Textformatter to render privacy options via shortcode [[privacywire-choose-cookies]]",
             'author' => 'blaueQuelle',
             'href' => "https://github.com/blaueQuelle/privacywire",
-            'version' => 7,
+            'version' => 8,
             'requires' => [
                 "PHP>=7.2",
                 "ProcessWire>=3.0.110"
@@ -35,20 +35,31 @@ class TextformatterPrivacyWire extends Textformatter implements Module
 
     public function formatValue(Page $page, Field $field, &$str)
     {
-        $privacyWire = $this->modules->get("PrivacyWire");
+        // Replace privacywire-choose-cookies with button element
+        $tag_search = $this->open_tag . "privacywire-choose-cookies" . $this->close_tag;
+        if (strpos($str, $tag_search) !== false) {
+            $privacyWire = $this->modules->get("PrivacyWire");
 
-        // Multi Language Support
-        if ($this->wire('languages')) {
-            $userLanguage = $this->wire('user')->language;
-            $lang = $userLanguage->isDefault() ? '' : "__$userLanguage->id";
-        } else {
-            $lang = '';
+            // Multi Language Support
+            if ($this->wire('languages')) {
+                $userLanguage = $this->wire('user')->language;
+                $lang = $userLanguage->isDefault() ? '' : "__$userLanguage->id";
+            } else {
+                $lang = '';
+            }
+
+            $tag_replace = "<button class='button privacywire-show-options'>{$privacyWire->get("textformatter_choose_label$lang|textformatter_choose_label")}</button>";
+            $str = str_replace($tag_search, $tag_replace, $str);
         }
 
-        $tag_search = $this->open_tag . "privacywire-choose-cookies" . $this->close_tag;
-
-        $tag_replace = "<button class='button privacywire-show-options'>{$privacyWire->get("textformatter_choose_label$lang|textformatter_choose_label")}</button>";
-
-        $str = str_replace($tag_search, $tag_replace, $str);
+        // Optional: enable PrivacyWire support for embedded media
+        if ($this->video_category && strpos($str, 'www.youtube.com/embed/') !== false) {
+            if (preg_match_all('/\<iframe.*?src=("|\')(?:https?:)\/\/(?:www\.youtube|player\.vimeo)\..*?\1.*?\<\/iframe\>/is', $str, $matches)) {
+                foreach ($matches[0] as $match) {
+                    $new_match = str_replace(' src=', ' data-category="' . $this->video_category . '" data-ask-consent=1 data-src=', $match);
+                    $str = str_replace($match, $new_match, $str);
+                }
+            }
+        }
     }
 }
