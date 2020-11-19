@@ -107,6 +107,10 @@ const priw_handleButtons = function () {
 
 }
 
+const priw_applyConsentToDisallowedElements = function () {
+
+}
+
 const priw_showOptions = function () {
     priw_wrapper.classList.remove('show-banner');
     priw_wrapper.classList.add("show-options");
@@ -139,6 +143,12 @@ const priw_trigger_custom_function = function () {
 
 const priw_updateAllElements = function (force = false) {
     const elements = document.querySelectorAll("[data-category]");
+    const consentWindows = document.querySelectorAll(".privacywire-ask-consent");
+
+    if (consentWindows.length > 0) {
+        priw_removeOldConsentWindows(consentWindows);
+    }
+
     if (elements.length === 0) {
         return;
     }
@@ -163,6 +173,25 @@ const priw_updateAllElements = function (force = false) {
     });
 }
 
+const priw_removeOldConsentWindows = function (consentWindows) {
+    consentWindows.forEach(function (el) {
+        const {dataset} = el;
+        const category = dataset.disallowedConsentCategory;
+        let allowed = false;
+        if (category) {
+            for (const consentCategory in priw_consent) {
+                if (consentCategory === category && priw_consent[consentCategory] === true) {
+                    allowed = true;
+                    break;
+                }
+            }
+        }
+        if (allowed) {
+            el.remove();
+        }
+    });
+}
+
 const priw_updateDisallowedElement = function (el) {
     const {dataset} = el;
     if (!dataset.askConsent || dataset.askConsentRendered === "1") {
@@ -176,6 +205,7 @@ const priw_updateDisallowedElement = function (el) {
     let newEl = document.createElement("div");
     newEl.classList.add("privacywire-ask-consent");
     newEl.classList.add("consent-category-" + category);
+    newEl.dataset.disallowedConsentCategory = category;
     newEl.innerHTML = priw_ask_consent_blueprint.innerHTML.formatUnicorn({
         category: categoryLabel,
         categoryname: category

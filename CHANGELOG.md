@@ -1,5 +1,8 @@
 # Changelog of PrivacyWire
 
+## 0.3.8
+- Fixed: Bug with ask consent window when cookies get accepted via the main banner
+
 ## 0.3.7
 - Added: Config options to show alternative headline and text elements within the options banner 
 
