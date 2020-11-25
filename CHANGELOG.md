@@ -1,5 +1,8 @@
 # Changelog of PrivacyWire
 
+## 0.3.9 
+- Added: Textformatter support for TextformatterVideoEmbed (Thank you @teppokoivula !)
+
 ## 0.3.8
 - Fixed: Bug with ask consent window when cookies get accepted via the main banner
 
