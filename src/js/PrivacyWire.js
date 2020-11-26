@@ -220,23 +220,18 @@ const priw_updateDisallowedElement = function (el) {
 
 const priw_updateAllowedElement = function (el) {
     const {dataset} = el;
-    const parent = el.parentElement;
+    el.removeAttribute("data-category");
+    el.removeAttribute("data-ask-consent");
+    el.removeAttribute("data-ask-consent-rendered");
+    el.type = dataset.type;
 
-    let clonedEl = el.cloneNode(true);
-    clonedEl.removeAttribute("data-category");
-    clonedEl.removeAttribute("data-ask-consent");
-    clonedEl.removeAttribute("data-ask-consent-rendered");
-    clonedEl.type = dataset.type;
     if (dataset.src) {
-        clonedEl.src = dataset.src;
+        el.src = dataset.src;
     }
 
     if (dataset.srcset) {
-        clonedEl.srcset = dataset.srcset;
+        el.srcset = dataset.srcset;
     }
-
-    parent.insertBefore(clonedEl, el);
-    parent.removeChild(el);
 }
 
 const priw_handleExternalTriggers = function () {

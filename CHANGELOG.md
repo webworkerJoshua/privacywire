@@ -1,5 +1,8 @@
 # Changelog of PrivacyWire
 
+## 0.4.1
+- Changed: Optimized "priw_updateAllowedElement"
+
 ## 0.4.0
 - Fixed: Bug during cloning allowed elements after giving consent
 
