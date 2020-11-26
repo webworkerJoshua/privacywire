@@ -1,5 +1,8 @@
 # Changelog of PrivacyWire
 
+## 0.4.0
+- Fixed: Bug during cloning allowed elements after giving consent
+
 ## 0.3.9 
 - Added: Textformatter support for TextformatterVideoEmbed (Thank you @teppokoivula !)
 

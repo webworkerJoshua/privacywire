@@ -221,37 +221,21 @@ const priw_updateDisallowedElement = function (el) {
 const priw_updateAllowedElement = function (el) {
     const {dataset} = el;
     const parent = el.parentElement;
-    const newEl = document.createElement(el.tagName);
-    for (const key of Object.keys(dataset)) {
-        newEl.dataset[key] = el.dataset[key];
-    }
-    newEl.removeAttribute("data-category");
-    newEl.removeAttribute("data-ask-consent-rendered");
-    newEl.type = dataset.type;
-    newEl.innerText = el.innerText;
-    newEl.text = el.text;
-    newEl.class = el.class;
-    newEl.style.cssText = el.style.cssText;
-    newEl.id = el.id;
-    newEl.name = el.name;
-    newEl.defer = el.defer;
-    newEl.async = el.async;
 
-    if (el.tagName.toLowerCase() === "iframe") {
-        newEl.width = el.width;
-        newEl.height = el.height;
-        newEl.setAttribute("frameborder", el.getAttribute("frameborder"));
-    }
-
+    let clonedEl = el.cloneNode(true);
+    clonedEl.removeAttribute("data-category");
+    clonedEl.removeAttribute("data-ask-consent");
+    clonedEl.removeAttribute("data-ask-consent-rendered");
+    clonedEl.type = dataset.type;
     if (dataset.src) {
-        newEl.src = dataset.src;
+        clonedEl.src = dataset.src;
     }
 
     if (dataset.srcset) {
-        newEl.srcset = dataset.srcset;
+        clonedEl.srcset = dataset.srcset;
     }
 
-    parent.insertBefore(newEl, el);
+    parent.insertBefore(clonedEl, el);
     parent.removeChild(el);
 }
 
