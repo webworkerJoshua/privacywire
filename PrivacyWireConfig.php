@@ -61,9 +61,9 @@ class PrivacyWireConfig extends ModuleConfig
         $f->description = $this->_("Choose, which groups of cookies the user is allowed to choose. If more than the two default groups (all & necessary) are allowed, the option window will be shown to the user.");
         $f->label = $this->_('Cookie Groups');
         $f->options = [
+            "all" => $this->_("All Cookies"),
             "necessary" => $this->_("Necessary Cookies"),
             "functional" => $this->_("Functional Cookies"),
-            "all" => $this->_("All Cookies"),
             "statistics" => $this->_("Statistics"),
             'marketing' => $this->_("Marketing"),
             'external_media' => $this->_("External Media")
