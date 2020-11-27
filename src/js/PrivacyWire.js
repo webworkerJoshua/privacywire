@@ -107,10 +107,6 @@ const priw_handleButtons = function () {
 
 }
 
-const priw_applyConsentToDisallowedElements = function () {
-
-}
-
 const priw_showOptions = function () {
     priw_wrapper.classList.remove('show-banner');
     priw_wrapper.classList.add("show-options");
@@ -219,19 +215,51 @@ const priw_updateDisallowedElement = function (el) {
 }
 
 const priw_updateAllowedElement = function (el) {
+    if (el.tagName.toLowerCase() === "script") {
+        priw_updateAllowedScripts(el);
+    } else {
+        priw_updateAllowedOtherElements(el);
+    }
+}
+
+const priw_updateAllowedOtherElements = function (el) {
     const {dataset} = el;
-    el.removeAttribute("data-category");
+    el.type = dataset.type;
+    el.src = dataset.src;
+    el.srcset = dataset.srcset;
+    el = priw_removeUnusedAttributes(el);
+}
+
+const priw_updateAllowedScripts = function (el) {
+    const {dataset} = el;
+    const parent = el.parentElement;
+
+    let newEl = document.createElement(el.tagName);
+    for (const key of Object.keys(dataset)) {
+        newEl.dataset[key] = el.dataset[key];
+    }
+    newEl.type = dataset.type;
+    if (dataset.src) {
+        newEl.src = dataset.src;
+    }
+    newEl.innerText = el.innerText;
+    newEl.id = el.id;
+    newEl.defer = el.defer;
+    newEl.async = el.async;
+    newEl = priw_removeUnusedAttributes(newEl);
+
+    parent.insertBefore(newEl, el);
+    parent.removeChild(el);
+}
+
+const priw_removeUnusedAttributes = function (el) {
     el.removeAttribute("data-ask-consent");
     el.removeAttribute("data-ask-consent-rendered");
-    el.type = dataset.type;
-
-    if (dataset.src) {
-        el.src = dataset.src;
-    }
-
-    if (dataset.srcset) {
-        el.srcset = dataset.srcset;
-    }
+    el.removeAttribute("data-category");
+    el.removeAttribute("data-src");
+    el.removeAttribute("data-srcset");
+    el.removeAttribute("data-type");
+    return el;
 }
 
 const priw_handleExternalTriggers = function () {
