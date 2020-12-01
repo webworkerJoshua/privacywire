@@ -25,7 +25,7 @@ class TextformatterPrivacyWire extends Textformatter implements Module
             'summary' => "PrivacyWire Textformatter to render privacy options via shortcode [[privacywire-choose-cookies]]",
             'author' => 'blaueQuelle',
             'href' => "https://github.com/blaueQuelle/privacywire",
-            'version' => 8,
+            'version' => 9,
             'requires' => [
                 "PHP>=7.2",
                 "ProcessWire>=3.0.110"
@@ -48,7 +48,7 @@ class TextformatterPrivacyWire extends Textformatter implements Module
         }
 
         // Optional: enable PrivacyWire support for embedded media
-        if ($this->video_category && (strpos($str, 'www.youtube.com/embed/') !== false || strpos($str, 'player.vimeo.com') !== false)) {
+        if ($this->video_category && (strpos($str, 'www.youtube.com/embed/') !== false || strpos($str, 'www.youtube-nocookie.com/embed/') !== false || strpos($str, 'player.vimeo.com') !== false)) {
             if (preg_match_all('/\<iframe.*?src=("|\')(?:https?:)\/\/(?:www\.youtube|player\.vimeo)\..*?\1.*?\<\/iframe\>/is', $str, $matches)) {
                 foreach ($matches[0] as $match) {
                     $new_match = str_replace(' src=', ' data-category="' . $this->video_category . '" data-ask-consent=1 data-src=', $match);

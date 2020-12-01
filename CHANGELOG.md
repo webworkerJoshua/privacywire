@@ -1,5 +1,8 @@
 # Changelog of PrivacyWire
 
+## 0.4.3
+- Fixed: Textformatter support for TextformatterVideoEmbed now also works for YouTube no-cookie mode
+
 ## 0.4.2
 - Fixed: Bug during cloning allowed script elements after giving consent
 
