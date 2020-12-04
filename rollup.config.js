@@ -35,7 +35,7 @@ export default [
     },
     plugins: [
       ignoreImport({
-        extensions: ['.scss']
+        extensions: ['.css']
       }),
       babel({
         exclude: 'node_modules/**',

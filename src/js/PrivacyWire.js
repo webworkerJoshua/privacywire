@@ -1,4 +1,4 @@
-import '../scss/PrivacyWire.scss';
+import '../../css/PrivacyWire.css';
 
 // NodeList.forEach Polyfill for old browsers
 if (window.NodeList && !NodeList.prototype.forEach) {

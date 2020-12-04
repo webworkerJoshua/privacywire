@@ -1,5 +1,9 @@
 # Changelog of PrivacyWire
 
+## 0.4.4
+- Added methods: getInlineJavaScriptTag & getPathToCssFile
+- Added: CSS file instead of SCSS for improved manual rendering options
+
 ## 0.4.3
 - Fixed: Textformatter support for TextformatterVideoEmbed now also works for YouTube no-cookie mode
 

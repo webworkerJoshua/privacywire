@@ -25,7 +25,7 @@ class PrivacyWire extends WireData implements Module, ConfigurableModule
             'summary' => "This module adds management options for GDPR-relevant elements (loading maps, videos etc. only after accepting external media) and cookies.",
             'author' => "blaueQuelle",
             'href' => "https://github.com/blaueQuelle/privacywire",
-            'version' => 43,
+            'version' => 44,
             'autoload' => true,
             'singular' => true,
             'requires' => ["PHP>=7.2", "ProcessWire>=3.0.110"],
@@ -105,9 +105,14 @@ class PrivacyWire extends WireData implements Module, ConfigurableModule
         $event->return = str_replace("</body>", "{$bodyContent}</body>", $event->return);
     }
 
+    public function ___getInlineJavaScriptTag()
+    {
+        return "<script>var PrivacyWireSettings={$this->getInlineJs()};</script>";
+    }
+
     public function renderHeadContent()
     {
-        $headContent = "<script>var PrivacyWireSettings={$this->getInlineJs()};</script>";
+        $headContent = $this->getInlineJavaScriptTag();
         $headContent .= ($this->use_procache_minification && $this->wire('modules')->isInstalled('ProCache') && $this->wire('modules')->get('ProCache')) ? "<script defer src='{$this->wire('modules')->get('ProCache')->js($this->getJsFile())}'></script>" : "<script defer src='{$this->getJsFile()}'></script>";
         return $headContent;
     }
@@ -115,6 +120,11 @@ class PrivacyWire extends WireData implements Module, ConfigurableModule
     public function renderBodyContent()
     {
         return wireRenderFile($this->getBannerTemplateFile(), ['module' => $this]);
+    }
+
+    public function ___getPathToCssFile($min = false)
+    {
+        return $this->wire('config')->paths->$this . "css/PrivacyWire.css";
     }
 
     public function ___install()
