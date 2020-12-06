@@ -1,350 +1,426 @@
-import '../../css/PrivacyWire.css';
+import '../css/PrivacyWire.css'
+import "./string-formatter"
 
-// NodeList.forEach Polyfill for old browsers
-if (window.NodeList && !NodeList.prototype.forEach) {
-    NodeList.prototype.forEach = Array.prototype.forEach;
-}
+class PrivacyWire {
+    constructor(PrivacyWireSettings) {
+        this.name = "privacywire"
+        this.cookieGroups = Object.freeze([
+            "necessary",
+            "functional",
+            "statistics",
+            "marketing",
+            "external_media"
+        ])
+        this.settings = this.sanitizeSettings(PrivacyWireSettings)
+        this.userConsent = this.sanitizeStoredConsent()
+        this.elements = this.initiateElements()
+        this.syncConsentToCheckboxes()
 
-// String formatter to output opt-in message of disabled elements
-// source: https://stackoverflow.com/a/18234317
-String.prototype.formatUnicorn = String.prototype.formatUnicorn ||
-    function () {
-        "use strict";
-        var str = this.toString();
-        if (arguments.length) {
-            var t = typeof arguments[0];
-            var key;
-            var args = ("string" === t || "number" === t) ?
-                Array.prototype.slice.call(arguments)
-                : arguments[0];
-
-            for (key in args) {
-                str = str.replace(new RegExp("\\{" + key + "\\}", "gi"), args[key]);
-            }
+        if (!this.checkForValidConsent()) {
+            this.showBanner()
         }
-
-        return str;
-    };
-
-
-/* ######### initiate functions  ######### */
-
-const priw_showBanner = function () {
-    priw_wrapper.classList.add("show-banner");
-}
-
-const priw_hideBanner = function () {
-    priw_wrapper.classList.remove('show-banner');
-    priw_wrapper.classList.remove('show-options');
-}
-
-const priw_setOnlyNecessaryConsent = function () {
-    priw_consent.necessary = true;
-    priw_consent.functional = false;
-    priw_consent.statistics = false;
-    priw_consent.marketing = false;
-    priw_consent.external_media = false;
-}
-
-const priw_handleButtons = function () {
-
-    priw_btn_allowAll.forEach(function (button) {
-        button.onclick = function () {
-            priw_consent.necessary = true;
-
-            priw_consent.functional = true;
-            priw_btns_options.functional.checked = true;
-
-            priw_consent.statistics = true;
-            priw_btns_options.statistics.checked = true;
-
-            priw_consent.marketing = true;
-            priw_btns_options.marketing.checked = true;
-
-            priw_consent.external_media = true;
-            priw_btns_options.external_media.checked = true;
-
-            priw_savePreferences();
-        }
-    });
-
-    priw_btn_allowNecessary.onclick = function () {
-        priw_setOnlyNecessaryConsent();
-        priw_savePreferences();
+        this.checkElementsWithRequiredConsent()
+        this.handleButtons()
     }
 
-    priw_btn_choose.onclick = function () {
-        priw_showOptions();
-    };
 
-    priw_btn_toggle.onclick = function () {
-        priw_btn_options.forEach(function (el) {
-            el.checked = priw_toggle_to_status;
-        });
-        priw_toggle_to_status = !priw_toggle_to_status;
-    };
+    /**
+     * Sanitize the inline script settings
+     * @param {Object} PrivacyWireSettings - The inline script settings container
+     * @returns {Object} Sanitized object with the settings
+     */
+    sanitizeSettings(PrivacyWireSettings) {
+        let settings = {}
+        settings.version = parseInt(PrivacyWireSettings.version)
+        settings.dnt = Boolean(parseInt(PrivacyWireSettings.dnt))
+        settings.customFunction = `${PrivacyWireSettings.customFunction}`
+        settings.messageTimeout = parseInt(PrivacyWireSettings.messageTimeout)
+        settings.consentByClass = Boolean(parseInt(PrivacyWireSettings.consentByClass))
+        settings.cookieGroups = {}
 
-    priw_btn_save.onclick = function () {
-        priw_consent.necessary = true;
-        priw_consent.functional = priw_btns_options.functional.checked;
-        priw_consent.statistics = priw_btns_options.statistics.checked;
-        priw_consent.marketing = priw_btns_options.marketing.checked;
-        priw_consent.external_media = priw_btns_options.external_media.checked;
-        priw_savePreferences();
-    };
+        for (const key of this.cookieGroups) {
+            settings.cookieGroups[key] = `${PrivacyWireSettings.cookieGroups[key]}`
+        }
 
-    if (priw_btn_consent_btns) {
-        priw_btn_consent_btns.forEach(function (button) {
-            const {dataset} = button;
-            button.onclick = function () {
-                priw_btns_options[dataset.consentCategory].checked = 1;
-                priw_consent[dataset.consentCategory] = true;
-                priw_savePreferences();
-                button.parentElement.remove();
-            };
+        return settings
+    }
+
+    /**
+     * Sanitize stored consent from LocalStorage
+     * @returns {Object} either empty object or sanitized stored consent object if version matches with settings version
+     */
+    sanitizeStoredConsent() {
+        if (!window.localStorage.getItem(this.name)) {
+            return this.getDefaultConsent()
+        }
+
+        const storedConsentRaw = JSON.parse(window.localStorage.getItem(this.name))
+        if (parseInt(storedConsentRaw.version) !== this.settings.version) {
+            return this.getDefaultConsent()
+        }
+        let storedConsent = {}
+        storedConsent.version = parseInt(storedConsentRaw.version)
+        storedConsent.cookieGroups = {}
+
+        for (const key of this.cookieGroups) {
+            storedConsent.cookieGroups[key] = Boolean(storedConsentRaw.cookieGroups[key])
+        }
+
+        return storedConsent
+
+    }
+
+    /**
+     * Get default Consent object
+     * @returns {Object} Consent object with only necessary allowed
+     */
+    getDefaultConsent() {
+        let consent = {}
+        consent.version = 0
+        consent.cookieGroups = {}
+        for (const key of this.cookieGroups) {
+            consent.cookieGroups[key] = (key === "necessary")
+        }
+        return consent
+    }
+
+    initiateElements() {
+        let elements = {}
+        elements.banner = {}
+        elements.banner.wrapper = document.getElementById("privacywire-wrapper")
+        elements.banner.intro = elements.banner.wrapper.getElementsByClassName("privacywire-banner")
+        elements.banner.options = elements.banner.wrapper.getElementsByClassName("privacywire-options")
+        elements.banner.message = elements.banner.wrapper.getElementsByClassName("privacywire-message")
+
+        elements.buttons = {}
+        elements.buttons.acceptAll = elements.banner.wrapper.getElementsByClassName("allow-all")
+        elements.buttons.acceptNecessary = elements.banner.wrapper.getElementsByClassName("allow-necessary")
+        elements.buttons.choose = elements.banner.wrapper.getElementsByClassName("choose")
+        elements.buttons.toggle = elements.banner.wrapper.getElementsByClassName("toggle")
+        elements.buttons.save = elements.banner.wrapper.getElementsByClassName("save")
+        elements.buttons.askForConsent = document.getElementsByClassName("privacywire-consent-button")
+        elements.buttons.externalTrigger = document.getElementsByClassName("privacywire-show-options")
+
+        elements.checkboxes = {}
+        for (const key of this.cookieGroups) {
+            if (key === "necessary") {
+                continue
+            }
+            elements.checkboxes[key] = document.getElementById(key)
+        }
+
+        elements.blueprint = document.getElementById("privacywire-ask-consent-blueprint")
+
+        elements.elementsWithRequiredConsent = (this.settings.consentByClass === true) ? document.getElementsByClassName("require-consent") : document.querySelectorAll("[data-category]")
+
+        elements.consentWindows = document.getElementsByClassName("privacywire-ask-consent")
+
+        return elements
+    }
+
+
+    handleButtons() {
+
+        this.handleButtonAcceptAll()
+        this.handleButtonAcceptNecessary()
+        this.handleButtonChoose()
+        this.handleButtonToggle()
+        this.handleButtonSave()
+
+        this.handleButtonAskForConsent()
+        this.handleButtonExternalTrigger()
+    }
+
+    handleButtonClick(buttons, handler) {
+        if (buttons) {
+            Array.from(buttons).forEach((btn) => {
+                btn.addEventListener("click", handler())
+            })
+        }
+    }
+
+    handleButtonAcceptAll() {
+        if (this.elements.buttons.acceptAll) {
+            Array.from(this.elements.buttons.acceptAll).forEach((btn) => {
+                btn.addEventListener("click", () => {
+                    for (const key of this.cookieGroups) {
+                        this.userConsent.cookieGroups[key] = true
+                    }
+                    this.syncConsentToCheckboxes()
+                    this.saveConsent()
+                })
+            })
+        }
+    }
+
+    handleButtonAcceptNecessary() {
+        if (this.elements.buttons.acceptNecessary) {
+            Array.from(this.elements.buttons.acceptNecessary).forEach((btn) => {
+                btn.addEventListener("click", () => {
+                    this.userConsent = this.getDefaultConsent()
+                    this.syncConsentToCheckboxes()
+                    this.saveConsent()
+                })
+            })
+        }
+    }
+
+    handleButtonChoose() {
+        if (this.elements.buttons.choose) {
+            Array.from(this.elements.buttons.choose).forEach((btn) => {
+                btn.addEventListener("click", () => {
+                    this.showOptions()
+                })
+            })
+        }
+    }
+
+    handleButtonToggle() {
+        if (this.elements.buttons.toggle) {
+            let toggleToStatus = true
+            Array.from(this.elements.buttons.toggle).forEach((btn) => {
+                btn.addEventListener("click", () => {
+                    for (const key in this.elements.checkboxes) {
+                        this.elements.checkboxes[key].checked = toggleToStatus
+                    }
+                    toggleToStatus = !toggleToStatus
+                })
+            })
+        }
+    }
+
+    handleButtonSave() {
+        if (this.elements.buttons.save) {
+            Array.from(this.elements.buttons.save).forEach((btn) => {
+                btn.addEventListener("click", () => {
+                    for (const key of this.cookieGroups) {
+                        if (key === "necessary") {
+                            continue
+                        }
+                        this.userConsent.cookieGroups[key] = this.elements.checkboxes[key].checked
+                    }
+                    this.saveConsent()
+                })
+            })
+        }
+    }
+
+    handleButtonAskForConsent() {
+        if (this.elements.buttons.askForConsent) {
+            const pw = this
+            Array.from(this.elements.buttons.askForConsent).forEach(function (btn) {
+                btn.addEventListener("click", () => {
+                    const {dataset} = btn
+                    pw.userConsent.cookieGroups[dataset.consentCategory] = true
+                    pw.syncConsentToCheckboxes()
+                    pw.saveConsent()
+                    btn.parentElement.remove()
+                })
+            })
+        }
+    }
+
+    handleButtonExternalTrigger() {
+        if (this.elements.buttons.externalTrigger) {
+            Array.from(this.elements.buttons.externalTrigger).forEach((btn) => {
+                btn.addEventListener("click", (event) => {
+                    event.preventDefault()
+                    this.showOptions()
+                })
+
+            })
+        }
+    }
+
+    syncConsentToCheckboxes() {
+        for (const key of this.cookieGroups) {
+            if (key === "necessary") {
+                continue
+            }
+            this.elements.checkboxes[key].checked = this.userConsent.cookieGroups[key]
+        }
+    }
+
+    checkForValidConsent() {
+        if (this.userConsent.version > 0 && this.userConsent.version === this.settings.version) {
+            return true
+        }
+
+        return this.settings.dnt && this.checkForUsersDNT() === true
+
+
+    }
+
+    checkForUsersDNT() {
+        if (this.settings.dnt && navigator.doNotTrack === "1") {
+            this.userConsent = this.getDefaultConsent()
+            this.saveConsent(true)
+
+            return true
+        }
+        return false
+    }
+
+    saveConsent(silent = false) {
+        this.userConsent.version = this.settings.version
+        window.localStorage.removeItem(this.name)
+        window.localStorage.setItem(this.name, JSON.stringify(this.userConsent))
+        this.hideBannerAndOptions()
+
+        if (!silent) {
+            this.showMessage()
+        }
+
+        this.checkElementsWithRequiredConsent()
+        this.triggerCustomFunction()
+
+    }
+
+    triggerCustomFunction() {
+        if (this.settings.customFunction.length && typeof window[this.settings.customFunction] === "function") {
+            window[this.settings.customFunction]()
+        }
+    }
+
+    hideBannerAndOptions() {
+        this.elements.banner.wrapper.classList.remove("show-banner", "show-options")
+    }
+
+    showBanner() {
+        this.elements.banner.wrapper.classList.add("show-banner")
+    }
+
+    showOptions() {
+        this.elements.banner.wrapper.classList.remove("show-banner")
+        this.elements.banner.wrapper.classList.add("show-options")
+    }
+
+    showMessage() {
+        this.elements.banner.wrapper.classList.add("show-message")
+        setTimeout(() => {
+            this.elements.banner.wrapper.classList.remove("show-message")
+        }, this.settings.messageTimeout)
+    }
+
+    checkElementsWithRequiredConsent() {
+
+        if (this.settings.consentByClass === false) {
+            this.elements.elementsWithRequiredConsent = document.querySelectorAll("[data-category]")
+        }
+
+        this.cleanOldConsentWindows()
+        if (this.elements.elementsWithRequiredConsent) {
+            const pw = this
+            Array.from(this.elements.elementsWithRequiredConsent).forEach(function (el) {
+                const category = el.dataset.category
+                if (!category) {
+                    return
+                }
+                let allowed = false
+
+                for (const consentCategory in pw.userConsent.cookieGroups) {
+                    if (consentCategory === category && pw.userConsent.cookieGroups[consentCategory] === true) {
+                        allowed = true
+                        break
+                    }
+                }
+                if (!allowed) {
+                    pw.updateDisallowedElement(el)
+                    return
+                }
+                pw.updateAllowedElement(el)
+            })
+        }
+    }
+
+    cleanOldConsentWindows() {
+        if (this.elements.consentWindows) {
+            Array.from(this.elements.consentWindows).forEach((el) => {
+                const {dataset} = el
+                const category = dataset.disallowedConsentCategory
+                let allowed = false
+
+                for (const consentCategory in this.userConsent.cookieGroups) {
+                    if (consentCategory === category && this.userConsent.cookieGroups[consentCategory] === true) {
+                        allowed = true
+                        break
+                    }
+                }
+                if (allowed) {
+                    el.remove()
+                }
+            })
+        }
+    }
+
+    updateDisallowedElement(el) {
+        const {dataset} = el
+        if (!dataset.askConsent || dataset.askConsentRendered === "1") {
+            return
+        }
+
+        const category = dataset.category
+        const categoryLabel = this.settings.cookieGroups[category]
+
+        let newEl = document.createElement("div")
+        newEl.classList.add("privacywire-ask-consent", "consent-category-" + category)
+        newEl.dataset.disallowedConsentCategory = category
+        newEl.innerHTML = this.elements.blueprint.innerHTML.formatUnicorn({
+            category: categoryLabel,
+            categoryname: category
         })
+        el.insertAdjacentElement('afterend', newEl)
+        el.dataset.askConsentRendered = "1"
     }
 
-}
-
-const priw_showOptions = function () {
-    priw_wrapper.classList.remove('show-banner');
-    priw_wrapper.classList.add("show-options");
-}
-
-const priw_showMessage = function () {
-    priw_wrapper.classList.add('show-message');
-    setTimeout(function () {
-        priw_wrapper.classList.remove('show-message');
-    }, priw_settings.msgTimeout);
-}
-
-const priw_savePreferences = function (silent = false) {
-    priw_consent.version = priw_settings.version;
-    window.localStorage.setItem(priw, JSON.stringify(priw_consent));
-    priw_hideBanner();
-    if (!silent) {
-        priw_showMessage();
-    }
-
-    priw_updateAllElements();
-    priw_trigger_custom_function();
-};
-
-const priw_trigger_custom_function = function () {
-    if (typeof window[priw_settings.cstFn] === 'function') {
-        window[priw_settings.cstFn]();
-    }
-};
-
-const priw_updateAllElements = function (force = false) {
-    const elements = document.querySelectorAll("[data-category]");
-    const consentWindows = document.querySelectorAll(".privacywire-ask-consent");
-
-    if (consentWindows.length > 0) {
-        priw_removeOldConsentWindows(consentWindows);
-    }
-
-    if (elements.length === 0) {
-        return;
-    }
-    elements.forEach(function (el) {
-        const {dataset} = el;
-        const category = dataset.category;
-        let allowed = false;
-        if (category) {
-            for (const consentCategory in priw_consent) {
-                if (consentCategory === category && priw_consent[consentCategory] === true) {
-                    allowed = true;
-                    break;
-                }
-            }
+    updateAllowedElement(el) {
+        if (el.tagName.toLowerCase() === "script") {
+            this.updateAllowedElementScript(el)
+        } else {
+            this.updateAllowedElementOther(el)
         }
-        if (!allowed) {
-            priw_updateDisallowedElement(el);
-            return;
+    }
+
+    updateAllowedElementScript(el) {
+        const {dataset} = el
+
+        let newEl = document.createElement(el.tagName)
+        for (const key of Object.keys(dataset)) {
+            newEl.dataset[key] = el.dataset[key]
         }
-
-        priw_updateAllowedElement(el);
-    });
-}
-
-const priw_removeOldConsentWindows = function (consentWindows) {
-    consentWindows.forEach(function (el) {
-        const {dataset} = el;
-        const category = dataset.disallowedConsentCategory;
-        let allowed = false;
-        if (category) {
-            for (const consentCategory in priw_consent) {
-                if (consentCategory === category && priw_consent[consentCategory] === true) {
-                    allowed = true;
-                    break;
-                }
-            }
+        newEl.type = dataset.type
+        if (dataset.src) {
+            newEl.src = dataset.src
         }
-        if (allowed) {
-            el.remove();
-        }
-    });
-}
-
-const priw_updateDisallowedElement = function (el) {
-    const {dataset} = el;
-    if (!dataset.askConsent || dataset.askConsentRendered === "1") {
-        return;
+        newEl.innerText = el.innerText
+        newEl.id = el.id
+        newEl.defer = el.defer
+        newEl.async = el.async
+        newEl = this.removeUnusedAttributesFromElement(newEl)
+        el.insertAdjacentElement('afterend', newEl)
+        el.remove()
     }
 
-    const parent = el.parentElement;
-    const category = dataset.category;
-    const categoryLabel = priw_settings.cookieGroups[category];
+    updateAllowedElementOther(el) {
+        const {dataset} = el
+        el.type = dataset.type
+        el.src = dataset.src
+        el.srcset = dataset.srcset
+        this.removeUnusedAttributesFromElement(el)
+    }
 
-    let newEl = document.createElement("div");
-    newEl.classList.add("privacywire-ask-consent");
-    newEl.classList.add("consent-category-" + category);
-    newEl.dataset.disallowedConsentCategory = category;
-    newEl.innerHTML = priw_ask_consent_blueprint.innerHTML.formatUnicorn({
-        category: categoryLabel,
-        categoryname: category
-    });
-    parent.insertBefore(newEl, el);
-
-    el.dataset.askConsentRendered = 1;
-    // update the list of buttons
-    priw_btn_consent_btns = document.querySelectorAll(".privacywire-consent-button");
-
-}
-
-const priw_updateAllowedElement = function (el) {
-    if (el.tagName.toLowerCase() === "script") {
-        priw_updateAllowedScripts(el);
-    } else {
-        priw_updateAllowedOtherElements(el);
+    removeUnusedAttributesFromElement(el) {
+        el.removeAttribute("data-ask-consent")
+        el.removeAttribute("data-ask-consent-rendered")
+        el.removeAttribute("data-category")
+        el.removeAttribute("data-src")
+        el.removeAttribute("data-srcset")
+        el.removeAttribute("data-type")
+        el.classList.remove("require-consent")
+        return el
     }
 }
 
-const priw_updateAllowedOtherElements = function (el) {
-    const {dataset} = el;
-    el.type = dataset.type;
-    el.src = dataset.src;
-    el.srcset = dataset.srcset;
-    el = priw_removeUnusedAttributes(el);
-}
-
-const priw_updateAllowedScripts = function (el) {
-    const {dataset} = el;
-    const parent = el.parentElement;
-
-    let newEl = document.createElement(el.tagName);
-    for (const key of Object.keys(dataset)) {
-        newEl.dataset[key] = el.dataset[key];
-    }
-    newEl.type = dataset.type;
-    if (dataset.src) {
-        newEl.src = dataset.src;
-    }
-    newEl.innerText = el.innerText;
-    newEl.id = el.id;
-    newEl.defer = el.defer;
-    newEl.async = el.async;
-    newEl = priw_removeUnusedAttributes(newEl);
-
-    parent.insertBefore(newEl, el);
-    parent.removeChild(el);
-}
-
-const priw_removeUnusedAttributes = function (el) {
-    el.removeAttribute("data-ask-consent");
-    el.removeAttribute("data-ask-consent-rendered");
-    el.removeAttribute("data-category");
-    el.removeAttribute("data-src");
-    el.removeAttribute("data-srcset");
-    el.removeAttribute("data-type");
-    return el;
-}
-
-const priw_handleExternalTriggers = function () {
-    const showButtons = document.querySelectorAll(".privacywire-show-options");
-    if (!showButtons.length) {
-        return;
-    }
-    showButtons.forEach(function (showButton) {
-        showButton.onclick = function (e) {
-            e.preventDefault();
-            priw_showOptions();
-            priw_handleButtons();
-        };
-    });
-}
-
-const priw_removeDeprecatedConsent = function () {
-    window.localStorage.removeItem(priw);
-    priw_setOnlyNecessaryConsent();
-}
-
-/* ######### initiate variables  ######### */
-
-let priw_settings = {};
-priw_settings.dnt = Boolean(parseInt(PrivacyWireSettings.dnt));
-priw_settings.version = parseInt(PrivacyWireSettings.version);
-priw_settings.cstFn = PrivacyWireSettings.customFunction;
-priw_settings.msgTimeout = parseInt(PrivacyWireSettings.messageTimeout) ?? 1500;
-priw_settings.cookieGroups = PrivacyWireSettings.cookieGroups ?? {};
-
-let priw = "privacywire";
-let priw_wrapper = document.querySelector(".privacywire-wrapper");
-let priw_btn_allowAll = priw_wrapper.querySelectorAll(".allow-all");
-let priw_btn_allowNecessary = priw_wrapper.querySelector(".allow-necessary");
-let priw_btn_choose = priw_wrapper.querySelector(".choose");
-let priw_btn_save = priw_wrapper.querySelector(".save");
-let priw_btn_toggle = priw_wrapper.querySelector(".toggle");
-let priw_btn_options = priw_wrapper.querySelectorAll(".optional");
-let priw_btns_options = {};
-priw_btns_options.functional = priw_wrapper.querySelector("#functional");
-priw_btns_options.statistics = priw_wrapper.querySelector("#statistics");
-priw_btns_options.marketing = priw_wrapper.querySelector("#marketing");
-priw_btns_options.external_media = priw_wrapper.querySelector("#external_media");
-let priw_toggle_to_status = true;
-let priw_ask_consent_blueprint = document.querySelector(".privacywire-ask-consent-blueprint");
-let priw_btn_consent_btns = document.querySelectorAll(".privacywire-consent-button");
-
-let priw_consent = {};
-let priw_storage = (window.localStorage.getItem(priw)) ? JSON.parse(window.localStorage.getItem(priw)) : "";
-
-if (priw_storage) {
-    if (parseInt(priw_storage.version) !== priw_settings.version) {
-        priw_removeDeprecatedConsent();
-    } else {
-        priw_consent.version = parseInt(priw_storage.version) ?? 0;
-        priw_consent.necessary = Boolean(priw_storage.necessary) ?? true;
-        priw_consent.functional = Boolean(priw_storage.functional) ?? false;
-        priw_consent.statistics = Boolean(priw_storage.statistics) ?? false;
-        priw_consent.marketing = Boolean(priw_storage.marketing) ?? false;
-        priw_consent.external_media = Boolean(priw_storage.external_media) ?? false;
-
-        // prefill the option checkboxes
-        priw_btns_options.functional.checked = priw_consent.functional;
-        priw_btns_options.statistics.checked = priw_consent.statistics;
-        priw_btns_options.marketing.checked = priw_consent.marketing;
-        priw_btns_options.external_media.checked = priw_consent.external_media;
-    }
-
-} else {
-    priw_consent.version = 0;
-    priw_setOnlyNecessaryConsent();
-
-    if (priw_settings.dnt === true && navigator.doNotTrack === "1") {
-        priw_consent.version = 1;
-        priw_savePreferences(true);
-    }
-}
-
-let priw_valid_consent = priw_consent.version > 0 && priw_consent.version === priw_settings.version;
-
-/* ######### initiate the whole thing  ######### */
-if (!priw_valid_consent) {
-    priw_showBanner();
-}
-
-priw_updateAllElements();
-priw_handleButtons();
-priw_handleExternalTriggers();
+document.addEventListener("DOMContentLoaded", function () {
+    window.PrivacyWire = new PrivacyWire(PrivacyWireSettings)
+});
