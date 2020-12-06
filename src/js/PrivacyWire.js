@@ -4,6 +4,7 @@ import "./string-formatter"
 class PrivacyWire {
     constructor(PrivacyWireSettings) {
         this.name = "privacywire"
+        this.toggleToStatus = true
         this.cookieGroups = Object.freeze([
             "necessary",
             "functional",
@@ -22,7 +23,6 @@ class PrivacyWire {
         this.checkElementsWithRequiredConsent()
         this.handleButtons()
     }
-
 
     /**
      * Sanitize the inline script settings
@@ -67,7 +67,6 @@ class PrivacyWire {
         }
 
         return storedConsent
-
     }
 
     /**
@@ -120,116 +119,84 @@ class PrivacyWire {
 
 
     handleButtons() {
-
-        this.handleButtonAcceptAll()
-        this.handleButtonAcceptNecessary()
-        this.handleButtonChoose()
-        this.handleButtonToggle()
-        this.handleButtonSave()
-
-        this.handleButtonAskForConsent()
-        this.handleButtonExternalTrigger()
+        this.handleButtonHelper(this.elements.buttons.acceptAll, "handleButtonAcceptAll")
+        this.handleButtonHelper(this.elements.buttons.acceptNecessary, "handleButtonAcceptNecessary")
+        this.handleButtonHelper(this.elements.buttons.choose, "handleButtonChoose")
+        this.handleButtonHelper(this.elements.buttons.toggle, "handleButtonToggle")
+        this.handleButtonHelper(this.elements.buttons.save, "handleButtonSave")
+        this.handleButtonHelper(this.elements.buttons.askForConsent, "handleButtonAskForConsent")
+        this.handleButtonHelper(this.elements.buttons.externalTrigger, "handleButtonExternalTrigger")
     }
 
-    handleButtonClick(buttons, handler) {
+    handleButtonHelper(buttons, method) {
         if (buttons) {
-            Array.from(buttons).forEach((btn) => {
-                btn.addEventListener("click", handler())
-            })
-        }
-    }
-
-    handleButtonAcceptAll() {
-        if (this.elements.buttons.acceptAll) {
-            Array.from(this.elements.buttons.acceptAll).forEach((btn) => {
-                btn.addEventListener("click", () => {
-                    for (const key of this.cookieGroups) {
-                        this.userConsent.cookieGroups[key] = true
-                    }
-                    this.syncConsentToCheckboxes()
-                    this.saveConsent()
-                })
-            })
-        }
-    }
-
-    handleButtonAcceptNecessary() {
-        if (this.elements.buttons.acceptNecessary) {
-            Array.from(this.elements.buttons.acceptNecessary).forEach((btn) => {
-                btn.addEventListener("click", () => {
-                    this.userConsent = this.getDefaultConsent()
-                    this.syncConsentToCheckboxes()
-                    this.saveConsent()
-                })
-            })
-        }
-    }
-
-    handleButtonChoose() {
-        if (this.elements.buttons.choose) {
-            Array.from(this.elements.buttons.choose).forEach((btn) => {
-                btn.addEventListener("click", () => {
-                    this.showOptions()
-                })
-            })
-        }
-    }
-
-    handleButtonToggle() {
-        if (this.elements.buttons.toggle) {
-            let toggleToStatus = true
-            Array.from(this.elements.buttons.toggle).forEach((btn) => {
-                btn.addEventListener("click", () => {
-                    for (const key in this.elements.checkboxes) {
-                        this.elements.checkboxes[key].checked = toggleToStatus
-                    }
-                    toggleToStatus = !toggleToStatus
-                })
-            })
-        }
-    }
-
-    handleButtonSave() {
-        if (this.elements.buttons.save) {
-            Array.from(this.elements.buttons.save).forEach((btn) => {
-                btn.addEventListener("click", () => {
-                    for (const key of this.cookieGroups) {
-                        if (key === "necessary") {
-                            continue
-                        }
-                        this.userConsent.cookieGroups[key] = this.elements.checkboxes[key].checked
-                    }
-                    this.saveConsent()
-                })
-            })
-        }
-    }
-
-    handleButtonAskForConsent() {
-        if (this.elements.buttons.askForConsent) {
             const pw = this
-            Array.from(this.elements.buttons.askForConsent).forEach(function (btn) {
-                btn.addEventListener("click", () => {
-                    const {dataset} = btn
-                    pw.userConsent.cookieGroups[dataset.consentCategory] = true
-                    pw.syncConsentToCheckboxes()
-                    pw.saveConsent()
-                    btn.parentElement.remove()
-                })
+            Array.from(buttons).forEach((btn) => {
+                pw[method](btn)
             })
         }
     }
 
-    handleButtonExternalTrigger() {
-        if (this.elements.buttons.externalTrigger) {
-            Array.from(this.elements.buttons.externalTrigger).forEach((btn) => {
-                btn.addEventListener("click", (event) => {
-                    event.preventDefault()
-                    this.showOptions()
-                })
+    handleButtonAcceptAll(btn) {
+        btn.addEventListener("click", () => {
+            for (const key of this.cookieGroups) {
+                this.userConsent.cookieGroups[key] = true
+            }
+            this.syncConsentToCheckboxes()
+            this.saveConsent()
+        })
+    }
 
-            })
-        }
+    handleButtonAcceptNecessary(btn) {
+        btn.addEventListener("click", () => {
+            this.userConsent = this.getDefaultConsent()
+            this.syncConsentToCheckboxes()
+            this.saveConsent()
+        })
+    }
+
+    handleButtonChoose(btn) {
+        btn.addEventListener("click", () => {
+            this.showOptions()
+        })
+    }
+
+    handleButtonToggle(btn) {
+        btn.addEventListener("click", () => {
+            for (const key in this.elements.checkboxes) {
+                this.elements.checkboxes[key].checked = this.toggleToStatus
+            }
+            this.toggleToStatus = !this.toggleToStatus
+        })
+    }
+
+    handleButtonSave(btn) {
+        btn.addEventListener("click", () => {
+            for (const key of this.cookieGroups) {
+                if (key === "necessary") {
+                    continue
+                }
+                this.userConsent.cookieGroups[key] = this.elements.checkboxes[key].checked
+            }
+            this.saveConsent()
+        })
+    }
+
+    handleButtonAskForConsent(btn) {
+        btn.addEventListener("click", () => {
+            const {dataset} = btn
+            this.userConsent.cookieGroups[dataset.consentCategory] = true
+            this.syncConsentToCheckboxes()
+            this.saveConsent()
+            btn.parentElement.remove()
+        })
+    }
+
+    handleButtonExternalTrigger(btn) {
+        btn.addEventListener("click", (event) => {
+            event.preventDefault()
+            this.showOptions()
+        })
     }
 
     syncConsentToCheckboxes() {
@@ -253,6 +220,7 @@ class PrivacyWire {
 
     checkForUsersDNT() {
         if (this.settings.dnt && navigator.doNotTrack === "1") {
+            console.log("DNT ACTIVE!")
             this.userConsent = this.getDefaultConsent()
             this.saveConsent(true)
 
@@ -421,8 +389,8 @@ class PrivacyWire {
     }
 
     refresh() {
-        //  TODO: Re-initiate Buttons
         this.checkElementsWithRequiredConsent()
+        this.handleButtonHelper(this.elements.buttons.askForConsent, "handleButtonAskForConsent")
     }
 }
 
