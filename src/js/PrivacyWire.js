@@ -419,6 +419,11 @@ class PrivacyWire {
         el.classList.remove("require-consent")
         return el
     }
+
+    refresh() {
+        //  TODO: Re-initiate Buttons
+        this.checkElementsWithRequiredConsent()
+    }
 }
 
 document.addEventListener("DOMContentLoaded", function () {
