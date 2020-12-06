@@ -18,6 +18,12 @@
 class PrivacyWire extends WireData implements Module, ConfigurableModule
 {
 
+    var $modulePath;
+    var $moduleUrl;
+    var $headContent = "";
+    var $bodyContent = "";
+    var $lang;
+
     public static function getModuleInfo()
     {
         return [
@@ -25,7 +31,7 @@ class PrivacyWire extends WireData implements Module, ConfigurableModule
             'summary' => "This module adds management options for GDPR-relevant elements (loading maps, videos etc. only after accepting external media) and cookies.",
             'author' => "blaueQuelle",
             'href' => "https://github.com/blaueQuelle/privacywire",
-            'version' => 44,
+            'version' => 100,
             'autoload' => true,
             'singular' => true,
             'requires' => ["PHP>=7.2", "ProcessWire>=3.0.110"],
@@ -43,96 +49,111 @@ class PrivacyWire extends WireData implements Module, ConfigurableModule
             return;
         }
 
+        $this->modulePath = $this->wire('config')->paths->$this;
+        $this->moduleUrl = $this->wire('config')->urls->$this;
+        $this->lang = ($this->wire('languages') && !$this->wire('user')->language->isDefault()) ? '__' . $this->wire('user')->language->id : '';
+
+        // 1. Add some styling via inline CSS (if wanted, configured via backend)
+        if ($this->add_basic_css_styling) {
+            $this->renderPrivacyWireStyles();
+        }
+
+        // 2. Insert PrivacyWire Configuration Object as inline JS (hookable method if you want to override something)
+        $this->renderPrivacyWireConfigAsInlineJs();
+
+        // 3. Insert JS File (hookable method) - either modern ES6 version or legacy version with IE support.
+        // Output modes: a) regular script tag b) ProCache script tag c) inline script
+        $this->renderPrivacyWireCoreJs();
+
+        // 4. Insert PrivacyWire Banner Markup
+        $this->renderPrivacyWireBannerTemplate();
+
+        // 5. Insert PrivacyWire Blueprint for Consent Window Markup
+        $this->renderPrivacyWireConsentBlueprint();
+
+        // 6. Render everything!
         if (!$this->render_manually) {
             $this->addHookAfter('Page::render', $this, 'render');
         }
     }
 
-    /**
-     * checks for a javascript file alternate path
-     * @return string   the path of the JS file
-     **/
-    public function ___getJsFile()
+    public function render(HookEvent $event)
     {
-        return ($this->add_basic_css_styling) ? $this->wire('config')->urls->$this . "js/PrivacyWire.js" : $this->wire('config')->urls->$this . "js/PrivacyWireUnstyled.js";
+        $event->return = str_replace("</head>", "{$this->headContent}</head>", $event->return);
+        $event->return = str_replace("</body>", "{$this->bodyContent}</body>", $event->return);
+    }
+
+    public function ___renderPrivacyWireStyles()
+    {
+        $this->headContent .= "<style>" . file_get_contents($this->modulePath . "css/PrivacyWire.css") . "</style>";
+    }
+
+    public function ___renderPrivacyWireConfigAsInlineJs()
+    {
+        $this->headContent .= "<script>var PrivacyWireSettings={$this->getPrivacyWireConfigObject()};</script>";
+    }
+
+    public function ___renderPrivacyWireCoreJs()
+    {
+        $fileName = "js/PrivacyWire" . (($this->use_es6) ? '_es6' : '') . ".js";
+        $filePath = $this->modulePath . $fileName;
+        $fileUrl = $this->moduleUrl . $fileName;
+
+        if ($this->output_mode === "regular") {
+            $this->headContent .= "<script defer src='{$fileUrl}'></script>";
+            return;
+        }
+
+        if ($this->output_mode === "procache" && $this->wire('modules')->isInstalled('ProCache') && $this->wire('modules')->get('ProCache')) {
+            $this->headContent .= "<script defer src='". $this->wire('modules')->get('ProCache')->js($fileUrl) ."'></script>";
+            return;
+        }
+
+        if ($this->output_mode === "inline") {
+            $this->bodyContent .= "<script type='text/javascript'>" . file_get_contents($filePath) . "</script>";
+        }
+    }
+
+    public function ___renderPrivacyWireBannerTemplate()
+    {
+        $sanitizedAlternateBannerPath = (substr($this->alternate_banner_template, 0, 1) !== "/") ? $this->alternate_banner_template : substr($this->alternate_banner_template, 1);
+
+        $filePath = $this->wire('config')->paths->$this . 'PrivacyWireBanner.php';
+
+        if (
+            !empty($this->alternate_banner_template) &&
+            file_exists($this->wire('config')->paths->root . $sanitizedAlternateBannerPath)) {
+            $filePath = $this->wire('config')->paths->root . $sanitizedAlternateBannerPath;
+        }
+
+        $this->bodyContent .= wireRenderFile($filePath, ['module' => $this]);
+    }
+
+    public function ___renderPrivacyWireConsentBlueprint()
+    {
+        $filePath = $this->wire('config')->paths->$this . 'PrivacyWireConsentBlueprint.php';
+        $this->bodyContent .= wireRenderFile($filePath, ['module' => $this]);
     }
 
     /**
-     * look for current module config and put this into an json array
-     * @return string   json object of inline settings
-     **/
-    public function ___getInlineJs()
+     * Get the current PrivacyWire config options and output them as JSON Object
+     * @return string   JSON Object of PrivacyWire config options
+     */
+    public function ___getPrivacyWireConfigObject(): string
     {
-        // Multi Language Support
-        if ($this->wire('languages')) {
-            $userLanguage = $this->wire('user')->language;
-            $lang = $userLanguage->isDefault() ? '' : "__$userLanguage->id";
-        } else {
-            $lang = '';
-        }
-
         $privacyWireSettings = new \StdClass;
         $privacyWireSettings->version = $this->version;
         $privacyWireSettings->dnt = ($this->respectDNT) ? "1" : "0";
-        $privacyWireSettings->customFunction = (!empty($this->trigger_custom_js_function)) ? $this->wire('sanitizer')->text($this->trigger_custom_js_function) : "";
+        $privacyWireSettings->customFunction = ($this->wire('sanitizer')->text($this->trigger_custom_js_function)) ?? "";
         $privacyWireSettings->messageTimeout = ($this->messageTimeout && intval($this->messageTimeout) > 1) ? intval($this->messageTimeout) : 1500;
+        $privacyWireSettings->consentByClass = ($this->detect_consents_by_class) ? "1" : "0";
         $privacyWireSettings->cookieGroups = [
-            'necessary' => $this->get("cookies_necessary_label$lang|cookies_necessary_label"),
-            'functional' => $this->get("cookies_functional_label$lang|cookies_functional_label"),
-            'statistics' => $this->get("cookies_statistics_label$lang|cookies_statistics_label"),
-            'marketing' => $this->get("cookies_marketing_label$lang|cookies_marketing_label"),
-            'external_media' => $this->get("cookies_external_media_label$lang|cookies_external_media_label"),
+            'necessary' => $this->get("cookies_necessary_label{$this->lang}|cookies_necessary_label"),
+            'functional' => $this->get("cookies_functional_label{$this->lang}|cookies_functional_label"),
+            'statistics' => $this->get("cookies_statistics_label{$this->lang}|cookies_statistics_label"),
+            'marketing' => $this->get("cookies_marketing_label{$this->lang}|cookies_marketing_label"),
+            'external_media' => $this->get("cookies_external_media_label{$this->lang}|cookies_external_media_label"),
         ];
         return json_encode($privacyWireSettings);
     }
-
-    /**
-     * checks for a alternate banner template path
-     * @return string   the path of the banner template file
-     **/
-    public function ___getBannerTemplateFile()
-    {
-        $sanitizedAlternateBannerPath = (substr($this->alternate_banner_template, 0, 1) !== "/") ? $this->alternate_banner_template : substr($this->alternate_banner_template, 1);
-        return (!empty($this->alternate_banner_template) && file_exists($this->wire('config')->paths->root . $sanitizedAlternateBannerPath)) ? $this->wire('config')->paths->root . $sanitizedAlternateBannerPath : $this->wire('config')->paths->$this . 'PrivacyWireBanner.php';
-    }
-
-    public function ___render(HookEvent $event)
-    {
-        $headContent = $this->renderHeadContent();
-        $event->return = str_replace("</head>", "{$headContent}</head>", $event->return);
-
-        $bodyContent = $this->renderBodyContent();
-        $event->return = str_replace("</body>", "{$bodyContent}</body>", $event->return);
-    }
-
-    public function ___getInlineJavaScriptTag()
-    {
-        return "<script>var PrivacyWireSettings={$this->getInlineJs()};</script>";
-    }
-
-    public function renderHeadContent()
-    {
-        $headContent = $this->getInlineJavaScriptTag();
-        $headContent .= ($this->use_procache_minification && $this->wire('modules')->isInstalled('ProCache') && $this->wire('modules')->get('ProCache')) ? "<script defer src='{$this->wire('modules')->get('ProCache')->js($this->getJsFile())}'></script>" : "<script defer src='{$this->getJsFile()}'></script>";
-        return $headContent;
-    }
-
-    public function renderBodyContent()
-    {
-        return wireRenderFile($this->getBannerTemplateFile(), ['module' => $this]);
-    }
-
-    public function ___getPathToCssFile($min = false)
-    {
-        return $this->wire('config')->paths->$this . "css/PrivacyWire.css";
-    }
-
-    public function ___install()
-    {
-    }
-
-    public function ___uninstall()
-    {
-    }
-
 }
