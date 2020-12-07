@@ -31,7 +31,7 @@ class PrivacyWire extends WireData implements Module, ConfigurableModule
             'summary' => "This module adds management options for GDPR-relevant elements (loading maps, videos etc. only after accepting external media) and cookies.",
             'author' => "blaueQuelle",
             'href' => "https://github.com/blaueQuelle/privacywire",
-            'version' => 100,
+            'version' => 1001,
             'autoload' => true,
             'singular' => true,
             'requires' => ["PHP>=7.2", "ProcessWire>=3.0.110"],
@@ -55,23 +55,35 @@ class PrivacyWire extends WireData implements Module, ConfigurableModule
 
         // 1. Add some styling via inline CSS (if wanted, configured via backend)
         if ($this->add_basic_css_styling) {
-            $this->renderPrivacyWireStyles();
+            $this->headContent .= $this->renderPrivacyWireStyles();
         }
 
         // 2. Insert PrivacyWire Configuration Object as inline JS (hookable method if you want to override something)
-        $this->renderPrivacyWireConfigAsInlineJs();
+        $this->headContent .= $this->renderPrivacyWireConfigAsInlineJs();
 
         // 3. Insert JS File (hookable method) - either modern ES6 version or legacy version with IE support.
         // Output modes: a) regular script tag b) ProCache script tag c) inline script
-        $this->renderPrivacyWireCoreJs();
+        $this->headContent .= $this->renderPrivacyWireCoreJs();
 
         // 4. Insert PrivacyWire Banner Markup
-        $this->renderPrivacyWireBannerTemplate();
+        $this->bodyContent .= $this->renderPrivacyWireBannerTemplate();
 
         // 5. Insert PrivacyWire Blueprint for Consent Window Markup
-        $this->renderPrivacyWireConsentBlueprint();
+        $this->bodyContent .= $this->renderPrivacyWireConsentBlueprint();
 
         // 6. Render everything!
+        /*
+         * Hint: If you want to render everything manually, make sure to insert the PrivacyWireConfig (step 2), PrivacyWireCore (step 2), Banner Markup (step 3) and if you want to display the ask-for-consent windows also the consent blueprint (step 5) somewhere in your template.
+         * The banner markup and consent window blueprint can be loaded anywhere, for example at the end of the body tag.
+         * To include the PrivacyWire Core JS in a bundled file, you can use the following code to get the correct URL or PATH to the JS file:
+         *
+         * $modules->get("PrivacyWire")->getPrivacyWireCore()->url;
+         *
+         * OR: if you need the PATH instead of URL
+         *
+         * $modules->get("PrivacyWire")->getPrivacyWireCore()->path;
+         *
+         */
         if (!$this->render_manually) {
             $this->addHookAfter('Page::render', $this, 'render');
         }
@@ -85,33 +97,28 @@ class PrivacyWire extends WireData implements Module, ConfigurableModule
 
     public function ___renderPrivacyWireStyles()
     {
-        $this->headContent .= "<style>" . file_get_contents($this->modulePath . "css/PrivacyWire.css") . "</style>";
+        $filepath = $this->modulePath . "css/PrivacyWire.css";
+        return "<style>" . file_get_contents($filepath) . "</style>";
     }
 
     public function ___renderPrivacyWireConfigAsInlineJs()
     {
-        $this->headContent .= "<script>var PrivacyWireSettings={$this->getPrivacyWireConfigObject()};</script>";
+        return "<script>var PrivacyWireSettings={$this->getPrivacyWireConfigObject()};</script>";
     }
 
     public function ___renderPrivacyWireCoreJs()
     {
-        $fileName = "js/PrivacyWire" . (($this->use_es6) ? '_es6' : '') . ".js";
-        $filePath = $this->modulePath . $fileName;
-        $fileUrl = $this->moduleUrl . $fileName;
+        $file = $this->getPrivacyWireCore();
 
-        if ($this->output_mode === "regular") {
-            $this->headContent .= "<script defer src='{$fileUrl}'></script>";
-            return;
+        if ($this->output_mode === "inline") {
+            return "<script type='text/javascript'>" . file_get_contents($file->path) . "</script>";
         }
 
         if ($this->output_mode === "procache" && $this->wire('modules')->isInstalled('ProCache') && $this->wire('modules')->get('ProCache')) {
-            $this->headContent .= "<script defer src='". $this->wire('modules')->get('ProCache')->js($fileUrl) ."'></script>";
-            return;
+            return "<script defer src='" . $this->wire('modules')->get('ProCache')->js($file->url) . "'></script>";
         }
 
-        if ($this->output_mode === "inline") {
-            $this->bodyContent .= "<script type='text/javascript'>" . file_get_contents($filePath) . "</script>";
-        }
+        return "<script defer src='{$file->url}'></script>";
     }
 
     public function ___renderPrivacyWireBannerTemplate()
@@ -126,13 +133,26 @@ class PrivacyWire extends WireData implements Module, ConfigurableModule
             $filePath = $this->wire('config')->paths->root . $sanitizedAlternateBannerPath;
         }
 
-        $this->bodyContent .= wireRenderFile($filePath, ['module' => $this]);
+        return wireRenderFile($filePath, ['module' => $this]);
     }
 
     public function ___renderPrivacyWireConsentBlueprint()
     {
         $filePath = $this->wire('config')->paths->$this . 'PrivacyWireConsentBlueprint.php';
-        $this->bodyContent .= wireRenderFile($filePath, ['module' => $this]);
+        return wireRenderFile($filePath, ['module' => $this]);
+    }
+
+    /**
+     * Get the PrivacyWire Core file as Object with path and url
+     * @return \StdClass $file with $file->path and $file->url
+     */
+    public function ___getPrivacyWireCore(): \StdClass
+    {
+        $file = new \StdClass;
+        $file->name = "js/PrivacyWire" . (($this->use_es6) ? '_es6' : '') . ".js";
+        $file->path = $this->modulePath . $file->name;
+        $file->url = $this->moduleUrl . $file->name;
+        return $file;
     }
 
     /**

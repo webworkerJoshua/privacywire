@@ -1,6 +1,11 @@
 # Changelog of PrivacyWire
 
-## 1.0.0a01 (beta)
+## 1.0.1b (beta)
+- Changed: Return value of PrivacyWire methods for better extensibility
+- Added: method `getPrivacyWireCore` which returns the path and url to the PrivacyWire Core JS file 
+- Added: more comments to explain how you can bundle the PrivacyWire Core JS with your other scripts
+
+## 1.0.0a (alpha)
 **Major Refactoring**. Rewritten both the JS and PHP parts.
 - Added: Config option for output mode (regular script tag, ProCache script tag, inline script) 
 - Added: Config option to choose elements which require consent by class `require-consent` instead of data-attribute (better performance). **WARNING**: Enabling this needs adding the css class `require-consent` to every element (also script tags!) you want to be processed by PrivacyWire
