@@ -97,8 +97,8 @@ class PrivacyWire extends WireData implements Module, ConfigurableModule
 
     public function ___renderPrivacyWireStyles()
     {
-        $filepath = $this->modulePath . "css/PrivacyWire.css";
-        return "<style>" . file_get_contents($filepath) . "</style>";
+        $file = $this->getPrivacyWireStyles();
+        return "<style>" . file_get_contents($file->path) . "</style>";
     }
 
     public function ___renderPrivacyWireConfigAsInlineJs()
@@ -140,6 +140,19 @@ class PrivacyWire extends WireData implements Module, ConfigurableModule
     {
         $filePath = $this->wire('config')->paths->$this . 'PrivacyWireConsentBlueprint.php';
         return wireRenderFile($filePath, ['module' => $this]);
+    }
+
+    /**
+     * Get the PrivacyWire stylesheet as Object with path and url
+     * @return \StdClass $file with $file->path and $file->url
+     */
+    public function ___getPrivacyWireStyles(): \StdClass
+    {
+        $file = new \StdClass;
+        $file->name = "css/PrivacyWire.css";
+        $file->path = $this->modulePath . $file->name;
+        $file->url = $this->moduleUrl . $file->name;
+        return $file;
     }
 
     /**
