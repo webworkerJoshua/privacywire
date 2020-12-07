@@ -221,7 +221,7 @@ class PrivacyWireConfig extends ModuleConfig
         $f->attr('name', 'render_manually');
         $f->label = $this->_('Render Banner and Header Content Manually');
         $f->description = $this->_("If you want to render PrivacyWire header and banner content manually instead of letting the module render them for you, check this option.");
-        $f->notes = $this->_("Use `\$modules->get('PrivacyWire')->renderHeadContent()` to render header tags and `\$modules->get('PrivacyWire')->renderBodyContent()` to render body content.");
+        $f->notes = $this->_("Use \n`\$modules->get('PrivacyWire')->headContent` to render header tags and \n`\$modules->get('PrivacyWire')->bodyContent` to render body content. \n**OR** if you want to have the total flexibility where and how you embed the required scripts and markup, have a look into the PrivacyWire.module and read the comments ;-)");
         $f->columnWidth = 34;
         $fs->add($f);
 
