@@ -58,6 +58,12 @@ class PrivacyWire {
         if (parseInt(storedConsentRaw.version) !== this.settings.version) {
             return this.getDefaultConsent()
         }
+
+        if (typeof storedConsentRaw.cookieGroups === 'undefined') {
+            this.removeStoredConsent();
+            return this.getDefaultConsent()
+        }
+
         let storedConsent = {}
         storedConsent.version = parseInt(storedConsentRaw.version)
         storedConsent.cookieGroups = {}
@@ -391,6 +397,13 @@ class PrivacyWire {
     refresh() {
         this.checkElementsWithRequiredConsent()
         this.handleButtonHelper(this.elements.buttons.askForConsent, "handleButtonAskForConsent")
+    }
+
+    removeStoredConsent() {
+        if (!window.localStorage.getItem(this.name)) {
+            return;
+        }
+        window.localStorage.removeItem(this.name);
     }
 }
 
