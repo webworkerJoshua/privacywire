@@ -11,7 +11,7 @@ export default [
         // ES6 PrivacyWire JS Frontend File
         input: 'src/js/PrivacyWire.js',
         output: {
-            file: 'js/PrivacyWire_es6.js',
+            file: 'js/PrivacyWire.js',
             format: 'iife',
             compact: true
         },
@@ -30,7 +30,7 @@ export default [
         // Regular PrivacyWire JS Frontend File
         input: 'src/js/PrivacyWire.js',
         output: {
-            file: 'js/PrivacyWire.js',
+            file: 'js/PrivacyWire_legacy.js',
             format: 'iife',
             compact: true
         },
@@ -47,11 +47,6 @@ export default [
                     {
                         src: "js/PrivacyWire.css",
                         dest: "css/"
-                    },
-                    {
-                        src: "js/PrivacyWire.js",
-                        dest: "js/",
-                        rename: "PrivacyWireUnstyled.js"
                     }
                 ]
             }),

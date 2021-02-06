@@ -12,12 +12,12 @@ The following cookie groups are available (the frontend visible label is editabl
 Necessary elements are always active. You can let the user decide, which individual cookie group(s) should be allowed, and/or add an „Allow all“ button.
 
 You can insert basic styles via css or completely style it yourself.
-The PrivacyWire Core Javascript file is available both as ES6 as well as transpiled with Babel for IE support. Both versions have a very small footprint:
+The PrivacyWire Core Javascript file is available both as ES6 as well as transpiled with Babel for IE11 support. Both versions have a very small footprint:
 
 File   |   Size    | Gzipped
 --- | :---: | ---:
-PrivacyWire_es6.js | 8.38 kb | 2.71 kb
-PrivacyWire.js | 12.21 kb | 3.69 kb
+PrivacyWire.js | < 9 kb | < 3 kb
+PrivacyWire_legacy.js | < 13 kb | < 4 kb
 
 To load scripts, frames, images or other elements only after the site visitor has given consent to that specific cookie group, use the following attributes:
 
@@ -40,7 +40,7 @@ class `require-consent` | optional (required if config option enabled) | If the 
 `data-srset` | optional | replaces the srcset attribute for images after giving consent | string
 `data-ask-consent`| optional | Replace element with Opt-In-Element | bool `0/1`
 
-For script tags it is required to add `type=text/plain"`, otherwise the script executes directly.
+For script tags it is required to add `type="text/plain"`, otherwise the script executes directly.
 
 ## Textformatter to choose Cookie groups / Opt-Out
 With PrivacyWire itself comes a Textformatter with the shortcode `[[privacywire-choose-cookies]]` to add a button to show the cookie group selection window.  
