@@ -35,11 +35,10 @@ class PrivacyWireConfig extends ModuleConfig
             'add_basic_css_styling' => true,
             'ask_consent_message' => $this->_("To load this element, it is required to consent to the following cookie category: {category}."),
             'ask_content_button_label' => $this->_("Load {category} cookies"),
-            'banner_header_tag' => 'header',
+            'banner_header_tag' => 'div',
             'alternate_banner_template' => '',
             'render_manually' => false,
             'detect_consents_by_class' => false,
-            'use_es6' => false,
             'output_mode' => 'regular'
         ];
     }
@@ -70,10 +69,9 @@ class PrivacyWireConfig extends ModuleConfig
         $f = $this->modules->get('InputfieldSelect');
         $f->attr('name', 'output_mode');
         $f->label = $this->_('Output mode of PrivacyWire JS Core');
-        $f->description = $this->_("Choose if you want to render the PrivacyWire JS Core as regular script tag, ProCache script tag or inline js.");
+        $f->description = $this->_("Choose if you want to render the PrivacyWire JS Core as inline script or regular script tag.");
         $f->options = [
             "regular" => $this->_("Regular script tag"),
-            "procache" => $this->_("ProCache script tag"),
             "inline" => $this->_("Inline script"),
         ];
         $f->columnWidth = 34;
@@ -202,8 +200,8 @@ class PrivacyWireConfig extends ModuleConfig
         $f->description = $this->_("Choose between <header> and <div>.");
         $f->label = $this->_('Banner Header Tag');
         $f->options = [
-            "header" => $this->_("<header>"),
             "div" => $this->_("<div>"),
+            "header" => $this->_("<header>"),
         ];
         $f->columnWidth = 33;
         $fs->add($f);
@@ -391,15 +389,6 @@ class PrivacyWireConfig extends ModuleConfig
         $f->label = $this->_('Detect consent windows by class `require-consent` instead of data-attribute.');
         $f->description = $this->_("If enabled, PrivacyWire will use a class selector instead of data-attribute selector to detect elements which require consent. This is more performant.");
         $f->checkboxLabel = $this->_('Use consent detection by class instead of data-attribute');
-        $f->columnWidth = 33;
-        $fs->add($f);
-
-        // use ES6 (No support for Internet Explorer!)
-        $f = $this->modules->get('InputfieldCheckbox');
-        $f->attr('name', 'use_es6');
-        $f->label = $this->_('Use ES6 (No support for Internet Explorer at all!)');
-        $f->description = $this->_("If enabled, the ES6 version of PrivacyWire will be used. **WARNING**: No support for Internet Explorer!");
-        $f->checkboxLabel = $this->_('Yes, I want to use the fancy new ES6 version!');
         $f->columnWidth = 33;
         $fs->add($f);
 
