@@ -47,13 +47,17 @@ $imprintPage = (!empty($module->get("content_banner_imprint_link{$module->lang}|
 
                     <button class="choose" <?php echo (!$showChooseButton) ? "hidden" : ""; ?>><?php echo $module->get("content_banner_button_choose{$module->lang}|content_banner_button_choose"); ?></button>
                 </div>
-                <?php if (!empty($privacyPage)): ?>
-                    <a class="privacywire-page-link" href="<?php echo $privacyPage; ?>"
-                       title="<?php echo $module->get("content_banner_privacy_title{$module->lang}|content_banner_privacy_title"); ?>"><?php echo $module->get("content_banner_privacy_title{$module->lang}|content_banner_privacy_title"); ?></a>
-                <?php endif; ?>
-                <?php if (!empty($imprintPage)): ?>
-                    <a class="privacywire-page-link" href="<?php echo $imprintPage; ?>"
-                       title="<?php echo $module->get("content_banner_imprint_title{$module->lang}|content_banner_imprint_title"); ?>"><?php echo $module->get("content_banner_imprint_title{$module->lang}|content_banner_imprint_title"); ?></a>
+                <?php if (!empty($privacyPage) || !empty($imprintPage)): ?>
+                    <div class="privacywire-page-links">
+                        <?php if (!empty($privacyPage)): ?>
+                            <a class="privacywire-page-link" href="<?php echo $privacyPage; ?>"
+                               title="<?php echo $module->get("content_banner_privacy_title{$module->lang}|content_banner_privacy_title"); ?>"><?php echo $module->get("content_banner_privacy_title{$module->lang}|content_banner_privacy_title"); ?></a>
+                        <?php endif; ?>
+                        <?php if (!empty($imprintPage)): ?>
+                            <a class="privacywire-page-link" href="<?php echo $imprintPage; ?>"
+                               title="<?php echo $module->get("content_banner_imprint_title{$module->lang}|content_banner_imprint_title"); ?>"><?php echo $module->get("content_banner_imprint_title{$module->lang}|content_banner_imprint_title"); ?></a>
+                        <?php endif; ?>
+                    </div>
                 <?php endif; ?>
             </div>
 
@@ -61,7 +65,7 @@ $imprintPage = (!empty($module->get("content_banner_imprint_link{$module->lang}|
         <div class="privacywire privacywire-options">
             <?php if (!empty($optionsTitle)) {
                 echo "<{$module->banner_header_tag} class='privacywire-header'>{$optionsTitle}</{$module->banner_header_tag}>";
-            }?>
+            } ?>
             <div class="privacywire-body">
                 <div class="privacywire-text"><?php echo $optionsText; ?></div>
                 <div class="privacywire-text">
@@ -88,7 +92,7 @@ $imprintPage = (!empty($module->get("content_banner_imprint_link{$module->lang}|
                     <button class="toggle" <?php echo ($showAllInsteadToggle) ? "hidden" : ""; ?>><?php echo $module->get("content_banner_button_toggle{$module->lang}|content_banner_button_toggle"); ?></button>
                     <button class="save"><?php echo $module->get("content_banner_button_save{$module->lang}|content_banner_button_save"); ?></button>
                 </div>
-                <?php if(!empty($privacyPage) || !empty($imprintPage)):?>
+                <?php if (!empty($privacyPage) || !empty($imprintPage)): ?>
                     <div class="privacywire-page-links">
                         <?php if (!empty($privacyPage)): ?>
                             <a class="privacywire-page-link" href="<?php echo $privacyPage; ?>"
@@ -99,7 +103,7 @@ $imprintPage = (!empty($module->get("content_banner_imprint_link{$module->lang}|
                                title="<?php echo $module->get("content_banner_imprint_title{$module->lang}|content_banner_imprint_title"); ?>"><?php echo $module->get("content_banner_imprint_title{$module->lang}|content_banner_imprint_title"); ?></a>
                         <?php endif; ?>
                     </div>
-                <?php endif;?>
+                <?php endif; ?>
             </div>
         </div>
         <div class="privacywire privacywire-message"><div class="privacywire-body"><?php echo $module->get("content_banner_save_message{$module->lang}|content_banner_save_message"); ?></div></div>
