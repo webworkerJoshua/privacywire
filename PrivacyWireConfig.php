@@ -30,15 +30,16 @@ class PrivacyWireConfig extends ModuleConfig
             'content_banner_save_message' => $this->_("Your cookie preferences have been saved."),
             'content_banner_button_all_instead_toggle' => false,
             'textformatter_choose_label' => $this->_("Show or edit my Cookie Consent"),
-            'use_procache_minification' => true,
             'trigger_custom_js_function' => "",
             'messageTimeout' => 1500,
             'add_basic_css_styling' => true,
             'ask_consent_message' => $this->_("To load this element, it is required to consent to the following cookie category: {category}."),
             'ask_content_button_label' => $this->_("Load {category} cookies"),
-            'banner_header_tag' => 'header',
+            'banner_header_tag' => 'div',
             'alternate_banner_template' => '',
             'render_manually' => false,
+            'detect_consents_by_class' => false,
+            'output_mode' => 'regular'
         ];
     }
 
@@ -64,13 +65,16 @@ class PrivacyWireConfig extends ModuleConfig
         $f->columnWidth = 33;
         $inputfields->add($f);
 
-        // ProCache JS Minification
-        $f = $this->modules->get('InputfieldCheckbox');
-        $f->attr('name', 'use_procache_minification');
-        $f->description = $this->_("If enabled, PrivacyWire checks if [ProCache](https://processwire.com/store/pro-cache/#procache-css-js-minification-api) is installed and activated. If so, the javascript files will be minified automatically via ProCache.");
-        $f->label = $this->_('Use ProCache JS Minification (if available)');
-        $f->checkboxLabel = $this->_('Use ProCache JS Minification (if available)');
-        $f->columnWidth = 33;
+        // Output mode
+        $f = $this->modules->get('InputfieldSelect');
+        $f->attr('name', 'output_mode');
+        $f->label = $this->_('Output mode of PrivacyWire JS Core');
+        $f->description = $this->_("Choose if you want to render the PrivacyWire JS Core as inline script or regular script tag.");
+        $f->options = [
+            "regular" => $this->_("Regular script tag"),
+            "inline" => $this->_("Inline script"),
+        ];
+        $f->columnWidth = 34;
         $inputfields->add($f);
 
         // opt-in type
@@ -86,7 +90,6 @@ class PrivacyWireConfig extends ModuleConfig
             'marketing' => $this->_("Marketing"),
             'external_media' => $this->_("External Media")
         ];
-        $f->columnWidth = 33;
         $inputfields->add($f);
 
         // fieldset for cookie groups
@@ -101,7 +104,7 @@ class PrivacyWireConfig extends ModuleConfig
         $f->label = $this->_('Necessary Cookies: Label');
         $f->showIf("cookie_groups=necessary");
         $f->useLanguages = true;
-        $f->columnWidth = 25;
+        $f->columnWidth = 20;
         $fs->add($f);
 
         // label for cookie group: functional
@@ -110,7 +113,7 @@ class PrivacyWireConfig extends ModuleConfig
         $f->label = $this->_('Functional Cookies: Label');
         $f->showIf("cookie_groups=functional");
         $f->useLanguages = true;
-        $f->columnWidth = 25;
+        $f->columnWidth = 20;
         $fs->add($f);
 
         // label for cookie group: statistics
@@ -119,7 +122,7 @@ class PrivacyWireConfig extends ModuleConfig
         $f->label = $this->_('Statistics Cookies: Label');
         $f->showIf("cookie_groups=statistics");
         $f->useLanguages = true;
-        $f->columnWidth = 25;
+        $f->columnWidth = 20;
         $fs->add($f);
 
         // label for cookie group: marketing
@@ -128,7 +131,7 @@ class PrivacyWireConfig extends ModuleConfig
         $f->label = $this->_('Marketing Cookies: Label');
         $f->showIf("cookie_groups=marketing");
         $f->useLanguages = true;
-        $f->columnWidth = 25;
+        $f->columnWidth = 20;
         $fs->add($f);
 
         // label for cookie group: external media
@@ -137,7 +140,7 @@ class PrivacyWireConfig extends ModuleConfig
         $f->label = $this->_('External Media Cookies: Label');
         $f->showIf("cookie_groups=external_media");
         $f->useLanguages = true;
-        $f->columnWidth = 25;
+        $f->columnWidth = 20;
         $fs->add($f);
 
         // fieldset for banner options
@@ -197,8 +200,8 @@ class PrivacyWireConfig extends ModuleConfig
         $f->description = $this->_("Choose between <header> and <div>.");
         $f->label = $this->_('Banner Header Tag');
         $f->options = [
-            "header" => $this->_("<header>"),
             "div" => $this->_("<div>"),
+            "header" => $this->_("<header>"),
         ];
         $f->columnWidth = 33;
         $fs->add($f);
@@ -216,7 +219,7 @@ class PrivacyWireConfig extends ModuleConfig
         $f->attr('name', 'render_manually');
         $f->label = $this->_('Render Banner and Header Content Manually');
         $f->description = $this->_("If you want to render PrivacyWire header and banner content manually instead of letting the module render them for you, check this option.");
-        $f->notes = $this->_("Use `\$modules->get('PrivacyWire')->renderHeadContent()` to render header tags and `\$modules->get('PrivacyWire')->renderBodyContent()` to render body content.");
+        $f->notes = $this->_("Use \n`\$modules->get('PrivacyWire')->headContent` to render header tags and \n`\$modules->get('PrivacyWire')->bodyContent` to render body content. \n**OR** if you want to have the total flexibility where and how you embed the required scripts and markup, have a look into the PrivacyWire.module and read the comments ;-)");
         $f->columnWidth = 34;
         $fs->add($f);
 
@@ -378,6 +381,15 @@ class PrivacyWireConfig extends ModuleConfig
         $f->label = $this->_('Trigger a custom js function');
         $f->description = $this->_("If you want to trigger a custom js function after saving the cookie banner, insert the name of the function here");
         $f->columnWidth = 34;
+        $fs->add($f);
+
+        // use consent detection by class?
+        $f = $this->modules->get('InputfieldCheckbox');
+        $f->attr('name', 'detect_consents_by_class');
+        $f->label = $this->_('Detect consent windows by class `require-consent` instead of data-attribute.');
+        $f->description = $this->_("If enabled, PrivacyWire will use a class selector instead of data-attribute selector to detect elements which require consent. This is more performant.");
+        $f->checkboxLabel = $this->_('Use consent detection by class instead of data-attribute');
+        $f->columnWidth = 33;
         $fs->add($f);
 
         return $inputfields;

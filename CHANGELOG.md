@@ -1,5 +1,28 @@
 # Changelog of PrivacyWire
 
+## 1.0.2
+- Changed: Removed ProCache Output method as there is no real improvement over enabling JS minification in the ProCache settings.
+- Changed: Load modern ES6 version of JavaScript via `<script type="module" ...>` and legacy version of Javascript via `<script nomodule ...>` to support both modern and legacy browsers with the best possible result.
+- Fixed: The Imprint and Privacy links markup is now equal between banner and option view.
+- Fixed: After upgrading from 0.4.5 (and below) to 1.0 (and up) require new consent from the user, as syntax has changed.
+
+## 1.0.1b (beta)
+- Changed: Return value of PrivacyWire methods for better extensibility
+- Added: method `getPrivacyWireCore` which returns the path and url to the PrivacyWire Core JS file 
+- Added: more comments to explain how you can bundle the PrivacyWire Core JS with your other scripts
+
+## 1.0.0a (alpha)
+**Major Refactoring**. Rewritten both the JS and PHP parts.
+- Added: Config option for output mode (regular script tag, ProCache script tag, inline script) 
+- Added: Config option to choose elements which require consent by class `require-consent` instead of data-attribute (better performance). **WARNING**: Enabling this needs adding the css class `require-consent` to every element (also script tags!) you want to be processed by PrivacyWire
+- Added: Config option to choose ES6 JavaScript instead of a _Babel_ transpiled version (Faster and smaller but no Internet Explorer support)
+- Changed: Module methods refactored. Hookable methods changed. Take a look into [PrivacyWire.module](PrivacyWire.module) to see the difference
+- Added: Possibility to manually refresh detection of elements (e.g. after loading content via AJAX). Just call `window.PrivacyWire.refresh();` after adding new content to the DOM which could require consent 
+- Changed: Split markup from Banner and Consent Blueprint in two different files for better separation of concerns and easier hook management.
+
+## 0.4.5
+- Added: JS function to manually trigger the update of DOM elements: `window.updatePrivacyWireElements`
+
 ## 0.4.4
 - Added methods: getInlineJavaScriptTag & getPathToCssFile
 - Added: CSS file instead of SCSS for improved manual rendering options
