@@ -1,5 +1,8 @@
 # Changelog of PrivacyWire
 
+## 1.0.3
+- Changed: Order of Buttons in Options window
+
 ## 1.0.2
 - Changed: Removed ProCache Output method as there is no real improvement over enabling JS minification in the ProCache settings.
 - Changed: Load modern ES6 version of JavaScript via `<script type="module" ...>` and legacy version of Javascript via `<script nomodule ...>` to support both modern and legacy browsers with the best possible result.

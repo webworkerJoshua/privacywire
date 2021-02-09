@@ -88,9 +88,9 @@ $imprintPage = (!empty($module->get("content_banner_imprint_link{$module->lang}|
                     </ul>
                 </div>
                 <div class="privacywire-buttons">
-                    <button class="allow-all" <?php echo ($showAllInsteadToggle) ? "" : "hidden"; ?>><?php echo $module->get("content_banner_button_allow_all{$module->lang}|content_banner_button_allow_all"); ?></button>
                     <button class="toggle" <?php echo ($showAllInsteadToggle) ? "hidden" : ""; ?>><?php echo $module->get("content_banner_button_toggle{$module->lang}|content_banner_button_toggle"); ?></button>
                     <button class="save"><?php echo $module->get("content_banner_button_save{$module->lang}|content_banner_button_save"); ?></button>
+                    <button class="allow-all" <?php echo ($showAllInsteadToggle) ? "" : "hidden"; ?>><?php echo $module->get("content_banner_button_allow_all{$module->lang}|content_banner_button_allow_all"); ?></button>
                 </div>
                 <?php if (!empty($privacyPage) || !empty($imprintPage)): ?>
                     <div class="privacywire-page-links">
