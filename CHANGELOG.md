@@ -1,5 +1,8 @@
 # Changelog of PrivacyWire
 
+## 1.0.4
+- Fixed: removed console.log() debugger from DNT-method
+
 ## 1.0.3
 - Changed: Order of Buttons in Options window
 
