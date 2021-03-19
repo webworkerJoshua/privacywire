@@ -226,7 +226,6 @@ class PrivacyWire {
 
     checkForUsersDNT() {
         if (this.settings.dnt && navigator.doNotTrack === "1") {
-            console.log("DNT ACTIVE!")
             this.userConsent = this.getDefaultConsent()
             this.saveConsent(true)
 
