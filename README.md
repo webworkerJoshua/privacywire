@@ -22,7 +22,7 @@ PrivacyWire_legacy.js | < 13 kb | < 4 kb
 To load scripts, frames, images or other elements only after the site visitor has given consent to that specific cookie group, use the following attributes:
 
 ```html
-<script type=text/plain" data-type="text/javascript" data-category="functional" class="require-consent">console.log("This script only runs after giving consent to functional cookies");</script>
+<script type="text/plain" data-type="text/javascript" data-category="functional" class="require-consent">console.log("This script only runs after giving consent to functional cookies");</script>
 ```
 You can even render and alternate Opt-In text instead of the element:
 ```html
