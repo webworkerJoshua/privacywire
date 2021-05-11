@@ -1,5 +1,8 @@
 # Changelog of PrivacyWire
 
+## 1.0.5
+- Fixed: Legacy Support for IE11 with Array.from Polyfill
+
 ## 1.0.4
 - Fixed: removed console.log() debugger from DNT-method
 
