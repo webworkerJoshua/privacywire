@@ -108,6 +108,7 @@ class PrivacyWire extends WireData implements Module, ConfigurableModule
         }
 
         $output = "<script type='module' src='" . $this->moduleUrl . "js/PrivacyWire.js" . "'></script>";
+        $output .= "<script nomodule type='text/javascript' src='" . $this->moduleUrl . "js/ie_polyfill.js" . "'></script>";
         $output .= "<script nomodule type='text/javascript' src='" . $this->moduleUrl . "js/PrivacyWire_legacy.js" . "'></script>";
         return $output;
 
