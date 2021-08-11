@@ -143,6 +143,11 @@ class PrivacyWire {
         }
     }
 
+    reHandleExternalButtons() {
+        this.elements.buttons.externalTrigger = document.getElementsByClassName("privacywire-show-options")
+        this.handleButtonHelper(this.elements.buttons.externalTrigger, "handleButtonExternalTrigger")
+    }
+
     handleButtonAcceptAll(btn) {
         btn.addEventListener("click", () => {
             for (const key of this.cookieGroups) {
