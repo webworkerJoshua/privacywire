@@ -1,7 +1,10 @@
 # Changelog of PrivacyWire
 
-## 1.0.6
+## 1.0.7
 - Added: Function to re-handle external button trigger via `window.PrivacyWire.reHandleExternalButtons()`
+
+## 1.0.6
+- Fixed: Legacy IE11 Bug with Array.from Polyfill (Also for not-inline mode)
 
 ## 1.0.5
 - Fixed: Legacy Support for IE11 with Array.from Polyfill
