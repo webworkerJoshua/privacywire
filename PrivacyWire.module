@@ -49,6 +49,22 @@ class PrivacyWire extends WireData implements Module, ConfigurableModule
             return;
         }
 
+        // 1. - 5. within initiatePrivacyWire method
+        $this->addHookBefore('Page::render', $this, 'initiatePrivacyWire');
+
+        // 6. Render everything!
+        /*
+         * Hint: If you want to render everything manually, make sure to insert the PrivacyWireConfig (step 2), PrivacyWireCore (step 3), Banner Markup (step 4) and if you want to display the ask-for-consent windows also the consent blueprint (step 5) somewhere in your template.
+         * The banner markup and consent window blueprint can be loaded anywhere, for example at the end of the body tag.
+         */
+        if (!$this->render_manually) {
+            $this->addHookAfter('Page::render', $this, 'render');
+        }
+    }
+
+    public function initiatePrivacyWire(HookEvent $event)
+    {
+
         $this->modulePath = $this->wire('config')->paths->$this;
         $this->moduleUrl = $this->wire('config')->urls->$this;
         $this->lang = ($this->wire('languages') && !$this->wire('user')->language->isDefault()) ? '__' . $this->wire('user')->language->id : '';
@@ -71,14 +87,8 @@ class PrivacyWire extends WireData implements Module, ConfigurableModule
         // 5. Insert PrivacyWire Blueprint for Consent Window Markup
         $this->bodyContent .= $this->renderPrivacyWireConsentBlueprint();
 
-        // 6. Render everything!
-        /*
-         * Hint: If you want to render everything manually, make sure to insert the PrivacyWireConfig (step 2), PrivacyWireCore (step 3), Banner Markup (step 4) and if you want to display the ask-for-consent windows also the consent blueprint (step 5) somewhere in your template.
-         * The banner markup and consent window blueprint can be loaded anywhere, for example at the end of the body tag.
-         */
-        if (!$this->render_manually) {
-            $this->addHookAfter('Page::render', $this, 'render');
-        }
+        // 6. (within ready method)
+
     }
 
     public function render(HookEvent $event)
@@ -157,7 +167,7 @@ class PrivacyWire extends WireData implements Module, ConfigurableModule
     public function ___getPrivacyWireCore(bool $legacy = false): \StdClass
     {
         $file = new \StdClass;
-        $file->name = "js/PrivacyWire". ($legacy) ? '_legacy' : ''  . ".js";
+        $file->name = "js/PrivacyWire" . ($legacy) ? '_legacy' : '' . ".js";
         $file->path = $this->modulePath . $file->name;
         $file->url = $this->moduleUrl . $file->name;
 
