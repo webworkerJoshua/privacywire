@@ -1,5 +1,8 @@
 # Changelog of PrivacyWire
 
+## 1.0.9
+- Changed: Reduced priority of Page::render hook to allow easier override of settings
+
 ## 1.0.8
 - Added: Add class to body "has-privacywire-window-opened" while PrivacyWire windows are visible
 
