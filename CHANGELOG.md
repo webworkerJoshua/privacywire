@@ -1,5 +1,8 @@
 # Changelog of PrivacyWire
 
+## 1.0.8
+- Added: Add class to body "has-privacywire-window-opened" while PrivacyWire windows are visible
+
 ## 1.0.7
 - Added: Function to re-handle external button trigger via `window.PrivacyWire.reHandleExternalButtons()`
 
