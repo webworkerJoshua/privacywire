@@ -401,6 +401,6 @@ class PrivacyWireConfig extends ModuleConfig
         $f->columnWidth = 33;
         $fs->add($f);
 
-			return $inputfields;
+        return $inputfields;
     }
 }
