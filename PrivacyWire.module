@@ -141,9 +141,18 @@ class PrivacyWire extends WireData implements Module, ConfigurableModule
 
     public function ___renderPrivacyWireConsentBlueprint()
     {
+        $sanitizedAlternateInlineConsentPath = (substr($this->alternate_inline_consent_template, 0, 1) !== "/") ? $this->alternate_inline_consent_template : substr($this->alternate_inline_consent_template, 1);
+
         $filePath = $this->wire('config')->paths->$this . 'PrivacyWireConsentBlueprint.php';
-        return wireRenderFile($filePath, ['module' => $this]);
-    }
+
+        if (
+            !empty($this->alternate_inline_consent_template) &&
+            file_exists($this->wire('config')->paths->root . $sanitizedAlternateInlineConsentPath)) {
+            $filePath = $this->wire('config')->paths->root . $sanitizedAlternateInlineConsentPath;
+        }
+
+		    return wireRenderFile($filePath, ['module' => $this]);
+		}
 
     /**
      * Get the PrivacyWire stylesheet as Object with path and url
