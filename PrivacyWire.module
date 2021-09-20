@@ -152,7 +152,7 @@ class PrivacyWire extends WireData implements Module, ConfigurableModule
         }
 
         return wireRenderFile($filePath, ['module' => $this]);
-		}
+    }
 
     /**
      * Get the PrivacyWire stylesheet as Object with path and url
