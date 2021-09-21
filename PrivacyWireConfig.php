@@ -37,6 +37,7 @@ class PrivacyWireConfig extends ModuleConfig
             'ask_content_button_label' => $this->_("Load {category} cookies"),
             'banner_header_tag' => 'div',
             'alternate_banner_template' => '',
+            'alternate_inline_consent_template' => '',
             'render_manually' => false,
             'detect_consents_by_class' => false,
             'output_mode' => 'regular'
@@ -389,6 +390,14 @@ class PrivacyWireConfig extends ModuleConfig
         $f->label = $this->_('Detect consent windows by class `require-consent` instead of data-attribute.');
         $f->description = $this->_("If enabled, PrivacyWire will use a class selector instead of data-attribute selector to detect elements which require consent. This is more performant.");
         $f->checkboxLabel = $this->_('Use consent detection by class instead of data-attribute');
+        $f->columnWidth = 33;
+        $fs->add($f);
+
+        // alternate inline consent template
+        $f = $this->modules->get('InputfieldText');
+        $f->attr('name', 'alternate_inline_consent_template');
+        $f->label = $this->_('Alternate Inline Consent Template');
+        $f->description = $this->_("If you want to replace the original inline consent template (located in site/modules/PrivacyWire/PrivacyWireConsentBlueprint.php ) insert the alternative file path here (starting from webroot without leading slash )");
         $f->columnWidth = 33;
         $fs->add($f);
 
