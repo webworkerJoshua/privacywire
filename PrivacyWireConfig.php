@@ -364,7 +364,7 @@ class PrivacyWireConfig extends ModuleConfig
         $f->attr('name', 'messageTimeout');
         $f->label = $this->_('Timeout of showing the success message');
         $f->description = $this->_("Time in ms for how long the success message should be visible");
-        $f->columnWidth = 33;
+        $f->columnWidth = 50;
         $fs->add($f);
 
         // add basic css styles or not
@@ -373,7 +373,7 @@ class PrivacyWireConfig extends ModuleConfig
         $f->description = $this->_("If enabled, PrivacyWire will automatically include some very basic css styles to the output.");
         $f->label = $this->_('CSS: Add basic CSS Styling');
         $f->checkboxLabel = $this->_('Add basic CSS Styling');
-        $f->columnWidth = 33;
+        $f->columnWidth = 50;
         $fs->add($f);
 
         // Trigger a custom js function
@@ -381,7 +381,7 @@ class PrivacyWireConfig extends ModuleConfig
         $f->attr('name', 'trigger_custom_js_function');
         $f->label = $this->_('Trigger a custom js function');
         $f->description = $this->_("If you want to trigger a custom js function after saving the cookie banner, insert the name of the function here");
-        $f->columnWidth = 34;
+        $f->columnWidth = 50;
         $fs->add($f);
 
         // use consent detection by class?
@@ -390,7 +390,7 @@ class PrivacyWireConfig extends ModuleConfig
         $f->label = $this->_('Detect consent windows by class `require-consent` instead of data-attribute.');
         $f->description = $this->_("If enabled, PrivacyWire will use a class selector instead of data-attribute selector to detect elements which require consent. This is more performant.");
         $f->checkboxLabel = $this->_('Use consent detection by class instead of data-attribute');
-        $f->columnWidth = 33;
+        $f->columnWidth = 50;
         $fs->add($f);
 
         // alternate inline consent template
@@ -398,7 +398,7 @@ class PrivacyWireConfig extends ModuleConfig
         $f->attr('name', 'alternate_inline_consent_template');
         $f->label = $this->_('Alternate Inline Consent Template');
         $f->description = $this->_("If you want to replace the original inline consent template (located in site/modules/PrivacyWire/PrivacyWireConsentBlueprint.php ) insert the alternative file path here (starting from webroot without leading slash )");
-        $f->columnWidth = 33;
+        $f->columnWidth = 50;
         $fs->add($f);
 
         return $inputfields;
