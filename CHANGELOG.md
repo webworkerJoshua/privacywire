@@ -1,5 +1,8 @@
 # Changelog of PrivacyWire
 
+## 1.0.10
+- Added: Config option to replace the original consent blueprint template (located in site/modules/PrivacyWire/PrivacyWireConsentBlueprint.php) with an alternative consent blueprint
+
 ## 1.0.9
 - Changed: Reduced priority of Page::render hook to allow easier override of settings
 
