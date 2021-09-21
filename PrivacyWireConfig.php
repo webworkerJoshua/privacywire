@@ -6,7 +6,7 @@ class PrivacyWireConfig extends ModuleConfig
     {
         return [
             'version' => 1,
-            'cookie_groups' => [ "all", "necessary" ],
+            'cookie_groups' => ["all", "necessary"],
             'respectDNT' => false,
             'cookies_necessary_label' => $this->_('Necessary'),
             'cookies_functional_label' => $this->_('Functional'),
@@ -223,7 +223,7 @@ class PrivacyWireConfig extends ModuleConfig
         $f->columnWidth = 34;
         $fs->add($f);
 
-       // fieldset for links
+        // fieldset for links
         $fs = $this->modules->get('InputfieldFieldset');
         $fs->label = $this->_("Links");
         $inputfields->add($fs);
@@ -318,7 +318,7 @@ class PrivacyWireConfig extends ModuleConfig
         $f->value = "";
         $fs->add($f);
 
-         // Saved Message Text
+        // Saved Message Text
         $f = $this->modules->get('InputfieldText');
         $f->attr('name', 'content_banner_save_message');
         $f->label = $this->_('Message: Save Confirmation');
