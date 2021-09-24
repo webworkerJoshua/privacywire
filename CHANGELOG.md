@@ -1,5 +1,8 @@
 # Changelog of PrivacyWire
 
+## 1.0.11
+- Fixed: Bug, when multiple page()->render() methods are called. Now PrivacyWire only loads on the main call of page()->render()
+
 ## 1.0.10
 - Added: Config option to replace the original consent blueprint template (located in site/modules/PrivacyWire/PrivacyWireConsentBlueprint.php) with an alternative consent blueprint
 
