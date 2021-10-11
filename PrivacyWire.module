@@ -31,7 +31,7 @@ class PrivacyWire extends WireData implements Module, ConfigurableModule
             'summary' => "This module adds management options for GDPR-relevant elements (loading maps, videos etc. only after accepting external media) and cookies.",
             'author' => "blaueQuelle",
             'href' => "https://github.com/blaueQuelle/privacywire",
-            'version' => "1.0.11",
+            'version' => "1.1.0",
             'autoload' => true,
             'singular' => true,
             'requires' => ["PHP>=7.2", "ProcessWire>=3.0.110"],
@@ -192,6 +192,7 @@ class PrivacyWire extends WireData implements Module, ConfigurableModule
         $privacyWireSettings = new \StdClass;
         $privacyWireSettings->version = $this->version;
         $privacyWireSettings->dnt = ($this->respectDNT) ? "1" : "0";
+        $privacyWireSettings->bots = ($this->checkForBots) ? "1" : "0";
         $privacyWireSettings->customFunction = ($this->wire('sanitizer')->text($this->trigger_custom_js_function)) ?? "";
         $privacyWireSettings->messageTimeout = ($this->messageTimeout && intval($this->messageTimeout) > 1) ? intval($this->messageTimeout) : 1500;
         $privacyWireSettings->consentByClass = ($this->detect_consents_by_class) ? "1" : "0";

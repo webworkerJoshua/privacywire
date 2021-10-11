@@ -33,6 +33,7 @@ class PrivacyWire {
         let settings = {}
         settings.version = parseInt(PrivacyWireSettings.version)
         settings.dnt = Boolean(parseInt(PrivacyWireSettings.dnt))
+        settings.bots = Boolean(parseInt(PrivacyWireSettings.bots))
         settings.customFunction = `${PrivacyWireSettings.customFunction}`
         settings.messageTimeout = parseInt(PrivacyWireSettings.messageTimeout)
         settings.consentByClass = Boolean(parseInt(PrivacyWireSettings.consentByClass))
@@ -223,9 +224,11 @@ class PrivacyWire {
         if (this.userConsent.version > 0 && this.userConsent.version === this.settings.version) {
             return true
         }
+        if (this.settings.bots) {
+            return this.checkForBots();
+        }
 
         return this.settings.dnt && this.checkForUsersDNT() === true
-
 
     }
 
@@ -234,6 +237,34 @@ class PrivacyWire {
             this.userConsent = this.getDefaultConsent()
             this.saveConsent(true)
 
+            return true
+        }
+        return false
+    }
+
+    detectRobot() {
+
+        const robots = new RegExp([
+            /bot/, /spider/, /crawl/,                            // GENERAL TERMS
+            /APIs-Google/, /AdsBot/, /Googlebot/,                // GOOGLE ROBOTS
+            /mediapartners/, /Google Favicon/,
+            /Google Page Speed Insights/, /Chrome-Lighthouse/,  // GOOGLE PAGESPEED AND LIGHTHOUSE
+            /FeedFetcher/, /Google-Read-Aloud/,
+            /DuplexWeb-Google/, /googleweblight/,
+            /bing/, /yandex/, /baidu/, /duckduck/, /yahoo/,        // OTHER ENGINES
+            /ecosia/, /ia_archiver/,
+            /facebook/, /instagram/, /pinterest/, /reddit/,       // SOCIAL MEDIA
+            /slack/, /twitter/, /whatsapp/, /youtube/,
+            /semrush/,                                         // OTHER
+        ].map((r) => r.source).join("|"), "i");               // BUILD REGEXP + "i" FLAG
+
+        return robots.test(navigator.userAgent);
+    }
+
+    checkForBots() {
+        if (this.detectRobot()) {
+            this.userConsent = this.getDefaultConsent()
+            this.saveConsent(true)
             return true
         }
         return false

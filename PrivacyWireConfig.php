@@ -8,6 +8,7 @@ class PrivacyWireConfig extends ModuleConfig
             'version' => 1,
             'cookie_groups' => ["all", "necessary"],
             'respectDNT' => false,
+            'checkForBots' => false,
             'cookies_necessary_label' => $this->_('Necessary'),
             'cookies_functional_label' => $this->_('Functional'),
             'cookies_statistics_label' => $this->_('Statistics'),
@@ -54,7 +55,7 @@ class PrivacyWireConfig extends ModuleConfig
         $f->description = $this->_("When you increase the version number, all users have to opt-in again. This version number is saved with the users consent in the cookie.");
         $f->label = $this->_('Versioning');
         $f->attr('min', 1);
-        $f->columnWidth = 33;
+        $f->columnWidth = 25;
         $inputfields->add($f);
 
         // respect "do not track"
@@ -63,7 +64,16 @@ class PrivacyWireConfig extends ModuleConfig
         $f->description = $this->_("If enabled, PrivacyWire checks if the users browser sends the DNT-Header. If so, no cookie banner will be shown and the user will be handled like 'Only Necessary Cookies' would be chosen.");
         $f->label = $this->_('DNT: Do Not Track');
         $f->checkboxLabel = $this->_('Respect "Do Not Track" Settings from the browser');
-        $f->columnWidth = 33;
+        $f->columnWidth = 25;
+        $inputfields->add($f);
+
+        // handle bots as only necessary
+        $f = $this->modules->get('InputfieldCheckbox');
+        $f->attr('name', 'checkForBots');
+        $f->description = $this->_("If enabled, PrivacyWire checks if the user-agent is some kind of bot. If so, no cookie banner will be shown and the user will be handled like 'Only Necessary Cookies' would be chosen. This im");
+        $f->label = $this->_('Bots: Hide Banner');
+        $f->checkboxLabel = $this->_('Treat bots as "only necessary" is chosen');
+        $f->columnWidth = 25;
         $inputfields->add($f);
 
         // Output mode
@@ -75,7 +85,7 @@ class PrivacyWireConfig extends ModuleConfig
             "regular" => $this->_("Regular script tag"),
             "inline" => $this->_("Inline script"),
         ];
-        $f->columnWidth = 34;
+        $f->columnWidth = 25;
         $inputfields->add($f);
 
         // opt-in type
