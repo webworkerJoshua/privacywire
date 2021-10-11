@@ -1,5 +1,8 @@
 # Changelog of PrivacyWire
 
+## 1.1.0
+- Added: Config option and feature to detect bots (per User-agent) and hide the banner to them
+
 ## 1.0.11
 - Fixed: Bug, when multiple page()->render() methods are called. Now PrivacyWire only loads on the main call of page()->render()
 
