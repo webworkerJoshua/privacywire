@@ -126,29 +126,24 @@ class PrivacyWire extends WireData implements Module, ConfigurableModule
 
     public function ___renderPrivacyWireBannerTemplate()
     {
-        $sanitizedAlternateBannerPath = (substr($this->alternate_banner_template, 0, 1) !== "/") ? $this->alternate_banner_template : substr($this->alternate_banner_template, 1);
-
-        $filePath = $this->wire('config')->paths->$this . 'PrivacyWireBanner.php';
-
-        if (
-            !empty($this->alternate_banner_template) &&
-            file_exists($this->wire('config')->paths->root . $sanitizedAlternateBannerPath)) {
-            $filePath = $this->wire('config')->paths->root . $sanitizedAlternateBannerPath;
-        }
-
-        return wireRenderFile($filePath, ['module' => $this]);
+        return $this->renderTemplate('PrivacyWireBanner.php', $this->alternate_banner_template);
     }
 
     public function ___renderPrivacyWireConsentBlueprint()
     {
-        $sanitizedAlternateInlineConsentPath = (substr($this->alternate_inline_consent_template, 0, 1) !== "/") ? $this->alternate_inline_consent_template : substr($this->alternate_inline_consent_template, 1);
+        return $this->renderTemplate('PrivacyWireConsentBlueprint.php', $this->alternate_inline_consent_template);
+    }
 
-        $filePath = $this->wire('config')->paths->$this . 'PrivacyWireConsentBlueprint.php';
+    protected function renderTemplate($filename, $alternatePath = '')
+    {
+        $filePath = $this->wire('config')->paths->$this . $filename;
+
+        $alternatePath = ltrim($alternatePath, '/');
 
         if (
-            !empty($this->alternate_inline_consent_template) &&
-            file_exists($this->wire('config')->paths->root . $sanitizedAlternateInlineConsentPath)) {
-            $filePath = $this->wire('config')->paths->root . $sanitizedAlternateInlineConsentPath;
+            !empty($alternatePath) &&
+            file_exists($this->wire('config')->paths->root . $alternatePath)) {
+            $filePath = $this->wire('config')->paths->root . $alternatePath;
         }
 
         return wireRenderFile($filePath, ['module' => $this]);
