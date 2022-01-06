@@ -49,7 +49,7 @@ class TextformatterPrivacyWire extends Textformatter implements Module
 
         // Optional: enable PrivacyWire support for embedded media
         if ($this->video_category && (strpos($str, 'www.youtube.com/embed/') !== false || strpos($str, 'www.youtube-nocookie.com/embed/') !== false || strpos($str, 'player.vimeo.com') !== false)) {
-            if (preg_match_all('/\<iframe.*?src=("|\')(?:https?:)\/\/(?:www\.youtube|player\.vimeo)\..*?\1.*?\<\/iframe\>/is', $str, $matches)) {
+            if (preg_match_all('/\<iframe.*?src=("|\')(?:https?:)\/\/(?:www\.youtube-nocookie|youtube|player\.vimeo)\..*?\1.*?\<\/iframe\>/is', $str, $matches)) {
                 foreach ($matches[0] as $match) {
                     $new_match = str_replace(' src=', ' data-category="' . $this->video_category . '" data-ask-consent=1 data-src=', $match);
                     $str = str_replace($match, $new_match, $str);
