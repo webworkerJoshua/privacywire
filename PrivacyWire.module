@@ -171,7 +171,7 @@ class PrivacyWire extends WireData implements Module, ConfigurableModule
     public function ___getPrivacyWireCore(bool $legacy = false): \StdClass
     {
         $file = new \StdClass;
-        $file->name = "js/PrivacyWire" . ($legacy) ? '_legacy' : '' . ".js";
+        $file->name = "js/PrivacyWire" . ($legacy ? '_legacy' : '') . ".js";
         $file->path = $this->modulePath . $file->name;
         $file->url = $this->moduleUrl . $file->name;
 
