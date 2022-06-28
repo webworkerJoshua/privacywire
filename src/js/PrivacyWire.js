@@ -404,8 +404,11 @@ class PrivacyWire {
         if (dataset.src) {
             newEl.src = dataset.src
         }
-        newEl.innerText = el.innerText
-        newEl.id = el.id
+        // textContent is more suitable as innerText may change the value, is limited, costly and slower 
+        // (like introduced <br> elements instead of new lines in inline scripts).
+        // More: https://stackoverflow.com/questions/35213147/difference-between-textcontent-vs-innertext
+        newEl.textContent = el.textContent
+        if (el.id) { newEl.id = el.id} // Do not create an empty ID attribute if no ID exist
         newEl.defer = el.defer
         newEl.async = el.async
         newEl = this.removeUnusedAttributesFromElement(newEl)
