@@ -1,5 +1,11 @@
 # Changelog of PrivacyWire
 
+## 1.1.1
+- Merged PR #19 and #22
+  - Changed: Switched `innerText` to `textContent` for accuracy in `updateAllowedElementScript()`
+  - Changed: form layout and fields definitions syntax
+- Updated dependencies
+
 ## 1.1.0
 - Added: Config option and feature to detect bots (per User-agent) and hide the banner to them
 
