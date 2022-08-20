@@ -93,8 +93,10 @@ class PrivacyWire extends WireData implements Module, ConfigurableModule
 
     public function render(HookEvent $event)
     {
-        $event->return = str_replace("</head>", "{$this->headContent}</head>", $event->return);
-        $event->return = str_replace("</body>", "{$this->bodyContent}</body>", $event->return);
+        $insertion_point = strpos($event->return, "</head>");
+        $event->return = substr($event->return, 0, $insertion_point) . $this->headContent . substr($event->return, $insertion_point);
+        $insertion_point = strrpos($event->return, "</body>");
+        $event->return = substr($event->return, 0, $insertion_point) . $this->bodyContent . substr($event->return, $insertion_point);
     }
 
     public function ___renderPrivacyWireStyles()
