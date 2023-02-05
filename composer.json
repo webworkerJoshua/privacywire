@@ -1,14 +1,26 @@
 {
   "name": "blauequelle/privacywire",
+  "type": "processwire-module",
+  "description": "ProcessWire module, adds management options for GDPR-relevant elements (loading maps, videos etc. only after accepting external media) and cookies.",
+  "keywords": ["processwire", "gdpr", "cookies", "consent"],
+  "homepage": "https://github.com/webworkerJoshua/privacywire/",
   "license": "GPL-3.0",
-  "type": "pw-module",
   "authors": [
     {
       "name": "blauequelle",
       "email": "jk@blauequelle.de"
     }
   ],
+  "extra": {
+    "installer-name": "PrivacyWire"
+  },
   "require": {
-    "wireframe-framework/processwire-composer-installer": "^1.0.0"
+    "php": ">=5.6",
+    "composer/installers": "~1.0"
+  },
+  "config": {
+    "allow-plugins": {
+      "composer/installers": true
+    }
   }
 }
