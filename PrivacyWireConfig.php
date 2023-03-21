@@ -364,6 +364,7 @@ class PrivacyWireConfig extends ModuleConfig
     public function getDefaults()
     {
         return [
+            'is_active' => true,
             'version' => 1,
             'cookie_groups' => ["all", "necessary"],
             'respectDNT' => false,
