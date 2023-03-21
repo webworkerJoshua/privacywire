@@ -44,7 +44,8 @@ class PrivacyWire extends WireData implements Module, ConfigurableModule
     {
         if (
             $this->wire('page')->template == 'admin' || // exclude admin pages
-            $this->wire('page')->template == 'form-builder' // exclude from form-builder iframe
+            $this->wire('page')->template == 'form-builder' || // exclude from form-builder iframe
+            ! $this->is_active // exclude, if PrivacyWire is NOT active
         ) {
             return;
         }
