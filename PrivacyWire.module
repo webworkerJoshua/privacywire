@@ -190,7 +190,7 @@ class PrivacyWire extends WireData implements Module, ConfigurableModule
         $privacyWireSettings->dnt = ($this->respectDNT) ? "1" : "0";
         $privacyWireSettings->bots = ($this->checkForBots) ? "1" : "0";
         $privacyWireSettings->customFunction = ($this->wire('sanitizer')->text($this->trigger_custom_js_function)) ?? "";
-        $privacyWireSettings->messageTimeout = ($this->messageTimeout && intval($this->messageTimeout) > 1) ? intval($this->messageTimeout) : 1500;
+        $privacyWireSettings->messageTimeout = (isset($this->messageTimeout) && intval($this->messageTimeout) >= 0) ? intval($this->messageTimeout) : 1500;
         $privacyWireSettings->consentByClass = ($this->detect_consents_by_class) ? "1" : "0";
         $privacyWireSettings->cookieGroups = [
             'necessary' => $this->get("cookies_necessary_label{$this->lang}|cookies_necessary_label"),
