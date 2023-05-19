@@ -10,6 +10,11 @@ class PrivacyWireConfig extends ModuleConfig
                 'type' => 'fieldset',
                 'label' => 'General Options',
                 'children' => [
+                    [
+                        'name' => 'is_active',
+                        'type' => 'checkbox',
+                        'label' => $this->_('Do you want to activate PrivacyWire?')
+                    ],
                     [ // opt-in type
                         'name' => 'cookie_groups',
                         'type' => 'asmselect',
@@ -359,6 +364,7 @@ class PrivacyWireConfig extends ModuleConfig
     public function getDefaults()
     {
         return [
+            'is_active' => true,
             'version' => 1,
             'cookie_groups' => ["all", "necessary"],
             'respectDNT' => false,
