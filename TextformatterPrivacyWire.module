@@ -33,7 +33,14 @@ class TextformatterPrivacyWire extends Textformatter implements Module
         ];
     }
 
-    public function formatValue(Page $page, Field $field, &$str)
+	/**
+	 * Formats the given $str reference.
+	 * Page and Field context are not needed, but the formatter can alternatively also be called by formatValue(Page $page, Field $field, &$value)
+	 * format($$str) internally calls formatValue(Page $page, Field $field, &$value)
+	 * @param mixed $str
+	 * @return void
+	 */
+    public function format(&$str)
     {
         // Replace privacywire-choose-cookies with button element
         $tag_search = $this->open_tag . "privacywire-choose-cookies" . $this->close_tag;
