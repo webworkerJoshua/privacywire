@@ -35,8 +35,9 @@ class TextformatterPrivacyWire extends Textformatter implements Module
 
 	/**
 	 * Formats the given $str reference.
-	 * Page and Field context are not needed, but the formatter can alternatively also be called by formatValue(Page $page, Field $field, &$value)
-	 * format($$str) internally calls formatValue(Page $page, Field $field, &$value)
+	 * Page and Field context are currently not necessary for the formatter to work. 
+	 * The formatter can be called via format(&$str) or formatValue(Page $page, Field $field, &$value)
+	 * formatValue(Page $page, Field $field, &$value) internally calls format(&$str), so the former does not need to be overwritten.
 	 * @param mixed $str
 	 * @return void
 	 */
