@@ -51,7 +51,6 @@ class PrivacyWire extends WireData implements Module, ConfigurableModule
         }
 
         // 1. - 5. within initiatePrivacyWire method
-        $this->wire('page')->addHookBefore('render', $this, 'initiatePrivacyWire');
 
         // 6. Render everything!
         /*
@@ -59,6 +58,7 @@ class PrivacyWire extends WireData implements Module, ConfigurableModule
          * The banner markup and consent window blueprint can be loaded anywhere, for example at the end of the body tag.
          */
         if (!$this->render_manually) {
+            $this->wire('page')->addHookBefore('render', $this, 'initiatePrivacyWire'); // also disabled : allows full manual execution, more reliable as fully executed exactly once
             $this->wire('page')->addHookAfter('render', $this, 'render', ['priority' => 101]);
         }
     }
