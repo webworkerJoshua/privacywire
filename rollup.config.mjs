@@ -1,7 +1,7 @@
 import babel from '@rollup/plugin-babel';
 import postcss from 'rollup-plugin-postcss';
 import ignoreImport from 'rollup-plugin-ignore-import';
-import {terser} from 'rollup-plugin-terser';
+import terser from '@rollup/plugin-terser';
 import copy from 'rollup-plugin-copy';
 
 const production = !process.env.ROLLUP_WATCH;
