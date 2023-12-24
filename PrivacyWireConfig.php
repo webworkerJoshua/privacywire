@@ -4,6 +4,13 @@ class PrivacyWireConfig extends ModuleConfig
 {
     public function __construct()
     {
+        $textarea_type = 'textarea';
+        if ($this->wire()->modules->isInstalled('InputfieldTinyMCE')) {
+          $textarea_type = 'tinymce';
+        } elseif ($this->wire()->modules->isInstalled('InputfieldCkeditor')) {
+          $textarea_type = 'ckeditor';
+        }
+
         $this->add([
             [ // general config
                 'name' => 'privacywire-general',
@@ -128,7 +135,7 @@ class PrivacyWireConfig extends ModuleConfig
                     ],
                     [ // banner body copy
                         'name' => 'content_banner_text',
-                        'type' => 'ckeditor',
+                        'type' => $textarea_type,
                         'label' => $this->_('Text'),
                         //'toolbar' => 'Bold, Italic, NumberedList, BulletedList, PWLink, Unlink, PWImage, Table',
                         'useLanguages' => true,
@@ -153,7 +160,7 @@ class PrivacyWireConfig extends ModuleConfig
                     ],
                     [ // banner details text
                         'name' => 'content_banner_details_text',
-                        'type' => 'ckeditor',
+                        'type' => $textarea_type,
                         'label' => $this->_('Details Text'),
                         //'toolbar' => 'Bold, Italic, NumberedList, BulletedList, PWLink, Unlink, PWImage, Table',
                         'showIf' => "content_banner_details_show=1",
@@ -275,7 +282,7 @@ class PrivacyWireConfig extends ModuleConfig
                     ],
                     [ // ask for consent text field
                         'name' => 'ask_consent_message',
-                        'type' => 'ckeditor',
+                        'type' => $textarea_type,
                         'label' => $this->_('Text above button: Ask for consent'),
                         'description' => $this->_("You can insert the current cookie category name by using the placeholder {category}."),
                         //'toolbar' => 'Bold, Italic, NumberedList, BulletedList, PWLink, Unlink, PWImage, Table',
