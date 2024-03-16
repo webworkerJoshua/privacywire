@@ -1,5 +1,10 @@
 # Changelog of PrivacyWire
 
+## 1.1.3
+- Made the textareas type flexible by @the-ge in https://github.com/webworkerJoshua/privacywire/pull/27
+- Context free formatter by @MarcoKalin in https://github.com/webworkerJoshua/privacywire/pull/28
+- Support regular YouTube URL variation with www prefix by @teppokoivula in https://github.com/webworkerJoshua/privacywire/pull/30
+
 ## 1.1.2
 - Added: Config option to activate / deactivate PrivacyWire
 
