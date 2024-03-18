@@ -294,17 +294,20 @@ class PrivacyWire {
     hideBannerAndOptions() {
         this.elements.banner.wrapper.classList.remove("show-banner", "show-options")
         document.body.classList.remove("has-privacywire-window-opened")
+        document.dispatchEvent(new CustomEvent('PrivacyWireBannerAndOptionsClosed'))
     }
 
     showBanner() {
         this.elements.banner.wrapper.classList.add("show-banner")
         document.body.classList.add("has-privacywire-window-opened")
+        document.dispatchEvent(new CustomEvent('PrivacyWireBannerOpened'))
     }
 
     showOptions() {
         this.elements.banner.wrapper.classList.remove("show-banner")
         this.elements.banner.wrapper.classList.add("show-options")
         document.body.classList.add("has-privacywire-window-opened")
+        document.dispatchEvent(new CustomEvent('PrivacyWireOptionsOpened'))
     }
 
     showMessage() {
