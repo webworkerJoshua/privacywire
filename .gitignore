@@ -1,7 +1,4 @@
 node_modules/
 vendor/
 .idea/
-*.lock
-package-lock.json
-pnpm-lock.yaml
 js/*.css
