@@ -1,5 +1,8 @@
 # Changelog of PrivacyWire
 
+## 1.1.6
+- add default type `text/javascript` if no `data-type` is defined. https://github.com/webworkerJoshua/privacywire/issues/33
+
 ## 1.1.5
 
 - Trigger CustomEvents when banner and options are opened/closed by @teppokoivula in https://github.com/webworkerJoshua/privacywire/pull/32
