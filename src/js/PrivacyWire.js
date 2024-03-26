@@ -421,7 +421,7 @@ class PrivacyWire {
 
     updateAllowedElementOther(el) {
         const {dataset} = el
-        el.type = dataset.type
+        el.type = dataset.type ?? 'text/javascript'
         el.src = dataset.src
         el.srcset = dataset.srcset
         this.removeUnusedAttributesFromElement(el)
