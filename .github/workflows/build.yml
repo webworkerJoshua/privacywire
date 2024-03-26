@@ -28,4 +28,4 @@ jobs:
       - name: commit changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "[skip ci] Automated changes (build)"
+          commit_message: "CI build run [skip ci]"
