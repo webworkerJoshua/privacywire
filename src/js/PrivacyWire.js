@@ -403,7 +403,7 @@ class PrivacyWire {
         for (const key of Object.keys(dataset)) {
             newEl.dataset[key] = el.dataset[key]
         }
-        newEl.type = dataset.type
+        newEl.type = dataset.type ?? 'text/javascript'
         if (dataset.src) {
             newEl.src = dataset.src
         }
