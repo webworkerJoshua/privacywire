@@ -1,5 +1,9 @@
 # Changelog of PrivacyWire
 
+## 1.1.7
+- add default type text/javascript of none is defined to correct function updateAllowedElementScript https://github.com/webworkerJoshua/privacywire/pull/37  
+Thank you @donatasben
+
 ## 1.1.6
 - add default type `text/javascript` if no `data-type` is defined. https://github.com/webworkerJoshua/privacywire/issues/33
 
