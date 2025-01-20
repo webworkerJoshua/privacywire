@@ -424,7 +424,7 @@ class PrivacyWire {
         el.type = dataset.type ?? 'text/javascript'
         el.src = dataset.src
         el.srcset = dataset.srcset
-        el.srcset = dataset.poster
+        el.poster = dataset.poster
         this.removeUnusedAttributesFromElement(el)
     }
 
