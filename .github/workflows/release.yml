@@ -57,14 +57,14 @@ jobs:
 
       - name: Create and push tag
         run: |
-          git tag v${{ env.NEW_VERSION }}
+          git tag ${{ env.NEW_VERSION }}
           git push origin master v${{ env.NEW_VERSION }}
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ env.NEW_VERSION }}
-          name: Release v${{ env.NEW_VERSION }}
+          tag_name: ${{ env.NEW_VERSION }}
+          name: ${{ env.NEW_VERSION }}
           draft: false
           prerelease: false
           generate_release_notes: true 
