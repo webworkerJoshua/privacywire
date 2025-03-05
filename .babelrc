@@ -1,13 +1,14 @@
 {
-  "presets": ["@babel/preset-env"],
-  "env": {
-    "production": {
-      "presets": [
-        "@babel/preset-env",
-        {
-          "useBuiltIns": "usage"
-        },
-        "minify"]
-    }
-  }
+	"presets": ["@babel/preset-env"],
+	"env": {
+		"production": {
+			"presets": [
+				"@babel/preset-env",
+				{
+					"useBuiltIns": "usage"
+				},
+				"minify"
+			]
+		}
+	}
 }
