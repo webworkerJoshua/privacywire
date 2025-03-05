@@ -13,7 +13,8 @@
 		"build": "rollup -c --compact",
 		"lint": "biome check --write",
 		"format": "biome format --write",
-		"check": "biome check --write"
+		"check": "biome check --write",
+		"check:ci": "biome ci"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.26.9",

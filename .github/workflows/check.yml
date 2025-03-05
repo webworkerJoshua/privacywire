@@ -1,0 +1,18 @@
+name: Code Quality Check
+
+on:
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Biome
+        uses: biomejs/setup-biome@v2
+        with:
+          version: 1.9.4
+      - name: Run Biome
+        run: biome ci .
