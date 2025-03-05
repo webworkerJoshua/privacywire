@@ -53,12 +53,12 @@ jobs:
       - name: commit changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "Release v${{ env.NEW_VERSION }}"
+          commit_message: "Release ${{ env.NEW_VERSION }}"
 
       - name: Create and push tag
         run: |
           git tag ${{ env.NEW_VERSION }}
-          git push origin master v${{ env.NEW_VERSION }}
+          git push origin master ${{ env.NEW_VERSION }}
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
