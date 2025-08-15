@@ -432,7 +432,7 @@ class PrivacyWire {
         }
         if (!allowed) {
           this.updateDisallowedElement(el);
-          return;
+          continue;
         }
         this.updateAllowedElement(el);
       }
