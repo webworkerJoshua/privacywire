@@ -39,6 +39,8 @@ class PrivacyWire {
     settings.messageTimeout = Number.parseInt(
       PrivacyWireSettings.messageTimeout
     );
+    settings.consentStorageDurationMonths =
+      Number.parseInt(PrivacyWireSettings.consentStorageDurationMonths) || 0;
     settings.consentByClass = Boolean(
       Number.parseInt(PrivacyWireSettings.consentByClass)
     );
@@ -60,7 +62,14 @@ class PrivacyWire {
       return this.getDefaultConsent();
     }
 
-    const storedConsentRaw = JSON.parse(window.localStorage.getItem(this.name));
+    let storedConsentRaw;
+    try {
+      storedConsentRaw = JSON.parse(window.localStorage.getItem(this.name));
+    } catch {
+      this.removeStoredConsent();
+      return this.getDefaultConsent();
+    }
+
     if (Number.parseInt(storedConsentRaw.version) !== this.settings.version) {
       return this.getDefaultConsent();
     }
@@ -70,8 +79,14 @@ class PrivacyWire {
       return this.getDefaultConsent();
     }
 
+    if (this.hasConsentExpired(storedConsentRaw)) {
+      this.removeStoredConsent();
+      return this.getDefaultConsent();
+    }
+
     const storedConsent = {};
     storedConsent.version = Number.parseInt(storedConsentRaw.version);
+    storedConsent.storedAt = this.getStoredAtTimestamp(storedConsentRaw);
     storedConsent.cookieGroups = {};
 
     for (const key of this.cookieGroups) {
@@ -90,11 +105,56 @@ class PrivacyWire {
   getDefaultConsent() {
     const consent = {};
     consent.version = 0;
+    consent.storedAt = null;
     consent.cookieGroups = {};
     for (const key of this.cookieGroups) {
       consent.cookieGroups[key] = key === "necessary";
     }
     return consent;
+  }
+
+  getStoredAtTimestamp(storedConsentRaw) {
+    const storedAt = Number.parseInt(storedConsentRaw.storedAt);
+
+    if (!Number.isFinite(storedAt) || storedAt <= 0) {
+      return null;
+    }
+
+    return storedAt;
+  }
+
+  hasConsentExpired(storedConsentRaw) {
+    if (this.settings.consentStorageDurationMonths <= 0) {
+      return false;
+    }
+
+    const storedAt = this.getStoredAtTimestamp(storedConsentRaw);
+    if (storedAt === null) {
+      return true;
+    }
+
+    return Date.now() >= this.getConsentExpiryTimestamp(storedAt);
+  }
+
+  getConsentExpiryTimestamp(storedAt) {
+    const expiryDate = new Date(storedAt);
+    const originalDay = expiryDate.getUTCDate();
+
+    expiryDate.setUTCDate(1);
+    expiryDate.setUTCMonth(
+      expiryDate.getUTCMonth() + this.settings.consentStorageDurationMonths
+    );
+    expiryDate.setUTCDate(
+      Math.min(originalDay, this.getDaysInUtcMonth(expiryDate))
+    );
+
+    return expiryDate.getTime();
+  }
+
+  getDaysInUtcMonth(date) {
+    return new Date(
+      Date.UTC(date.getUTCFullYear(), date.getUTCMonth() + 1, 0)
+    ).getUTCDate();
   }
 
   initiateElements() {
@@ -353,6 +413,7 @@ class PrivacyWire {
 
   saveConsent(silent = false) {
     this.userConsent.version = this.settings.version;
+    this.userConsent.storedAt = Date.now();
     window.localStorage.removeItem(this.name);
     window.localStorage.setItem(this.name, JSON.stringify(this.userConsent));
     this.hideBannerAndOptions();
