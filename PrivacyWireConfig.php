@@ -414,7 +414,7 @@ class PrivacyWireConfig extends ModuleConfig
             'textformatter_choose_label' => $this->_("Show or edit my Cookie Consent"),
             'trigger_custom_js_function' => "",
             'messageTimeout' => 1500,
-            'consent_storage_duration_months' => 0,
+            'consent_storage_duration_months' => "0",
             'add_basic_css_styling' => true,
             'ask_consent_message' => $this->_("To load this element, it is required to consent to the following cookie category: {category}."),
             'ask_content_button_label' => $this->_("Load {category} cookies"),
