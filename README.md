@@ -12,12 +12,7 @@ The following cookie groups are available (the frontend visible label is editabl
 Necessary elements are always active. You can let the user decide, which individual cookie group(s) should be allowed, and/or add an „Allow all“ button.
 
 You can insert basic styles via css or completely style it yourself.
-The PrivacyWire Core Javascript file is available both as ES6 as well as transpiled with Babel for IE11 support. Both versions have a very small footprint:
-
-File   |   Size    | Gzipped
---- | :---: | ---:
-PrivacyWire.js | < 9 kb | < 3 kb
-PrivacyWire_legacy.js | < 13 kb | < 4 kb
+The PrivacyWire Core Javascript file is available both as ES6 as well as transpiled with Babel for IE11 support.
 
 To load scripts, frames, images or other elements only after the site visitor has given consent to that specific cookie group, use the following attributes:
 
