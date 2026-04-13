@@ -1,5 +1,8 @@
 # Changelog of PrivacyWire
 
+## 1.2.1
+- feat: add capability to set messageTimout to zero
+
 ## 1.2.0
 - add configuration option to define max retention of stored consent
 
