@@ -36,12 +36,10 @@ class PrivacyWire {
     settings.dnt = Boolean(Number.parseInt(PrivacyWireSettings.dnt));
     settings.bots = Boolean(Number.parseInt(PrivacyWireSettings.bots));
     settings.customFunction = `${PrivacyWireSettings.customFunction}`;
-    settings.messageTimeout = Number.parseInt(
-      PrivacyWireSettings.messageTimeout
-    );
-    settings.consentByClass = Boolean(
-      Number.parseInt(PrivacyWireSettings.consentByClass)
-    );
+    settings.messageTimeout = Number.parseInt(PrivacyWireSettings.messageTimeout);
+    settings.consentStorageDurationMonths =
+      Number.parseInt(PrivacyWireSettings.consentStorageDurationMonths) || 0;
+    settings.consentByClass = Boolean(Number.parseInt(PrivacyWireSettings.consentByClass));
     settings.cookieGroups = {};
 
     for (const key of this.cookieGroups) {
@@ -56,12 +54,20 @@ class PrivacyWire {
    * @returns {Object} either empty object or sanitized stored consent object if version matches with settings version
    */
   sanitizeStoredConsent() {
-    if (!window.localStorage.getItem(this.name)) {
+    const localStorageConsentItem = window.localStorage.getItem(this.name);
+    if (!localStorageConsentItem) {
       return this.getDefaultConsent();
     }
 
-    const storedConsentRaw = JSON.parse(window.localStorage.getItem(this.name));
-    if (Number.parseInt(storedConsentRaw.version) !== this.settings.version) {
+    let storedConsentRaw;
+    try {
+      storedConsentRaw = JSON.parse(localStorageConsentItem);
+    } catch {
+      this.removeStoredConsent();
+      return this.getDefaultConsent();
+    }
+
+    if (Number.parseInt(storedConsentRaw?.version) !== this.settings.version) {
       return this.getDefaultConsent();
     }
 
@@ -70,14 +76,18 @@ class PrivacyWire {
       return this.getDefaultConsent();
     }
 
+    if (this.hasConsentExpired(storedConsentRaw)) {
+      this.removeStoredConsent();
+      return this.getDefaultConsent();
+    }
+
     const storedConsent = {};
     storedConsent.version = Number.parseInt(storedConsentRaw.version);
+    storedConsent.storedAt = this.getStoredAtTimestamp(storedConsentRaw);
     storedConsent.cookieGroups = {};
 
     for (const key of this.cookieGroups) {
-      storedConsent.cookieGroups[key] = Boolean(
-        storedConsentRaw.cookieGroups[key]
-      );
+      storedConsent.cookieGroups[key] = Boolean(storedConsentRaw.cookieGroups[key]);
     }
 
     return storedConsent;
@@ -90,6 +100,7 @@ class PrivacyWire {
   getDefaultConsent() {
     const consent = {};
     consent.version = 0;
+    consent.storedAt = null;
     consent.cookieGroups = {};
     for (const key of this.cookieGroups) {
       consent.cookieGroups[key] = key === "necessary";
@@ -97,36 +108,61 @@ class PrivacyWire {
     return consent;
   }
 
+  getStoredAtTimestamp(storedConsentRaw) {
+    const storedAt = Number.parseInt(storedConsentRaw.storedAt);
+
+    if (!Number.isFinite(storedAt) || storedAt <= 0) {
+      return null;
+    }
+
+    return storedAt;
+  }
+
+  hasConsentExpired(storedConsentRaw) {
+    if (this.settings.consentStorageDurationMonths <= 0) {
+      return false;
+    }
+
+    const storedAt = this.getStoredAtTimestamp(storedConsentRaw);
+    if (storedAt === null) {
+      return true;
+    }
+
+    return Date.now() >= this.getConsentExpiryTimestamp(storedAt);
+  }
+
+  getConsentExpiryTimestamp(storedAt) {
+    const expiryDate = new Date(storedAt);
+    const originalDay = expiryDate.getUTCDate();
+
+    expiryDate.setUTCDate(1);
+    expiryDate.setUTCMonth(expiryDate.getUTCMonth() + this.settings.consentStorageDurationMonths);
+    expiryDate.setUTCDate(Math.min(originalDay, this.getDaysInUtcMonth(expiryDate)));
+
+    return expiryDate.getTime();
+  }
+
+  getDaysInUtcMonth(date) {
+    return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth() + 1, 0)).getUTCDate();
+  }
+
   initiateElements() {
     const elements = {};
     elements.banner = {};
     elements.banner.wrapper = document.getElementById("privacywire-wrapper");
-    elements.banner.intro =
-      elements.banner.wrapper.getElementsByClassName("privacywire-banner");
-    elements.banner.options = elements.banner.wrapper.getElementsByClassName(
-      "privacywire-options"
-    );
-    elements.banner.message = elements.banner.wrapper.getElementsByClassName(
-      "privacywire-message"
-    );
+    elements.banner.intro = elements.banner.wrapper.getElementsByClassName("privacywire-banner");
+    elements.banner.options = elements.banner.wrapper.getElementsByClassName("privacywire-options");
+    elements.banner.message = elements.banner.wrapper.getElementsByClassName("privacywire-message");
 
     elements.buttons = {};
-    elements.buttons.acceptAll =
-      elements.banner.wrapper.getElementsByClassName("allow-all");
+    elements.buttons.acceptAll = elements.banner.wrapper.getElementsByClassName("allow-all");
     elements.buttons.acceptNecessary =
       elements.banner.wrapper.getElementsByClassName("allow-necessary");
-    elements.buttons.choose =
-      elements.banner.wrapper.getElementsByClassName("choose");
-    elements.buttons.toggle =
-      elements.banner.wrapper.getElementsByClassName("toggle");
-    elements.buttons.save =
-      elements.banner.wrapper.getElementsByClassName("save");
-    elements.buttons.askForConsent = document.getElementsByClassName(
-      "privacywire-consent-button"
-    );
-    elements.buttons.externalTrigger = document.getElementsByClassName(
-      "privacywire-show-options"
-    );
+    elements.buttons.choose = elements.banner.wrapper.getElementsByClassName("choose");
+    elements.buttons.toggle = elements.banner.wrapper.getElementsByClassName("toggle");
+    elements.buttons.save = elements.banner.wrapper.getElementsByClassName("save");
+    elements.buttons.askForConsent = document.getElementsByClassName("privacywire-consent-button");
+    elements.buttons.externalTrigger = document.getElementsByClassName("privacywire-show-options");
 
     elements.checkboxes = {};
     for (const key of this.cookieGroups) {
@@ -136,42 +172,26 @@ class PrivacyWire {
       elements.checkboxes[key] = document.getElementById(key);
     }
 
-    elements.blueprint = document.getElementById(
-      "privacywire-ask-consent-blueprint"
-    );
+    elements.blueprint = document.getElementById("privacywire-ask-consent-blueprint");
 
     elements.elementsWithRequiredConsent =
       this.settings.consentByClass === true
         ? document.getElementsByClassName("require-consent")
         : document.querySelectorAll("[data-category]");
 
-    elements.consentWindows = document.getElementsByClassName(
-      "privacywire-ask-consent"
-    );
+    elements.consentWindows = document.getElementsByClassName("privacywire-ask-consent");
 
     return elements;
   }
 
   handleButtons() {
-    this.handleButtonHelper(
-      this.elements.buttons.acceptAll,
-      "handleButtonAcceptAll"
-    );
-    this.handleButtonHelper(
-      this.elements.buttons.acceptNecessary,
-      "handleButtonAcceptNecessary"
-    );
+    this.handleButtonHelper(this.elements.buttons.acceptAll, "handleButtonAcceptAll");
+    this.handleButtonHelper(this.elements.buttons.acceptNecessary, "handleButtonAcceptNecessary");
     this.handleButtonHelper(this.elements.buttons.choose, "handleButtonChoose");
     this.handleButtonHelper(this.elements.buttons.toggle, "handleButtonToggle");
     this.handleButtonHelper(this.elements.buttons.save, "handleButtonSave");
-    this.handleButtonHelper(
-      this.elements.buttons.askForConsent,
-      "handleButtonAskForConsent"
-    );
-    this.handleButtonHelper(
-      this.elements.buttons.externalTrigger,
-      "handleButtonExternalTrigger"
-    );
+    this.handleButtonHelper(this.elements.buttons.askForConsent, "handleButtonAskForConsent");
+    this.handleButtonHelper(this.elements.buttons.externalTrigger, "handleButtonExternalTrigger");
   }
 
   handleButtonHelper(buttons, method) {
@@ -184,12 +204,9 @@ class PrivacyWire {
 
   reHandleExternalButtons() {
     this.elements.buttons.externalTrigger = document.getElementsByClassName(
-      "privacywire-show-options"
+      "privacywire-show-options",
     );
-    this.handleButtonHelper(
-      this.elements.buttons.externalTrigger,
-      "handleButtonExternalTrigger"
-    );
+    this.handleButtonHelper(this.elements.buttons.externalTrigger, "handleButtonExternalTrigger");
   }
 
   handleButtonAcceptAll(btn) {
@@ -231,8 +248,7 @@ class PrivacyWire {
         if (key === "necessary") {
           continue;
         }
-        this.userConsent.cookieGroups[key] =
-          this.elements.checkboxes[key].checked;
+        this.userConsent.cookieGroups[key] = this.elements.checkboxes[key].checked;
       }
       this.saveConsent();
     });
@@ -260,16 +276,12 @@ class PrivacyWire {
       if (key === "necessary") {
         continue;
       }
-      this.elements.checkboxes[key].checked =
-        this.userConsent.cookieGroups[key];
+      this.elements.checkboxes[key].checked = this.userConsent.cookieGroups[key];
     }
   }
 
   checkForValidConsent() {
-    if (
-      this.userConsent.version > 0 &&
-      this.userConsent.version === this.settings.version
-    ) {
+    if (this.userConsent.version > 0 && this.userConsent.version === this.settings.version) {
       return true;
     }
     if (this.settings.bots) {
@@ -325,7 +337,7 @@ class PrivacyWire {
       ]
         .map((r) => r.source)
         .join("|"),
-      "i"
+      "i",
     ); // BUILD REGEXP + "i" FLAG
 
     return robots.test(navigator.userAgent);
@@ -353,6 +365,7 @@ class PrivacyWire {
 
   saveConsent(silent = false) {
     this.userConsent.version = this.settings.version;
+    this.userConsent.storedAt = Date.now();
     window.localStorage.removeItem(this.name);
     window.localStorage.setItem(this.name, JSON.stringify(this.userConsent));
     this.hideBannerAndOptions();
@@ -376,14 +389,9 @@ class PrivacyWire {
   }
 
   hideBannerAndOptions() {
-    this.elements.banner.wrapper.classList.remove(
-      "show-banner",
-      "show-options"
-    );
+    this.elements.banner.wrapper.classList.remove("show-banner", "show-options");
     document.body.classList.remove("has-privacywire-window-opened");
-    document.dispatchEvent(
-      new CustomEvent("PrivacyWireBannerAndOptionsClosed")
-    );
+    document.dispatchEvent(new CustomEvent("PrivacyWireBannerAndOptionsClosed"));
   }
 
   showBanner() {
@@ -408,8 +416,7 @@ class PrivacyWire {
 
   checkElementsWithRequiredConsent() {
     if (this.settings.consentByClass === false) {
-      this.elements.elementsWithRequiredConsent =
-        document.querySelectorAll("[data-category]");
+      this.elements.elementsWithRequiredConsent = document.querySelectorAll("[data-category]");
     }
 
     this.cleanOldConsentWindows();
@@ -472,18 +479,14 @@ class PrivacyWire {
     const categoryLabel = this.settings.cookieGroups[category];
 
     const newEl = document.createElement("div");
-    newEl.classList.add(
-      "privacywire-ask-consent",
-      `consent-category-${category}`
-    );
+    newEl.classList.add("privacywire-ask-consent", `consent-category-${category}`);
     newEl.dataset.disallowedConsentCategory = category;
     newEl.innerHTML = this.elements.blueprint.innerHTML.formatUnicorn({
       category: categoryLabel,
       categoryname: category,
     });
     if (dataset.askConsentMessage) {
-      newEl.querySelector(".privacywire-consent-message").textContent =
-        dataset.askConsentMessage;
+      newEl.querySelector(".privacywire-consent-message").textContent = dataset.askConsentMessage;
     }
     if (dataset.askConsentButtonLabel) {
       newEl.querySelector("button").textContent = dataset.askConsentButtonLabel;
@@ -551,10 +554,7 @@ class PrivacyWire {
 
   refresh() {
     this.checkElementsWithRequiredConsent();
-    this.handleButtonHelper(
-      this.elements.buttons.askForConsent,
-      "handleButtonAskForConsent"
-    );
+    this.handleButtonHelper(this.elements.buttons.askForConsent, "handleButtonAskForConsent");
   }
 
   removeStoredConsent() {

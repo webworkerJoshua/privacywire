@@ -67,6 +67,20 @@ class PrivacyWireConfig extends ModuleConfig
                         'description' => $this->_("How many milliseconds should the consent saving confirmation be visible after the user makes a choice."),
                         'columnWidth' => 25,
                     ],
+                    [ // consent storage duration
+                        'name' => 'consent_storage_duration_months',
+                        'type' => 'select',
+                        'label' => $this->_('Consent Storage Duration'),
+                        'description' => $this->_("Choose how long a consent decision may remain stored in the browser before the banner is shown again."),
+                        'options' => [
+                            "0" => $this->_("Unlimited"),
+                            "1" => $this->_("1 month"),
+                            "3" => $this->_("3 months"),
+                            "6" => $this->_("6 months"),
+                            "12" => $this->_("12 months"),
+                        ],
+                        'columnWidth' => 25,
+                    ],
                 ],
             ],
             [ // groups labels
@@ -400,6 +414,7 @@ class PrivacyWireConfig extends ModuleConfig
             'textformatter_choose_label' => $this->_("Show or edit my Cookie Consent"),
             'trigger_custom_js_function' => "",
             'messageTimeout' => 1500,
+            'consent_storage_duration_months' => "0",
             'add_basic_css_styling' => true,
             'ask_consent_message' => $this->_("To load this element, it is required to consent to the following cookie category: {category}."),
             'ask_content_button_label' => $this->_("Load {category} cookies"),
