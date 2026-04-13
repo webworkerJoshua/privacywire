@@ -1,5 +1,8 @@
 # Changelog of PrivacyWire
 
+## 1.2.0
+- add configuration option to define max retention of stored consent
+
 ## 1.1.7
 - add default type text/javascript of none is defined to correct function updateAllowedElementScript https://github.com/webworkerJoshua/privacywire/pull/37  
 Thank you @donatasben
