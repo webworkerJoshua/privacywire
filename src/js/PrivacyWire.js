@@ -32,11 +32,12 @@ class PrivacyWire {
    */
   sanitizeSettings(PrivacyWireSettings) {
     const settings = {};
+    const messageTimeout = Number.parseInt(PrivacyWireSettings.messageTimeout);
     settings.version = Number.parseInt(PrivacyWireSettings.version);
     settings.dnt = Boolean(Number.parseInt(PrivacyWireSettings.dnt));
     settings.bots = Boolean(Number.parseInt(PrivacyWireSettings.bots));
     settings.customFunction = `${PrivacyWireSettings.customFunction}`;
-    settings.messageTimeout = Number.parseInt(PrivacyWireSettings.messageTimeout);
+    settings.messageTimeout = Number.isFinite(messageTimeout) && messageTimeout >= 0 ? messageTimeout : 1500;
     settings.consentStorageDurationMonths =
       Number.parseInt(PrivacyWireSettings.consentStorageDurationMonths) || 0;
     settings.consentByClass = Boolean(Number.parseInt(PrivacyWireSettings.consentByClass));
@@ -408,6 +409,10 @@ class PrivacyWire {
   }
 
   showMessage() {
+    if (this.settings.messageTimeout === 0) {
+      return;
+    }
+
     this.elements.banner.wrapper.classList.add("show-message");
     setTimeout(() => {
       this.elements.banner.wrapper.classList.remove("show-message");

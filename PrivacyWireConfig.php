@@ -64,7 +64,7 @@ class PrivacyWireConfig extends ModuleConfig
                         'name' => 'messageTimeout',
                         'type' => 'integer',
                         'label' => $this->_('Consent Saving Confirmation Duration'),
-                        'description' => $this->_("How many milliseconds should the consent saving confirmation be visible after the user makes a choice."),
+                        'description' => $this->_("How many milliseconds should the consent saving confirmation be visible after the user makes a choice? Set to 0 to disable the confirmation message."),
                         'columnWidth' => 25,
                     ],
                     [ // consent storage duration
