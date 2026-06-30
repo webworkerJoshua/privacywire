@@ -17,7 +17,7 @@
 		"check:ci": "biome ci"
 	},
 	"devDependencies": {
-		"@babel/core": "^7.29.0",
+		"@babel/core": "^7.29.6",
 		"@babel/preset-env": "^7.29.2",
 		"@biomejs/biome": "1.9.4",
 		"@rollup/plugin-babel": "^7.0.0",
