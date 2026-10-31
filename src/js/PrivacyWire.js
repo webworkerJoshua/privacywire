@@ -55,7 +55,13 @@ class PrivacyWire {
    * @returns {Object} either empty object or sanitized stored consent object if version matches with settings version
    */
   sanitizeStoredConsent() {
-    const localStorageConsentItem = window.localStorage.getItem(this.name);
+    let localStorageConsentItem;
+    try {
+      localStorageConsentItem = window.localStorage.getItem(this.name);
+    } catch {
+      // Storage is blocked (e.g. the browser blocks all cookies): nothing can be stored
+      return this.getDefaultConsent();
+    }
     if (!localStorageConsentItem) {
       return this.getDefaultConsent();
     }
@@ -367,8 +373,12 @@ class PrivacyWire {
   saveConsent(silent = false) {
     this.userConsent.version = this.settings.version;
     this.userConsent.storedAt = Date.now();
-    window.localStorage.removeItem(this.name);
-    window.localStorage.setItem(this.name, JSON.stringify(this.userConsent));
+    try {
+      window.localStorage.removeItem(this.name);
+      window.localStorage.setItem(this.name, JSON.stringify(this.userConsent));
+    } catch {
+      // Storage is blocked: the consent still applies to the current page
+    }
     this.hideBannerAndOptions();
 
     if (!silent) {
@@ -563,10 +573,14 @@ class PrivacyWire {
   }
 
   removeStoredConsent() {
-    if (!window.localStorage.getItem(this.name)) {
-      return;
+    try {
+      if (!window.localStorage.getItem(this.name)) {
+        return;
+      }
+      window.localStorage.removeItem(this.name);
+    } catch {
+      // Storage is blocked: nothing is stored
     }
-    window.localStorage.removeItem(this.name);
   }
 }
 
